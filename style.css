@@ -93,7 +93,7 @@ a{color:inherit}
 
 /* ---------- scena 02 · separazione (port Cut02) ---------- */
 
-#sep .stage{background:#05110f}
+#sep .stage{background:#05110f;isolation:isolate}
 #sep canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 
 #sep .sep-intro{position:absolute;z-index:12;will-change:transform,opacity;left:clamp(22px,8vw,138px);top:50%;transform:translateY(-52%);max-width:min(760px,78vw)}
@@ -103,11 +103,18 @@ a{color:inherit}
 #sep .scrollhint{margin-top:34px;font:500 10px/1 var(--mono);letter-spacing:.08em;color:#78988e;display:flex;align-items:center;gap:10px}
 #sep .scrollhint::before{content:"";width:28px;height:1px;background:#78988e}
 
-#sep .persona{position:absolute;z-index:8;left:clamp(24px,5vw,84px);top:17%;width:min(33vw,520px);color:#1c2824;opacity:0;transform:translateY(38px);will-change:transform,opacity}
-#sep .plabel{font:500 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#5f7069;margin-bottom:18px}
-#sep .pname{font:300 clamp(62px,8.4vw,132px)/.82 var(--serif);letter-spacing:-.055em;margin:0;color:#14211d}
+/* la persona nasce al centro in blend-difference: quando il campo carta
+   cresce sotto di lei, il nome si inverte e si adagia nella sua colonna */
+#sep .persona{position:absolute;z-index:8;left:50%;top:44%;transform:translate(-50%,-50%);
+  width:max-content;max-width:92%;text-align:center;color:#fff;opacity:0;
+  mix-blend-mode:difference;will-change:left,top,transform,opacity}
+#sep .persona.on{mix-blend-mode:normal;color:#23382e}
+#sep .plabel{font:500 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#fff;margin-bottom:18px;transition:color .3s}
+#sep .persona.on .plabel{color:#5f7069}
+#sep .pname{font:300 clamp(62px,8.4vw,132px)/.82 var(--serif);letter-spacing:-.055em;margin:0;color:inherit}
 #sep .pname span{display:block}
-#sep .prole{margin-top:26px;font:600 12px/1.45 "Manrope",system-ui,sans-serif;color:#33443e;max-width:320px}
+#sep .prole{margin:26px auto 0;font:600 12px/1.45 "Manrope",system-ui,sans-serif;color:#dfe9e3;max-width:320px;opacity:0;transition:color .3s}
+#sep .persona.on .prole{color:#33443e}
 #sep .identityFacts{position:absolute;z-index:8;left:clamp(24px,5vw,84px);bottom:9%;width:min(31vw,450px);color:#1c2824;opacity:0;will-change:transform,opacity}
 #sep .fact{display:grid;grid-template-columns:86px 1fr;gap:16px;padding:12px 0;border-top:1px solid rgba(20,33,29,.16);font:400 12px/1.45 "Manrope",system-ui,sans-serif}
 #sep .fact b{font:500 9px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#4c5d57}
@@ -130,6 +137,14 @@ a{color:inherit}
 #sep .sepcap{position:absolute;z-index:18;left:50%;bottom:4.8%;transform:translateX(-50%) translateY(10px);width:min(760px,70vw);
   text-align:center;font:300 clamp(18px,2vw,31px)/1.2 var(--serif);color:#f6f4ec;opacity:0;will-change:transform,opacity;text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.3)}
 #sep .sepcap em{font-style:italic;color:#f2d47c}
+#sep .token-label{position:absolute;z-index:18;left:0;top:0;transform:translate(-50%,0);
+  font:500 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#f7df9f;
+  background:rgba(6,21,18,.82);padding:6px 11px;border-radius:100px;white-space:nowrap;
+  opacity:0;pointer-events:none;will-change:transform,opacity}
+#sep .cue{position:absolute;z-index:18;left:clamp(24px,4vw,64px);bottom:4.8%;
+  font:500 10px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#8faea4;
+  display:flex;align-items:center;gap:10px;pointer-events:none}
+#sep .cue::before{content:"";width:22px;height:1px;background:currentColor}
 
 /* ---------- scena 03 ---------- */
 
@@ -241,8 +256,10 @@ a.contact:hover{background:#0c1f1c}
 /* separazione — il piano identità scende dall'alto */
 @media (max-width:800px){
   #sep{height:880vh}
-  #sep .persona{left:24px;right:24px;top:12%;width:auto}
-  #sep .pname{font-size:clamp(64px,20vw,108px)}
+  #sep .persona{left:50%;right:auto;top:44%;width:92%}
+  #sep .pname{font-size:clamp(58px,16vw,100px)}
+  #sep .token-label{display:none}
+  #sep .cue{display:none}
   #sep .identityFacts{left:24px;right:24px;bottom:51%;width:auto}
   #sep .fact{grid-template-columns:74px 1fr;padding:8px 0;font-size:10px}
   #sep .clinical{left:24px;right:24px;top:57%;bottom:6%}

@@ -461,15 +461,17 @@ function initS4(stage, ctx) {
 
 function initSep(stage, ctx) {
   const $ = s => stage.querySelector(s);
-  const intro = $("#sepIntro"), persona = $("#persona"), identityFacts = $("#identityFacts");
+  const intro = $("#sepIntro"), persona = $("#persona"), prole = stage.querySelector(".prole");
+  const identityFacts = $("#identityFacts");
   const clinical = $("#clinical"), code = $("#pcode"), statement = $("#statement");
+  const label = $("#tokenLabel"), cue = $("#sepCue");
   const caps = ["#scap1", "#scap2", "#scap3"].map($);
-  const show = (el, v, y = 0) => { el.style.opacity = v; el.style.transform = `translateY(${y}px)`; };
   const FINAL = "7K4M9QX2R";
-  let W = 0, H = 0, DPR = 1, bg = null, paperCache = null;
+  let W = 0, H = 0, DPR = 1, bg = null, tickH = [];
   const mob = () => W <= 800;
-  const pw = () => mob() ? W : W * .36;
-  const ph = () => mob() ? H * .52 : H;
+  const seamX = () => W * .36, seamY = () => H * .52;
+  const sx = () => mob() ? W * .5 : W * .36;
+  const sy = () => mob() ? H * .52 : H * .5;
 
   function off(w, h) {
     const c = document.createElement("canvas");
@@ -486,41 +488,30 @@ function initSep(stage, ctx) {
     c.width = W * DPR; c.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     const grain = makeGrain(ctx);
-    const w = pw(), h = ph();
 
-    // sfondo statico (ambient + vignetta + grain): renderizzato una
-    // sola volta su offscreen, poi un unico blit per frame
+    // sfondo statico: base + vignetta + grain, un solo blit per frame
     let g;
     [bg, g] = off(W, H);
     let lg = g.createLinearGradient(0, 0, W, H);
-    lg.addColorStop(0, "#05110f"); lg.addColorStop(.46, "#071b18"); lg.addColorStop(1, "#09221e");
-    g.fillStyle = lg; g.fillRect(0, 0, W, H);
-    lg = g.createRadialGradient(W * .72, H * .35, 0, W * .72, H * .35, W * .42);
-    lg.addColorStop(0, "rgba(33,105,88,.16)"); lg.addColorStop(.66, "rgba(33,105,88,0)");
+    lg.addColorStop(0, "#03120f"); lg.addColorStop(.55, "#092722"); lg.addColorStop(1, "#103c33");
     g.fillStyle = lg; g.fillRect(0, 0, W, H);
     lg = g.createRadialGradient(W * .15, H * .80, 0, W * .15, H * .80, W * .34);
-    lg.addColorStop(0, `rgba(${GOLD},.06)`); lg.addColorStop(.7, `rgba(${GOLD},0)`);
+    lg.addColorStop(0, `rgba(${GOLD},.05)`); lg.addColorStop(.7, `rgba(${GOLD},0)`);
     g.fillStyle = lg; g.fillRect(0, 0, W, H);
-    lg = g.createRadialGradient(W * .5, H * .44, Math.min(W, H) * .30, W * .5, H * .44, Math.max(W, H) * .72);
-    lg.addColorStop(0, "rgba(0,0,0,0)"); lg.addColorStop(1, "rgba(0,0,0,.22)");
+    lg = g.createRadialGradient(W * .5, H * .48, Math.min(W, H) * .20, W * .5, H * .48, Math.max(W, H) * .80);
+    lg.addColorStop(0, "rgba(0,0,0,0)"); lg.addColorStop(1, "rgba(0,0,0,.40)");
     g.fillStyle = lg; g.fillRect(0, 0, W, H);
-    g.globalAlpha = .045; g.fillStyle = grain; g.fillRect(0, 0, W, H);
+    g.globalAlpha = .05; g.fillStyle = grain; g.fillRect(0, 0, W, H);
 
-    // il piano carta: anche lui statico, scorre solo come blit
-    [paperCache, g] = off(w, h);
-    lg = g.createLinearGradient(0, 0, w * .8, h);
-    lg.addColorStop(0, "#ece9dc"); lg.addColorStop(1, "#d9d4c1");
-    g.fillStyle = lg; g.fillRect(0, 0, w, h);
-    lg = g.createRadialGradient(w * .86, h * .5, 0, w * .86, h * .5, Math.max(w, h) * .5);
-    lg.addColorStop(0, "rgba(255,255,255,.30)"); lg.addColorStop(.7, "rgba(255,255,255,0)");
-    g.fillStyle = lg; g.fillRect(0, 0, w, h);
-    lg = g.createLinearGradient(mob() ? 0 : w - 34, mob() ? h - 34 : 0, mob() ? 0 : w, mob() ? h : 0);
-    lg.addColorStop(0, "rgba(0,0,0,0)"); lg.addColorStop(1, "rgba(90,80,55,.18)");
-    g.fillStyle = lg;
-    mob() ? g.fillRect(0, h - 34, w, 34) : g.fillRect(w - 34, 0, 34, h);
+    // altezze precomputate del righello temporale
+    tickH = [];
+    const n = mob() ? 49 : 111;
+    for (let i = 0; i < n; i++) {
+      const near = i === Math.round(n * .16) || i === Math.round(n * .48) || i === Math.round(n * .8);
+      tickH.push({ h: (.012 + rnd(i * 7.7) * .048 + (near ? .027 : 0)) * H, near });
+    }
   }
 
-  // risoluzione calma: puntini che diventano il codice, un carattere alla volta
   function codeAt(p) {
     const q = smoother(seg(p, .56, .72)); let out = "";
     for (let i = 0; i < FINAL.length; i++)
@@ -528,134 +519,194 @@ function initSep(stage, ctx) {
     return out;
   }
 
-  // bezier quadratica: curva unica, senza spigolo all'apertura
-  function tokenPosition(p) {
-    const t = smoother(seg(p, .68, .84));
+  // traiettoria del token: parametrica su t per poter disegnare la scia
+  function tokenPoint(t) {
+    const q = smoother(t);
     const a = mob() ? { x: W * .26, y: H * .45 } : { x: W * .30, y: H * .69 };
     const b = mob() ? { x: W * .50, y: H * .52 } : { x: W * .36, y: H * .50 };
     const c = mob() ? { x: W * .67, y: H * .69 } : { x: W * .665, y: H * .655 };
-    const m = 1 - t;
+    const m = 1 - q;
     return {
-      x: m * m * a.x + 2 * m * t * b.x + t * t * c.x,
-      y: m * m * a.y + 2 * m * t * b.y + t * t * c.y,
+      x: m * m * a.x + 2 * m * q * b.x + q * q * c.x,
+      y: m * m * a.y + 2 * m * q * b.y + q * q * c.y,
     };
   }
 
   function update(p) {
     ctx.clearRect(0, 0, W, H);
-    const w = pw(), h = ph();
-    const sx = mob() ? W * .5 : w, sy = mob() ? h : H * .5;
+    const mobile = mob();
+    const split = smoother(seg(p, .24, .48));   // il campo carta cresce dal confine
+    const edge = mobile ? seamY() : seamX();    // posizione fissa del confine
+    const ax = sx(), ay = sy();
     let g;
 
-    // sfondo: un blit
     ctx.drawImage(bg, 0, 0, W, H);
 
-    // piano identità: un blit in scorrimento + l'ombra oltre il bordo
-    const plane = smoother(seg(p, .12, .26));
-    if (plane > 0) {
-      const px = mob() ? 0 : lerp(-w, 0, plane), py = mob() ? lerp(-h, 0, plane) : 0;
-      ctx.drawImage(paperCache, px, py, w, h);
-      if (mob()) {
-        g = ctx.createLinearGradient(0, py + h, 0, py + h + 56);
-        g.addColorStop(0, "rgba(0,0,0,.12)"); g.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = g; ctx.fillRect(0, py + h, W, 56);
-      } else {
-        g = ctx.createLinearGradient(px + w, 0, px + w + 56, 0);
-        g.addColorStop(0, "rgba(0,0,0,.12)"); g.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = g; ctx.fillRect(px + w, 0, 56, H);
-      }
+    // la luce si sposta con l'atto del separarsi — sempre a destra,
+    // fuori dal corridoio dove transita il nome (difference + oro = blu)
+    const lx = W * lerp(.74, .80, split), ly = H * lerp(.50, .58, split);
+    const la = .35 + .65 * split;
+    g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.max(W, H) * .62);
+    g.addColorStop(0, `rgba(73,123,93,${.24 * la})`); g.addColorStop(.45, `rgba(41,84,61,${.12 * la})`); g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // righello del tempo: tacche che il confine poi taglia
+    const emerge = smooth(seg(p, .005, .13));
+    const fadeEvents = 1 - smooth(seg(p, .72, .80));
+    const n = tickH.length;
+    for (let i = 0; i < n; i++) {
+      const u = .055 + .89 * i / (n - 1);
+      const x = u * W;
+      const left = !mobile && x < seamX();
+      const fade = left ? 1 - split : fadeEvents;
+      if (fade < .01) continue;
+      const yc = mobile ? lerp(H * .57, H * .66, split)
+                        : left ? H * .51 : lerp(H * .51, H * .62, split);
+      const appear = smooth(seg(emerge, i / n * .55, Math.min(1, i / n * .55 + .3)));
+      const tk = tickH[i];
+      ctx.strokeStyle = `rgba(183,220,201,${(tk.near ? .66 : .34) * appear * fade})`;
+      ctx.lineWidth = tk.near ? 1.6 : 1;
+      ctx.beginPath(); ctx.moveTo(x, yc - tk.h); ctx.lineTo(x, yc + tk.h); ctx.stroke();
     }
 
-    // confine: due segmenti oro con apertura centrale
-    const boundary = smooth(seg(p, .48, .58));
+    // il campo carta cresce dal confine verso sinistra (bordo sfumato)
+    if (split > .001) {
+      const size = edge * split, start = edge - size;
+      g = mobile
+        ? ctx.createLinearGradient(0, start, 0, edge)
+        : ctx.createLinearGradient(start, 0, edge, 0);
+      g.addColorStop(0, "#c1c9b8"); g.addColorStop(.4, "#d8dcc9"); g.addColorStop(1, "#e7e5d9");
+      ctx.fillStyle = g;
+      mobile ? ctx.fillRect(0, start, W, size) : ctx.fillRect(start, 0, size, H);
+      // bordo ottico sfumato dove il campo sta crescendo
+      const f = mobile ? 65 : 95;
+      g = mobile
+        ? ctx.createLinearGradient(0, start - f, 0, start)
+        : ctx.createLinearGradient(start - f, 0, start, 0);
+      g.addColorStop(0, "rgba(193,201,184,0)"); g.addColorStop(1, "rgba(193,201,184,1)");
+      ctx.fillStyle = g;
+      mobile ? ctx.fillRect(0, start - f, W, f) : ctx.fillRect(start - f, 0, f, H);
+      // respiro scuro oltre il confine
+      g = mobile
+        ? ctx.createLinearGradient(0, edge, 0, edge + 56)
+        : ctx.createLinearGradient(edge, 0, edge + 56, 0);
+      g.addColorStop(0, `rgba(0,0,0,${.12 * split})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      mobile ? ctx.fillRect(0, edge, W, 56) : ctx.fillRect(edge, 0, 56, H);
+    }
+
+    // confine oro + apertura: appare solo dopo l'atterraggio del nome
+    // (il difference blend inverte l'oro in blu se coincide col testo)
+    const boundary = smooth(seg(p, .50, .60));
     if (boundary > 0) {
       ctx.globalAlpha = boundary;
       ctx.lineWidth = 1;
-      g = mob()
-        ? ctx.createLinearGradient(0, sy, W, sy)
-        : ctx.createLinearGradient(sx, 0, sx, H);
+      g = mobile
+        ? ctx.createLinearGradient(0, ay, W, ay)
+        : ctx.createLinearGradient(ax, 0, ax, H);
       g.addColorStop(0, `rgba(${GOLD},.15)`); g.addColorStop(.5, "#e6bd52"); g.addColorStop(1, `rgba(${GOLD},.15)`);
       ctx.strokeStyle = g;
       ctx.shadowColor = `rgba(${GOLD},.22)`; ctx.shadowBlur = 18;
       ctx.beginPath();
-      if (mob()) { ctx.moveTo(0, sy); ctx.lineTo(W * .5 - 38, sy); ctx.moveTo(W * .5 + 38, sy); ctx.lineTo(W, sy); }
-      else { ctx.moveTo(sx, 0); ctx.lineTo(sx, H * .5 - 38); ctx.moveTo(sx, H * .5 + 38); ctx.lineTo(sx, H); }
+      if (mobile) { ctx.moveTo(0, ay); ctx.lineTo(W * .5 - 38, ay); ctx.moveTo(W * .5 + 38, ay); ctx.lineTo(W, ay); }
+      else { ctx.moveTo(ax, 0); ctx.lineTo(ax, H * .5 - 38); ctx.moveTo(ax, H * .5 + 38); ctx.lineTo(ax, H); }
       ctx.stroke();
       ctx.shadowBlur = 0;
-      // apertura: anello + anello interno + punto
       const sc = lerp(.72, 1, boundary);
       ctx.globalAlpha = .9 * boundary;
       ctx.strokeStyle = `rgba(${GOLD},.58)`;
-      ctx.beginPath(); ctx.arc(sx, sy, 38 * sc, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ax, ay, 38 * sc, 0, Math.PI * 2); ctx.stroke();
       ctx.strokeStyle = `rgba(${GOLD},.32)`;
-      ctx.beginPath(); ctx.arc(sx, sy, 24 * sc, 0, Math.PI * 2); ctx.stroke();
-      g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 20);
-      g.addColorStop(0, `rgba(242,212,124,.9)`); g.addColorStop(1, "rgba(242,212,124,0)");
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(ax, ay, 24 * sc, 0, Math.PI * 2); ctx.stroke();
+      g = ctx.createRadialGradient(ax, ay, 0, ax, ay, 20);
+      g.addColorStop(0, "rgba(242,212,124,.9)"); g.addColorStop(1, "rgba(242,212,124,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ax, ay, 20, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#f2d47c";
-      ctx.beginPath(); ctx.arc(sx, sy, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(ax, ay, 2.5, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
     }
 
-    // token: pill oro che attraversa — disegnata, non più un div
-    const tv = seg(p, .68, .84);
+    // il diritto attraversa: punto luminoso con scia, non una scatola
+    const tv = seg(p, .66, .84);
     if (tv > 0 && tv < 1) {
-      const pos = tokenPosition(p);
-      const a = smooth(seg(tv, 0, .10)) * (1 - smooth(seg(tv, .88, 1)));
-      const open = 1 - Math.abs(tv - .5) * 2;
-      // bagliore dell'apertura mentre il diritto passa
-      g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 42 + open * 42);
-      g.addColorStop(0, `rgba(${GOLD},${.12 + open * .18})`); g.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, 42 + open * 42, 0, Math.PI * 2); ctx.fill();
-      // halo del token
-      g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 44);
-      g.addColorStop(0, `rgba(${GOLD},${.30 * a})`); g.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pos.x, pos.y, 44, 0, Math.PI * 2); ctx.fill();
-      // pill + testo
-      ctx.globalAlpha = a;
-      ctx.font = '600 9px "DM Mono",monospace';
-      const label = "diritto alla prestazione".toUpperCase();
-      const tw = ctx.measureText(label).width;
-      const bw = tw + 34, bh = 27, bx = pos.x - bw / 2, by = pos.y - bh / 2;
-      ctx.fillStyle = "#f4d67f";
-      ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, bh / 2); ctx.fill();
-      ctx.fillStyle = "#13211c";
-      ctx.beginPath(); ctx.arc(bx + 12, pos.y, 3, 0, Math.PI * 2); ctx.fill();
-      ctx.fillText(label, bx + 21, pos.y + 3.5);
+      const strength = smooth(seg(tv, 0, .08)) * (1 - smooth(seg(tv, .90, 1)));
+      const pt = tokenPoint(tv);
+      ctx.globalAlpha = strength;
+      ctx.lineCap = "round";
+      for (let i = 24; i >= 0; i--) {
+        const prev = Math.max(0, tv - i * .012), next = Math.max(0, prev - .012);
+        const a = tokenPoint(prev), b = tokenPoint(next);
+        const f = 1 - i / 25;
+        ctx.strokeStyle = `rgba(244,203,106,${.75 * f})`;
+        ctx.lineWidth = .5 + 3 * f;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+      g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 38);
+      g.addColorStop(0, "rgba(255,238,187,.9)"); g.addColorStop(.2, "rgba(242,205,121,.28)"); g.addColorStop(1, "rgba(242,205,121,0)");
+      ctx.fillStyle = g; ctx.fillRect(pt.x - 38, pt.y - 38, 76, 76);
+      ctx.fillStyle = "#fff3cf";
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 4.2, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
-    }
+      const open = 1 - Math.abs(tv - .5) * 2;
+      g = ctx.createRadialGradient(ax, ay, 0, ax, ay, 42 + open * 42);
+      g.addColorStop(0, `rgba(${GOLD},${.10 + open * .16})`); g.addColorStop(1, `rgba(${GOLD},0)`);
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ax, ay, 42 + open * 42, 0, Math.PI * 2); ctx.fill();
+      label.style.left = pt.x + "px"; label.style.top = (pt.y + 24) + "px";
+      label.style.opacity = strength;
+    } else label.style.opacity = 0;
 
-    /* ---------- DOM: solo testo ---------- */
+    /* ---------- DOM: testo ---------- */
     const introOut = smooth(seg(p, .06, .13));
     intro.style.opacity = 1 - introOut;
     intro.style.transform = `translateY(calc(-52% - ${introOut * 24}px))`;
 
-    const per = smooth(seg(p, .30, .40));
-    show(persona, per, lerp(42, 0, per));
+    // la persona: nasce al centro in difference, il campo cresce, il nome si adagia
+    const enter = smooth(seg(p, .12, .20));
+    persona.style.opacity = enter * (1 - .30 * smooth(seg(p, .90, .97)));
+    persona.style.left = lerp(50, mobile ? 50 : 18, split) + "%";
+    persona.style.top = lerp(44, mobile ? 18 : 33, split) + "%";
+    persona.style.transform = `translate(-50%,-50%) scale(${lerp(1, .92, split)})`;
+    persona.classList.toggle("on", split > .97);
+    prole.style.opacity = smooth(seg(p, .50, .58));
 
-    const facts = smooth(seg(p, .40, .48));
-    show(identityFacts, facts, lerp(20, 0, facts));
+    const facts = smooth(seg(p, .50, .58));
+    identityFacts.style.opacity = facts * (1 - .45 * smooth(seg(p, .90, .97)));
+    identityFacts.style.transform = `translateY(${lerp(20, 0, facts)}px)`;
 
     const cl = smooth(seg(p, .54, .66));
-    clinical.style.opacity = cl;
+    clinical.style.opacity = cl * (1 - .20 * smooth(seg(p, .90, .97)));
     clinical.style.transform = `translateY(${lerp(18, 0, cl)}px)`;
     const cs = codeAt(p);
     if (cs !== code._s) { code.textContent = cs; code._s = cs; }
 
-    const cap1 = smooth(seg(p, .30, .36)) * (1 - smooth(seg(p, .44, .50)));
-    const cap2 = smooth(seg(p, .56, .62)) * (1 - smooth(seg(p, .66, .71)));
-    const cap3 = smooth(seg(p, .72, .78)) * (1 - smooth(seg(p, .85, .89)));
+    // caption bicolore sul confine: scure sulla carta, chiare sul petrolio
+    const capW = Math.min(760, W * .70), capL = (W - capW) / 2;
+    const rel = clamp((seamX() - capL) / capW) * 100;
+    const capGrad = mobile ? null
+      : `linear-gradient(90deg,#23382e ${rel}%,#f6f4ec ${rel}%)`;
+    const cap1 = smooth(seg(p, .38, .44)) * (1 - smooth(seg(p, .50, .55)));
+    const cap2 = smooth(seg(p, .56, .62)) * (1 - smooth(seg(p, .72, .77)));
+    const cap3 = smooth(seg(p, .78, .84)) * (1 - smooth(seg(p, .88, .92)));
     [cap1, cap2, cap3].forEach((v, i) => {
       caps[i].style.opacity = v;
       caps[i].style.transform = `translateX(-50%) translateY(${lerp(10, 0, v)}px)`;
+      caps[i].style.background = capGrad || "none";
+      caps[i].style.webkitBackgroundClip = caps[i].style.backgroundClip = capGrad ? "text" : "";
+      caps[i].style.color = capGrad ? "transparent" : "";
     });
+
+    // cue di fase
+    const cueText = p < .15 ? "scorri per entrare"
+      : p < .50 ? "l'identità prende il suo spazio"
+      : p < .70 ? "attraversa il diritto"
+      : "il nome è rimasto fuori";
+    if (cue._t !== cueText) { cue.textContent = cueText; cue._t = cueText; }
+    cue.style.color = !mobile && split > .97 ? "#4c5d57" : "#8faea4";
+    cue.style.opacity = 1 - smooth(seg(p, .90, .97));
 
     const st = smooth(seg(p, .90, .97));
     statement.style.opacity = st;
     statement.style.transform = `translateY(${lerp(24, 0, st)}px)`;
-    clinical.style.opacity = cl * (1 - .20 * st);
-    persona.style.opacity = per * (1 - .25 * st);
-    identityFacts.style.opacity = facts * (1 - .45 * st);
   }
   return { resize, update };
 }
