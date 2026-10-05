@@ -14,7 +14,8 @@
 
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--deep);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
-body{overflow-x:hidden}
+html,body{overflow-x:hidden}
+html,body{overflow-x:clip}
 ::selection{background:rgba(241,200,71,.28)}
 
 h1,h2,h3{font-weight:300;letter-spacing:-.045em;line-height:.95}

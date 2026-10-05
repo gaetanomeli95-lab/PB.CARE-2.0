@@ -183,7 +183,7 @@ function initS2(stage, ctx) {
   function hub() {
     const mob = W < 760;
     return mob
-      ? { x: W * .5, y: H * .66, rx: W * .40, ry: H * .24 }
+      ? { x: W * .5, y: H * .74, rx: W * .36, ry: H * .17 }
       : { x: W * .71, y: H * .52, rx: W * .245, ry: H * .34 };
   }
   const satPos = (s, h) => {
@@ -255,9 +255,9 @@ function initS2(stage, ctx) {
       ctx.fillStyle = `rgba(${s.c},${.95 * on})`;
       ctx.beginPath(); ctx.arc(pos.x, pos.y, 3.4 * pop, 0, Math.PI * 2); ctx.fill();
 
-      // label
+      // label: solo desktop — su mobile i nomi sono nel manifest DOM
       const la = seg(p, startOf(i) + .05, startOf(i) + .16);
-      if (la > 0) {
+      if (la > 0 && W >= 760) {
         ctx.font = "11px 'DM Mono', monospace";
         ctx.fillStyle = `rgba(236,244,239,${.85 * la})`;
         const off = pos.x > h.x ? 14 : -(ctx.measureText(s.name).width + 14);
@@ -382,12 +382,14 @@ function initS4(stage, ctx) {
   }
 
   // 5 corsie bezier che convergono verso un punto a destra
+  // (su mobile compresse nella metà bassa, sotto il testo)
   function lanePoint(lane, u) {
-    const y0 = H * (.18 + lane * .14);
-    const p0 = { x: W * .06, y: y0 + (rnd(lane * 7) - .5) * H * .1 };
+    const mob = W < 760;
+    const y0 = H * (mob ? .58 + lane * .07 : .18 + lane * .14);
+    const p0 = { x: W * .06, y: y0 + (rnd(lane * 7) - .5) * H * (mob ? .05 : .1) };
     const p1 = { x: W * .42, y: y0 };
-    const p2 = { x: W * .62, y: H * (.30 + lane * .08) };
-    const p3 = { x: W * .88, y: H * .52 };
+    const p2 = { x: W * .62, y: H * (mob ? .60 + lane * .045 : .30 + lane * .08) };
+    const p3 = { x: W * (mob ? .85 : .88), y: H * (mob ? .82 : .52) };
     const m = 1 - u;
     return {
       x: m * m * m * p0.x + 3 * m * m * u * p1.x + 3 * m * u * u * p2.x + u * u * u * p3.x,
@@ -433,7 +435,8 @@ function initS4(stage, ctx) {
     // nodo d'arrivo
     const end = smooth(seg(p, .7, .85));
     if (end > 0) {
-      const ex = W * .88, ey = H * .52;
+      const mob = W < 760;
+      const ex = W * (mob ? .85 : .88), ey = H * (mob ? .82 : .52);
       const rg = ctx.createRadialGradient(ex, ey, 0, ex, ey, 40 * end);
       rg.addColorStop(0, `rgba(${GOLD},${.7 * end})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
       ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ex, ey, 40 * end, 0, Math.PI * 2); ctx.fill();
@@ -522,9 +525,9 @@ function initSep(stage, ctx) {
   // traiettoria del token: parametrica su t per poter disegnare la scia
   function tokenPoint(t) {
     const q = smoother(t);
-    const a = mob() ? { x: W * .26, y: H * .45 } : { x: W * .30, y: H * .69 };
+    const a = mob() ? { x: W * .32, y: H * .38 } : { x: W * .30, y: H * .69 };
     const b = mob() ? { x: W * .50, y: H * .52 } : { x: W * .36, y: H * .50 };
-    const c = mob() ? { x: W * .67, y: H * .69 } : { x: W * .665, y: H * .655 };
+    const c = mob() ? { x: W * .58, y: H * .76 } : { x: W * .665, y: H * .655 };
     const m = 1 - q;
     return {
       x: m * m * a.x + 2 * m * q * b.x + q * q * c.x,
@@ -558,7 +561,9 @@ function initSep(stage, ctx) {
       const u = .055 + .89 * i / (n - 1);
       const x = u * W;
       const left = !mobile && x < seamX();
-      const fade = left ? 1 - split : fadeEvents;
+      // su mobile le tacche svaniscono quando arriva il testo clinico
+      const fade = (left ? 1 - split : fadeEvents)
+        * (mobile ? 1 - smooth(seg(p, .50, .62)) : 1);
       if (fade < .01) continue;
       const yc = mobile ? lerp(H * .57, H * .66, split)
                         : left ? H * .51 : lerp(H * .51, H * .62, split);
