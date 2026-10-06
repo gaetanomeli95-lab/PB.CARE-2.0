@@ -26,6 +26,14 @@
 #system{--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#050e13}
 #reveal{--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#061512}
 #end{--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#071b24}
+/* mondi — il territorio cromatico dell'entità (palette da ecosystem.js) */
+#careprogram{--scene-accent:#5abf78;--scene-accent2:#e58a3a;--scene-atmo:#0a2418}
+#tutela{--scene-accent:#f1c847;--scene-accent2:#c9cd93;--scene-atmo:#141b12}
+#farmacomm{--scene-accent:#4fd8e0;--scene-accent2:#2e86c1;--scene-atmo:#081a30}
+#camit{--scene-accent:#5fd4b4;--scene-accent2:#2fae8f;--scene-atmo:#0f2a24}
+#eventi{--scene-accent:#a8e4ff;--scene-accent2:#3f9fe0;--scene-atmo:#0c2a44}
+#enzima{--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#062028}
+#prosperya{--scene-accent:#d4a94f;--scene-accent2:#e07a5f;--scene-atmo:#191611}
 
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--deep);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
@@ -91,8 +99,6 @@ a{color:inherit}
    prima ancora del marchio. La transizione resta organica perché
    l'handoff (exit envelope + entrata dal basso) porta il colore oltre
    il confine della scena.                                          */
-#intro .stage{background:radial-gradient(900px 620px at 50% 46%,rgba(18,44,60,.24),transparent 70%),
-  linear-gradient(160deg,#03080e 0%,#050e15 55%,#08141d 100%)}
 #s1 .stage{background:radial-gradient(1000px 700px at 74% 43%,rgba(20,56,66,.26),transparent 65%),
   linear-gradient(125deg,#040b10 0%,#061219 52%,#0a1e28 100%)}
 #tempo .stage{background:radial-gradient(1000px 700px at 70% 50%,rgba(28,64,86,.24),transparent 66%),
@@ -110,16 +116,15 @@ a{color:inherit}
 #reveal .stage{background:radial-gradient(1000px 700px at 50% 46%,rgba(22,74,65,.30),transparent 65%),
   linear-gradient(125deg,#051310 0%,#071a16 52%,#0a2420 100%)}
 
-#intro{height:230vh}
-#s1{height:340vh}
-#sep{height:800vh}
-#tempo{height:560vh}
-#relation{height:540vh}
-#event{height:480vh}
-#knowledge{height:720vh}
-#research{height:520vh}
-#system{height:620vh}
-#reveal{height:380vh}
+#s1{height:220vh}
+#sep{height:520vh}
+#tempo{height:240vh}
+#relation{height:320vh}
+#event{height:240vh}
+#knowledge{height:340vh}
+#research{height:280vh}
+#system{height:260vh}
+#reveal{height:200vh}
 
 .tag{
   position:absolute;z-index:20;left:var(--pad);top:calc(var(--nav) + 14px);
@@ -134,6 +139,12 @@ a{color:inherit}
   font:11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.12em;
   color:var(--muted);margin:0 0 14px;
 }
+/* marcatura onesta: numeri e nomi nelle scene sono illustrativi */
+.datalabel{
+  position:absolute;z-index:12;right:var(--pad);top:calc(var(--nav) + 14px);margin:0;
+  font:10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(138,164,157,.55);pointer-events:none;
+}
 .cap{
   position:absolute;z-index:12;left:50%;bottom:5.5vh;transform:translateX(-50%);
   width:min(880px,86vw);text-align:center;margin:0;
@@ -142,24 +153,287 @@ a{color:inherit}
 }
 .cap small{display:block;margin-top:12px;font:10px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:rgba(138,164,157,.7)}
 
-/* ---------- intro · identità ----------
-   il marchio emerge da una fenditura di luce fredda e si scioglie
-   in un punto che diventa la traccia di #s1                        */
+/* ---------- hero · identità immediata ----------
+   la prima viewport è già il sito: marchio, nome, promessa, ingressi.
+   il canvas è ambientale — il contenuto non dipende dallo scroll.  */
 
-#intro .imark{position:absolute;z-index:12;left:50%;top:45%;width:min(330px,62vw);height:auto;
-  transform:translate(-50%,-50%) scale(.84);opacity:0;will-change:opacity,transform;
+.hero{
+  position:relative;min-height:100svh;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:calc(var(--nav) + 40px) var(--pad) 90px;
+  background:
+    radial-gradient(900px 620px at 50% 42%,rgba(18,44,60,.30),transparent 70%),
+    linear-gradient(160deg,#03080e 0%,#050e15 55%,#08141d 100%);
+}
+.hero .field{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.hero-inner{position:relative;z-index:2;display:grid;justify-items:center;text-align:center}
+.hero .imark{width:min(400px,64vw);height:auto;
   filter:drop-shadow(0 0 2px rgba(255,255,255,.35)) drop-shadow(0 16px 60px rgba(0,0,0,.65))}
-#intro .iline{position:absolute;z-index:12;left:50%;top:calc(45% + 66px);transform:translateX(-50%);
-  margin:0;width:88vw;text-align:center;
+.hero .iline{margin:22px 0 0;
   font:10px/1.6 var(--mono);letter-spacing:.24em;text-transform:uppercase;
-  color:rgba(186,220,235,.55);opacity:0}
-#intro .tag{color:rgba(190,225,240,.4)}
+  color:rgba(186,220,235,.55)}
+.hero .hero-line{margin:6vh 0 0;font-size:clamp(40px,6.4vw,92px);color:#f2f5ee}
+.hero .hero-line em{font-style:italic;color:var(--mint)}
+.hero .hero-sub{margin:26px 0 0;max-width:520px;
+  font:400 clamp(14px,1.2vw,17px)/1.65 "Manrope",system-ui,sans-serif;
+  color:rgba(200,222,222,.68)}
+.hero-actions{display:flex;align-items:center;gap:26px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+.hero-cue{position:absolute;z-index:2;left:50%;bottom:26px;transform:translateX(-50%);margin:0;
+  font:500 9px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:rgba(158,208,205,.55)}
+.hero-cue::after{content:"";display:block;width:1px;height:26px;margin:10px auto 0;
+  background:linear-gradient(rgba(158,208,205,.6),transparent)}
+
+/* ---------- elementi condivisi fuori scena ---------- */
+
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cta{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;
+  min-height:48px;font:500 11px/1.5 var(--mono);letter-spacing:.04em;
+  border:1px solid currentColor;padding:15px 20px;text-decoration:none;
+  transition:background .2s,transform .2s;color:#b7dacc}
+.cta:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+.cta span[aria-hidden]{font-size:19px;line-height:1}
+.cta.primary{background:var(--paper);color:#13282c;border-color:var(--paper)}
+.cta.primary:hover{background:#fff8e7}
+.text-link{display:inline-flex;gap:16px;align-items:center;font:400 11px/1.7 var(--mono);
+  letter-spacing:.04em;color:var(--mint);padding:8px 0;text-decoration:none;
+  border-bottom:1px solid rgba(170,205,193,.3);transition:color .25s}
+.text-link:hover{color:var(--gold)}
+/* reveal guidato dallo scroll: gli elementi editoriali entrano in scena
+   quando la loro posizione lo richiede — il sito si legge muovendosi  */
+[data-rise]{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+[data-rise].in{opacity:1;transform:none}
+
+/* ---------- sezioni editoriali ---------- */
+
+.editorial{padding:clamp(70px,8vw,130px) var(--pad)}
+.editorial h2{font-size:clamp(42px,6vw,88px);margin:0}
+.editorial h2 em{font-style:italic;color:var(--mint)}
+
+.about{background:var(--paper);color:#183337}
+.about .eyebrow{color:#506b68}
+.about h2 em{color:#66887e}
+.about-body{display:grid;grid-template-columns:1fr 1fr;gap:10%;
+  padding-top:44px;margin-top:44px;border-top:1px solid rgba(107,134,117,.3)}
+.about-body .large-copy{font-size:clamp(22px,2.4vw,34px);line-height:1.3;letter-spacing:-.02em;margin:0}
+.about-body div>p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#3f5a54;margin:0}
+.about-body div>p+p{margin-top:17px}
+
+/* ---------- per chi / ingressi ---------- */
+
+.audiences{background:#081a22}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:38px}
+.section-head .eyebrow{margin-bottom:18px}
+.section-head>p{max-width:330px;color:var(--muted);font-size:14px;margin:0}
+.audience-list{border-top:1px solid rgba(182,209,201,.2)}
+.audience-list>a{display:grid;grid-template-columns:50px 1fr auto;align-items:center;gap:25px;
+  padding:21px 0;border-bottom:1px solid rgba(182,209,201,.16);text-decoration:none;
+  transition:padding .25s,background .25s}
+.audience-list>a:hover{padding-left:12px;padding-right:12px;background:rgba(182,209,201,.03)}
+.entry-index{font:400 9px var(--mono);color:#6c989e}
+.audience-list strong{display:block;font:300 clamp(23px,2.5vw,36px)/1.2 var(--serif);letter-spacing:-.025em;color:var(--ink)}
+.audience-list small{font-size:12px;line-height:1.7;color:#94afb3;display:block;margin-top:6px}
+.entry-destination{font:400 10px var(--mono);color:#aac8be;white-space:nowrap}
+.entry-destination i{font:300 24px var(--serif);font-style:normal;margin-left:18px}
+.audience-clinic{margin-top:24px}
+
+/* ---------- welfare ---------- */
+
+.welfare{background:#0b211d;border-top:1px solid rgba(166,204,203,.12)}
+.welfare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10%}
+.welfare h2 em{color:#84ccce}
+.welfare p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#a5bec0;margin:0}
+.welfare .text-link{margin-top:18px}
+
+/* ---------- intro dell'ecosistema ---------- */
+
+.ecosystem-intro{background:#071a21;border-top:1px solid rgba(166,204,203,.1);padding-bottom:56px}
+.ecosystem-intro>p:not(.eyebrow){max-width:550px;color:var(--muted);font-size:14px;margin:22px 0 0}
+.world-nav{display:flex;gap:8px 24px;flex-wrap:wrap;margin-top:30px;
+  border-top:1px solid rgba(166,204,203,.16);padding-top:22px;
+  font:400 10px/2 var(--mono);letter-spacing:.04em}
+.world-nav a{color:#aecfc6;text-decoration:none;padding:6px 0}
+.world-nav a:hover{color:var(--gold)}
+
+/* ---------- mondi: una realtà, un territorio, un'uscita ----------
+   Ogni mondo è una scena: il territorio cromatico del brand bagna
+   lo stage, gli elementi si compongono scrollando (data-beat),
+   il marchio emerge nel suo colore — mai un PNG su carta.        */
+
+.world{height:190vh}
+#careprogram{height:230vh}
+#tutela{height:210vh}
+#prosperya{height:200vh}
+.world .stage{display:flex;align-items:center}
+.world-grid{position:relative;z-index:3;width:100%;padding:0 var(--pad);
+  display:grid;grid-template-columns:1.05fr .95fr;gap:8%;align-items:center}
+.world-copy{position:relative;max-width:560px}
+.world-copy .eyebrow{margin-bottom:18px}
+/* il marchio è trasparente e vive nel territorio: una pozza di luce
+   radiale lo solleva dal fondo — integrazione, non rettangolo       */
+.world-logo{width:min(230px,60vw);height:auto;display:block;margin-bottom:30px;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.38)) drop-shadow(0 10px 40px rgba(0,0,0,.55))}
+.world-logo{position:relative;z-index:2}
+.world-copy:has(.world-logo){position:relative}
+.world-copy:has(.world-logo)::before{content:"";position:absolute;left:-8%;top:2%;
+  width:min(340px,80vw);height:150px;z-index:0;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(236,244,239,.10),transparent 70%)}
+.world-copy h2{font-size:clamp(42px,4.9vw,76px);line-height:.95;margin:0 0 26px}
+.world-copy>p:not(.eyebrow):not(.legal-quote){max-width:470px;color:#afc9c3;line-height:1.75;
+  font-size:14px;font-family:"Manrope",system-ui,sans-serif;margin:0}
+.world-copy>p.world-detail{font-size:12px;margin-top:14px;color:#8aaba6}
+.world-copy .cta{margin-top:28px}
+[data-beat]{opacity:0;will-change:opacity,transform}
+/* mondo a colonna singola: la copia prende tutta la larghezza utile */
+.world-grid:not(:has(.connection-demo)):not(:has(.camit-route)):not(:has(.prosperya-boundary)):not(.legal-grid){
+  grid-template-columns:minmax(0,640px)}
+
+.world-care .stage{background:
+  radial-gradient(820px 560px at 68% 46%,rgba(63,157,99,.16),transparent 66%),
+  linear-gradient(135deg,#061009 0%,#0a2115 55%,#0e2e1d 100%)}
+.world-care h2 em{color:#80c587}
+.world-care .eyebrow{color:#8fbd99}
+.world-care .cta{color:#cfaa71}
+
+.world-farmacomm .stage{background:
+  radial-gradient(900px 600px at 30% 55%,rgba(46,134,193,.16),transparent 66%),
+  linear-gradient(140deg,#040a16 0%,#081a30 55%,#0c2740 100%)}
+.world-farmacomm h2 em{color:#70ccd9}
+.world-farmacomm .eyebrow{color:#91bac9}
+.world-farmacomm .cta{color:#86d4df}
+
+.world-camit .stage{background:
+  radial-gradient(760px 560px at 70% 50%,rgba(47,174,143,.14),transparent 66%),
+  linear-gradient(135deg,#081410 0%,#0f2a24 60%,#122c29 100%)}
+.world-camit h2 em{color:#8cdbbd}
+.world-camit .eyebrow{color:#99c5b3}
+.world-camit .cta{color:#9adfc4}
+.camit-logo{max-height:120px}
+.camit-grid{grid-template-columns:.8fr 1.2fr;gap:10%}
+.camit-route{position:relative;height:min(460px,62vh);min-height:260px}
+.camit-route svg{width:100%;height:100%;overflow:visible}
+.route-base{stroke:rgba(131,185,168,.23);stroke-width:1}
+.route-progress{stroke:#8cdbbd;stroke-width:2;stroke-dasharray:1;
+  stroke-dashoffset:calc(1 - var(--route-progress,0))}
+.route-word{position:absolute;font:400 8px var(--mono);letter-spacing:.1em;color:#99c5b3;
+  padding:8px 10px;background:#122c29}
+.route-word.first{right:5%;top:12%}
+.route-word.second{left:3%;top:42%}
+.route-word.third{right:0;top:78%}
+
+/* EventiScientifici: la superficie più luminosa del campo —
+   non carta appiccicata, una fascia di luce nel blu profondo    */
+.world-events .stage{background:
+  radial-gradient(1000px 640px at 50% 44%,rgba(168,228,255,.22),transparent 62%),
+  linear-gradient(150deg,#081a30 0%,#0c2a44 50%,#10486b 100%)}
+.world-events h2 em{color:#a8e4ff}
+.world-events .eyebrow{color:#7fb8d8}
+.world-events .cta{color:#a8e4ff}
+.world-events .cta:hover{background:rgba(168,228,255,.08)}
+
+.world-enzima .stage{background:
+  radial-gradient(860px 580px at 58% 50%,rgba(43,184,201,.15),transparent 66%),
+  linear-gradient(135deg,#030d11 0%,#062028 60%,#083038 100%)}
+.world-enzima h2 em{color:#7fe8e0}
+.world-enzima .eyebrow{color:#6db8c4}
+.world-enzima .cta{color:#8fd8de}
+
+/* Prosperya: collegata ma distinta — il confine è visibile, non nascosto */
+.world-prosperya .stage{background:
+  radial-gradient(780px 560px at 28% 52%,rgba(212,169,79,.12),transparent 66%),
+  linear-gradient(140deg,#0d0b07 0%,#191611 55%,#221c12 100%)}
+.world-prosperya h2 em{color:#cdac77}
+.world-prosperya .eyebrow{color:#b3a488}
+.world-prosperya .cta{color:#d4b883}
+.prosperya-boundary{position:relative;border-right:1px dashed rgba(193,174,128,.3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 35px 20px 0;min-height:340px;opacity:0}
+.prosperya-boundary::after{content:"";position:absolute;top:50%;right:-38px;
+  width:75px;height:1px;background:rgba(193,174,128,.35)}
+.autonomy{margin-top:20px}
+.autonomy img{display:block;width:min(100%,330px);height:auto;max-height:295px;object-fit:contain;
+  filter:drop-shadow(0 12px 44px rgba(0,0,0,.55))}
+.autonomy-caption{font:400 9px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#c9b994;margin-top:25px}
+
+/* ---------- Articolo 32 — servizio, non token ----------
+   territorio oliva scuro + oro: la tutela ha peso, non è un alleato  */
+
+.world-legal .stage{background:
+  radial-gradient(820px 560px at 30% 46%,rgba(241,200,71,.10),transparent 64%),
+  linear-gradient(140deg,#0a120c 0%,#141b12 55%,#1c2114 100%)}
+.legal-grid{grid-template-columns:.85fr 1.15fr;gap:10%}
+.world-legal .eyebrow{color:#a8ab84}
+.legal-name{display:block;margin-top:32px;font:300 clamp(35px,4vw,60px)/1 var(--serif);letter-spacing:-.04em;color:#e9e4d7}
+.legal-name b{display:block;font:300 clamp(120px,17vw,260px)/.85 var(--serif);letter-spacing:-.09em;
+  color:#f1c847;margin-top:25px;text-shadow:0 0 40px rgba(241,200,71,.18)}
+.legal-quote{margin:38px 0 0;max-width:420px;font:300 clamp(18px,1.9vw,26px)/1.4 var(--serif);
+  letter-spacing:-.01em;color:#c9c4ae}
+.legal-quote small{display:block;margin-top:14px;font:10px/1.5 var(--mono);letter-spacing:.08em;
+  text-transform:uppercase;color:#8f9078}
+.world-legal h2{font-size:clamp(40px,4.7vw,70px);margin:0 0 25px;color:#f4f2e6}
+.world-legal h2 em{color:#c9cd93}
+.world-legal .world-copy>p:not(.eyebrow){color:#b8bda6}
+.legal-services{list-style:none;margin:30px 0 0;padding:0;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  background:rgba(233,228,215,.14);border:1px solid rgba(233,228,215,.14)}
+.legal-services li{background:#11150d;padding:13px 15px;
+  font:11px/1.5 var(--mono);color:#d9dcc4}
+.legal-services li em{display:block;margin-top:4px;font-style:normal;font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:#a89c62}
+.world-legal .cta{color:#d9cd92}
+.world-legal .cta:hover{background:rgba(241,200,71,.07)}
+
+/* ---------- principi ---------- */
+
+.principles{background:#071a21}
+.principles>h2{margin:25px 0 55px;max-width:850px}
+.principle-lines{margin-left:30%;border-top:1px solid rgba(157,199,195,.19)}
+.principle-lines>div{display:grid;grid-template-columns:1fr 1fr;gap:30px;
+  padding:24px 0;border-bottom:1px solid rgba(157,199,195,.19)}
+.principle-lines span{font:300 24px/1.15 var(--serif);letter-spacing:-.015em}
+.principle-lines p{font-size:12px;line-height:1.65;color:#a1b9b7;margin:0}
+.closing-line{font:300 clamp(28px,3.8vw,55px)/1.2 var(--serif);letter-spacing:-.035em;
+  margin:70px 0 0;color:#9dc2b7}
+
+/* ---------- demo connessione (CareProgram) ---------- */
+
+.connection-demo{padding:35px 28px;border:1px solid rgba(130,181,132,.21);background:#072316;position:relative}
+.connection-demo>.eyebrow{color:#ddb480}
+.connection-field{position:relative;height:280px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.connection-person,.connection-pro{z-index:2;display:grid;place-items:center;border:1px solid rgba(152,197,150,.48);
+  border-radius:50%;width:106px;height:106px;background:#102e1d;color:#c9dfc0;font:400 10px var(--mono)}
+.connection-pro{width:120px;height:120px;background:#0b201a;color:#9eac8e;border-color:rgba(167,182,162,.27)}
+.connection-wire{height:1px;flex:1;background:#84bd80;position:relative;transition:opacity .4s,transform .5s}
+.connection-wire>span{position:absolute;inset:-3px 0 auto;height:7px;
+  background:linear-gradient(90deg,transparent,#e59a48,transparent);transform:scaleX(.25);
+  animation:grant-pass 4s ease-in-out infinite}
+.connection-gate{position:absolute;left:50%;top:42px;transform:translateX(-50%);
+  color:#e4b276;font:400 9px var(--mono);letter-spacing:.06em;white-space:nowrap}
+.connection-gate::after{content:"";position:absolute;top:22px;left:50%;height:51px;width:1px;background:rgba(188,146,83,.33)}
+.connection-status{font-size:13px;color:#c5d8c0;min-height:46px;margin:0}
+.demo-controls{display:flex;gap:6px;border-top:1px solid rgba(151,182,145,.19);padding-top:18px;margin-top:15px}
+.demo-controls button{flex:1;border:1px solid rgba(151,182,145,.25);background:none;padding:12px 10px;
+  font:400 10px var(--mono);letter-spacing:.04em;color:#c9dfc0;min-height:44px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.demo-controls button[aria-pressed="true"]{border-color:#d29e62;color:#e3b783;background:rgba(205,146,94,.05)}
+.connection-demo>.small-note{font-size:9px;margin:16px 0 0;color:#88a789;font-family:var(--mono);letter-spacing:.04em}
+.connection-demo[data-state="revoked"] .connection-wire{transform:scaleX(.18);opacity:.12}
+.connection-demo[data-state="revoked"] .connection-wire>span{animation:none}
+.connection-demo[data-state="revoked"] .connection-pro{border-style:dashed;color:#8a9d85}
+@keyframes grant-pass{0%,100%{translate:-30%}50%{translate:30%}}
+
+/* ---------- footer ---------- */
+
+footer{display:flex;align-items:center;justify-content:space-between;gap:25px;
+  padding:30px var(--pad);background:#071a21;color:#99b1b3;
+  font:400 9px/1.5 var(--mono);letter-spacing:.04em}
+footer p{margin:0}
+footer a{color:#aecfc6;text-decoration:none}
+footer a:hover{color:var(--gold)}
 
 /* ---------- scena 01 ---------- */
 
 #s1 .intro{position:absolute;z-index:10;left:var(--pad);top:50%;transform:translateY(-50%);max-width:min(680px,70vw)}
-#s1 .intro .eyebrow,#s1 h1,#s1 .sub{opacity:0;will-change:opacity,transform}
-#s1 h1{margin:0;font-size:clamp(44px,8.5vw,124px)}
+#s1 .intro .eyebrow,#s1 h2,#s1 .sub{opacity:0;will-change:opacity,transform}
+#s1 h2{margin:0;font-size:clamp(44px,8.5vw,124px)}
 #s1 .sub{margin:30px 0 0;max-width:470px;font-size:clamp(16px,1.45vw,21px);line-height:1.4;color:rgba(236,244,239,.72)}
 
 /* ---------- scena 02 · separazione (port Cut02) ---------- */
@@ -169,7 +443,7 @@ a{color:inherit}
 
 #sep .sep-intro{position:absolute;z-index:12;will-change:transform,opacity;left:clamp(22px,8vw,138px);top:50%;transform:translateY(-52%);max-width:min(760px,78vw)}
 #sep .kicker{font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#f2d47c;margin-bottom:22px}
-#sep .sep-intro h1{margin:0;font:300 clamp(58px,9vw,150px)/.83 var(--serif);letter-spacing:-.045em;color:#f7f4eb}
+#sep .sep-intro h2{margin:0;font:300 clamp(58px,9vw,150px)/.83 var(--serif);letter-spacing:-.045em;color:#f7f4eb}
 #sep .sep-intro p{margin:28px 0 0;max-width:640px;font:400 clamp(16px,1.35vw,21px)/1.55 "Manrope",system-ui,sans-serif;color:#c6d4ce}
 #sep .scrollhint{margin-top:34px;font:500 10px/1 var(--mono);letter-spacing:.08em;color:#78988e;display:flex;align-items:center;gap:10px}
 #sep .scrollhint::before{content:"";width:28px;height:1px;background:#78988e}
@@ -315,21 +589,10 @@ a{color:inherit}
   font-size:clamp(40px,6.6vw,96px);opacity:0;will-change:opacity,transform;
   text-shadow:0 10px 50px rgba(0,0,0,.5)}
 
-/* ---------- atto 06 · services (Art.32 integrato, non macro-scena) ---------- */
+/* ---------- atto 05 · la prestazione diventa evento ----------
+   gli ambiti di tutela sono migrati nella sezione Articolo 32:
+   la scena racconta la prestazione, il servizio legale è a sé   */
 
-#event .services{
-  list-style:none;margin:0;padding:0;display:grid;position:absolute;z-index:10;
-  grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;text-align:left;
-  right:var(--pad);bottom:16vh;width:min(460px,42vw);
-  background:rgba(159,216,201,.14);border:1px solid rgba(159,216,201,.14);
-}
-#event .services li{
-  background:var(--deep);padding:12px 14px;
-  font:11px/1.5 var(--mono);color:rgba(236,244,239,.8);
-  opacity:0;transform:translateY(10px);
-}
-#event .services li em{display:block;margin-top:4px;font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.65)}
-/* safe area: la didascalia scende sotto la griglia servizi — bande separate */
 #event .tlog.caps{bottom:9vh}
 
 /* ---------- atto 08 · ricerca (Enzima) ---------- */
@@ -403,14 +666,70 @@ a.contact:hover{background:#0c1f1c}
 .netlinks{margin-top:5vh;display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center}
 .netlinks a{font:11px/1 var(--mono);letter-spacing:.06em;color:var(--muted);text-decoration:none;transition:color .25s}
 .netlinks a:hover{color:var(--gold)}
-.legal{margin-top:4vh;font:10px/1.5 var(--mono);color:rgba(138,164,157,.55);letter-spacing:.08em}
+.legal-note{margin-top:4vh;font:10px/1.5 var(--mono);color:rgba(138,164,157,.55);letter-spacing:.08em}
 
 /* ---------- responsive ---------- */
 
 @media (max-width:760px){
-  .topnav nav a:not(:last-child){display:none}
-  #s1{height:440vh}#tempo{height:600vh}#relation{height:580vh}#event{height:520vh}
-  #knowledge{height:780vh}#research{height:540vh}#system{height:680vh}#reveal{height:360vh}
+  .topnav nav a:not(:nth-last-child(-n+2)){display:none}
+  #s1{height:240vh}#tempo{height:260vh}#relation{height:340vh}#event{height:260vh}
+  #knowledge{height:380vh}#research{height:300vh}#system{height:300vh}#reveal{height:200vh}
+  .hero{padding-bottom:70px}
+  .hero .imark{width:74vw}
+  .hero .iline{font-size:8.5px;letter-spacing:.18em}
+  .hero .hero-line{font-size:clamp(34px,10vw,52px);margin-top:5vh}
+  .hero .hero-sub{font-size:14px;max-width:340px}
+  .hero-actions{flex-direction:column;gap:10px;align-items:stretch;width:min(320px,86vw)}
+  .hero-actions .cta{justify-content:center;font-size:10px}
+  .hero-actions .text-link{justify-content:center}
+  .editorial{padding:64px var(--pad)}
+  .editorial h2{font-size:clamp(38px,11vw,52px)}
+  .about-body{grid-template-columns:1fr;gap:24px;padding-top:30px;margin-top:30px}
+  .about-body .large-copy{font-size:clamp(22px,6.4vw,30px)}
+  .section-head{display:block;margin-bottom:28px}
+  .section-head>p{margin-top:20px}
+  .audience-list>a{grid-template-columns:22px 1fr 24px;gap:14px;padding:19px 0}
+  .audience-list strong{font-size:24px}
+  .audience-list small{font-size:11px;line-height:1.5}
+  .entry-destination{font-size:0}
+  .entry-destination i{font-size:22px;margin:0}
+  .welfare-grid{grid-template-columns:1fr;gap:20px}
+  .ecosystem-intro h2{font-size:clamp(38px,11vw,50px)}
+  .world{height:210vh}
+  #careprogram{height:250vh}
+  #tutela{height:230vh}
+  #prosperya{height:220vh}
+  .world-grid{grid-template-columns:1fr;gap:30px;align-content:center}
+  .camit-grid,.legal-grid{grid-template-columns:1fr;gap:26px}
+  .world-copy{max-width:none}
+  .world-copy h2{font-size:clamp(38px,10.5vw,52px);margin-bottom:20px}
+  .world-logo{width:200px;max-height:80px;margin-bottom:24px}
+  .camit-route{order:2;height:190px;min-height:0}
+  .camit-route svg{transform:rotate(90deg);position:absolute;height:300px;width:200px;left:calc(50% - 100px);top:-58px}
+  .route-word{font-size:7px}
+  .route-word.first{left:0;right:auto;top:40%}
+  .route-word.second{left:42%;top:10%}
+  .route-word.third{right:0;top:62%}
+  .prosperya-boundary{min-height:0;border-right:none;border-bottom:1px dashed rgba(193,174,128,.3);padding:5px 0 30px}
+  .prosperya-boundary::after{top:auto;bottom:-18px;left:50%;width:1px;height:35px}
+  .autonomy img{width:225px;max-height:200px}
+  .connection-demo{padding:24px 18px}
+  .connection-field{height:190px}
+  .connection-person{width:80px;height:80px;font-size:8px}
+  .connection-pro{width:94px;height:94px;font-size:8px}
+  .connection-gate{top:18px;font-size:8px}
+  .connection-gate::after{height:30px}
+  .legal-name{margin-top:16px;font-size:34px;display:flex;gap:16px;align-items:baseline}
+  .legal-name b{font-size:96px;margin:0;line-height:.8}
+  .legal-quote{font-size:19px;margin-top:26px}
+  .legal-services{grid-template-columns:1fr 1fr}
+  .legal-services li{padding:10px 11px;font-size:9.5px}
+  .principle-lines{margin-left:0}
+  .principle-lines>div{grid-template-columns:1fr;gap:10px;padding:20px 0}
+  .principle-lines span{font-size:23px}
+  .closing-line{font-size:28px;margin-top:44px}
+  footer{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  footer p{order:3;grid-column:1/-1}
   #s1 .intro{top:20vh;max-width:86vw}
   #system .manifest,#tempo .manifest,#relation .manifest,#event .manifest,#knowledge .manifest{
     top:11vh;width:min(430px,88vw)}
@@ -420,8 +739,6 @@ a.contact:hover{background:#0c1f1c}
   .lname{padding:10px 6px 4px;font-size:8px}
   .sat{padding:5px 4px}.sat .sname{font-size:14px}
   .sat .smeta{font-size:9px}
-  #event .services{left:24px;right:24px;bottom:12vh;width:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
-  #event .services li{padding:9px 10px;font-size:9px}
   #relation .manifest.centered,#knowledge .manifest.centered,#event .manifest.right{
     left:24px;right:24px;width:auto;transform:none;text-align:left;top:11vh}
   #knowledge .manifest.centered h2{font-size:clamp(34px,10vw,48px)}
@@ -438,8 +755,6 @@ a.contact:hover{background:#0c1f1c}
   #system .sigs .lsig{height:34px;max-width:56vw}
   #system .sigs .lsig.minor{height:22px}
   #system .sigs .lsig.e-prosperya{height:42px}
-  #intro .imark{width:74vw}
-  #intro .iline{top:calc(45% + 52px);font-size:8.5px}
   .pbc-logo{width:min(320px,84vw)}
   .reveal-line{font-size:clamp(28px,8.5vw,40px)}
   .cap{bottom:4vh}
@@ -460,7 +775,7 @@ a.contact:hover{background:#0c1f1c}
 
 /* separazione — il piano identità scende dall'alto */
 @media (max-width:800px){
-  #sep{height:880vh}
+  #sep{height:560vh}
   #sep .persona{left:50%;right:auto;top:44%;width:92%}
   #sep .pname{font-size:clamp(58px,15vw,96px)}
   #sep .prole{display:none}
@@ -475,7 +790,7 @@ a.contact:hover{background:#0c1f1c}
   #sep .statement{left:24px;right:24px;bottom:7%}
   #sep .sepcap{left:50%;width:86vw;bottom:3.8%}
   #sep .sep-intro{left:24px;right:24px;max-width:none}
-  #sep .sep-intro h1{font-size:clamp(62px,19vw,110px)}
+  #sep .sep-intro h2{font-size:clamp(62px,19vw,110px)}
   #sep .sep-intro p{font-size:15px}
 }
 
@@ -483,6 +798,8 @@ a.contact:hover{background:#0c1f1c}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .cap,.services li,.endcta{transition:none}
+  [data-rise]{opacity:1;transform:none;transition:none}
+  .connection-wire>span{animation:none}
+  .cap,.endcta{transition:none}
   #s3 .quote .w{transition:none}
 }

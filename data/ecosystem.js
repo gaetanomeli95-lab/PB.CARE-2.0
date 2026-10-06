@@ -86,15 +86,14 @@
       palette: pal("#9fd8c9", "#5f7a72", "#f1c847", "#0a1f1b"),
       logo: null,
       status: "current",
-      currentUrl: null, // articolo32.it NON verificato nel materiale — vedi note
-      urlStatus: "da verificare",
+      currentUrl: "https://pbcare.it/articolo-32/", // verificato: pagina attiva sul sito corrente
       futureUrl: null,
       layer: "identita",
       layerMeta: "tutela del diritto",
-      layerAnchor: "#event",
+      layerAnchor: "#tutela",
       narrative: true,
       footerLink: false,
-      notes: "Peso narrativo da collocare nel master model. URL legacy non confermato: nessun link finché non verificato.",
+      notes: "Servizio di tutela legale — superficie propria, NON il fondamento tecnico del token (diritto alla prestazione). La relazione token↔tutela non è rappresentata.",
     },
     {
       id: "farmacomm",
@@ -158,8 +157,7 @@
       palette: pal("#2bb8c9", "#4fd8b0", "#7fe8e0", "#06222a"),
       logo: "assets/brand/enzima/logo.png",
       status: "current",
-      currentUrl: null, // enzimamilano.it NON verificato — nessun link finché non confermato
-      urlStatus: "da verificare",
+      currentUrl: "https://pbcare.it/enzima/", // verificato: pagina attiva sul sito corrente
       futureUrl: null,
       layer: "ricerca",
       layerMeta: "dipartimento R&S · PB-CARe",
@@ -217,9 +215,9 @@
       urlStatus: "da verificare",
       futureUrl: null,
       layer: null,
-      narrative: false, // §11: rimosso dalla narrativa, resta documentato
+      narrative: false, // realtà cessata: fuori dalla narrativa, resta solo tracciato
       footerLink: false,
-      notes: "⚠ Legacy. NON sostituire con Prosperya nello stesso ruolo: hanno natura diversa.",
+      notes: "⚠ Legacy cessato — non appare nel sito pubblico. Prosperya è società distinta e autonoma: occupa il layer esterno per natura propria, NON come sostituzione del ruolo Trua.",
     },
   ];
 

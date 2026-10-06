@@ -75,95 +75,62 @@ function captionLog(el, LOG, off) {
   };
 }
 
-/* ---------- intro · l'identità — il marchio si scioglie in traccia ----------
+/* ---------- hero · campo ambientale ----------
+   La prima viewport è già il sito: nessuna coreografia obbligata.
+   Il canvas respira in autonomia — la fenditura dell'identità resta
+   accesa dietro il marchio come traccia luminosa del sistema.        */
 
-   Prima dichiarazione del mondo: non uno splash screen, un'inquadratura.
-   Fenditura di luce fredda → marchio reale → si contrae in un seme →
-   il seme scende e diventa la traccia che apre #s1.                    */
-
-function initIntro(stage, ctx) {
+function initHero(canvas) {
+  const ctx = canvas.getContext("2d");
   let W = 0, H = 0, grain = null, dust = [];
-  const mark = stage.querySelector("#introMark");
-  const line = stage.querySelector("#introLine");
-  const COLD = "168,216,240"; // luce fredda dell'identità
+  const COLD = "168,216,240";
 
   function resize() {
-    W = stage.clientWidth; H = stage.clientHeight;
+    W = canvas.clientWidth; H = canvas.clientHeight;
     const DPR = Math.min(1.5, devicePixelRatio || 1);
-    const c = stage.querySelector("canvas");
-    c.width = W * DPR; c.height = H * DPR;
+    canvas.width = W * DPR; canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     grain = makeGrain(ctx);
     dust = [];
-    for (let i = 0; i < 34; i++) dust.push({ x: rnd(i * 3.7) * W, y: rnd(i * 7.3) * H, r: .5 + rnd(i * 2.1) * 1.1, ph: rnd(i) * 6.28 });
+    for (let i = 0; i < 46; i++) dust.push({
+      x: rnd(i * 3.7) * W, y: rnd(i * 7.3) * H,
+      r: .5 + rnd(i * 2.1) * 1.2, ph: rnd(i) * 6.28, sp: .04 + rnd(i * 5.1) * .09,
+    });
   }
 
-  function update(p, time) {
+  function draw(time) {
     ctx.clearRect(0, 0, W, H);
     const t = reduce ? 0 : time;
-    const cx = W * .5, cy = H * .45;
+    const cx = W * .5, cy = H * .42;
 
-    // pulviscolo freddo, sparso — il vuoto prima della luce
+    // fenditura quieta: la firma luminosa dell'identità, sempre accesa
+    const breathe = reduce ? .85 : .78 + .07 * Math.sin(t * .0006);
+    const hh = H * .30;
+    const g = ctx.createLinearGradient(cx, cy - hh, cx, cy + hh);
+    g.addColorStop(0, "rgba(168,216,240,0)");
+    g.addColorStop(.5, `rgba(${COLD},${.42 * breathe})`);
+    g.addColorStop(1, "rgba(168,216,240,0)");
+    ctx.strokeStyle = g; ctx.lineWidth = 1.4;
+    ctx.shadowColor = "rgba(120,200,240,.55)"; ctx.shadowBlur = 18;
+    ctx.beginPath(); ctx.moveTo(cx, cy - hh); ctx.lineTo(cx, cy + hh); ctx.stroke();
+    ctx.shadowBlur = 0;
+    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * .34);
+    rg.addColorStop(0, `rgba(90,160,200,${.08 * breathe})`); rg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+
+    // pulviscolo in deriva lenta — il campo è vivo, non fermo
     for (const d of dust) {
+      const y = (d.y - (reduce ? 0 : t * d.sp * .01)) % H;
       ctx.fillStyle = `rgba(${COLD},${.05 + .04 * Math.sin(t * .0008 + d.ph)})`;
-      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // la fenditura: una linea di luce fredda verticale che si apre al centro
-    const slit = smooth(seg(p, .05, .20));
-    if (slit > 0) {
-      const hh = H * .30 * slit;
-      const g = ctx.createLinearGradient(cx, cy - hh, cx, cy + hh);
-      g.addColorStop(0, "rgba(168,216,240,0)");
-      g.addColorStop(.5, `rgba(${COLD},${.8 * slit})`);
-      g.addColorStop(1, "rgba(168,216,240,0)");
-      ctx.strokeStyle = g;
-      ctx.lineWidth = 1.4;
-      ctx.shadowColor = "rgba(120,200,240,.6)"; ctx.shadowBlur = 18;
-      ctx.beginPath(); ctx.moveTo(cx, cy - hh); ctx.lineTo(cx, cy + hh); ctx.stroke();
-      ctx.shadowBlur = 0;
-      // alone freddo che respira dietro la fenditura
-      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * .30 * slit);
-      rg.addColorStop(0, `rgba(90,160,200,${.10 * slit})`); rg.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
-    }
-
-    // rilascio: il marchio si contrae nel punto-seme
-    const rel = smooth(seg(p, .60, .80));
-    if (rel > 0) {
-      const k = smooth(rel);
-      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30 + k * 20);
-      rg.addColorStop(0, `rgba(230,248,255,${.9 * k})`); rg.addColorStop(1, "rgba(168,216,240,0)");
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 30 + k * 20, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = `rgba(240,252,255,${k})`;
-      ctx.beginPath(); ctx.arc(cx, cy, 3.2, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // il seme scende: una traccia che lascia il centro e prosegue in #s1
-    const drop = smooth(seg(p, .78, .98));
-    if (drop > 0) {
-      const hy = lerp(cy, H * 1.05, smooth(drop));
-      ctx.strokeStyle = `rgba(${MINT},${.5 * drop})`;
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([1, 6]);
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, hy); ctx.stroke();
-      ctx.setLineDash([]);
-      const rg = ctx.createRadialGradient(cx, hy, 0, cx, hy, 20);
-      rg.addColorStop(0, `rgba(${MINT},${.7 * drop})`); rg.addColorStop(1, `rgba(${MINT},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, hy, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(d.x, y < 0 ? y + H : y, d.r, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // DOM — il marchio sta nella luce, si nomina una volta, poi si scioglie
-    const mk = smooth(seg(p, .22, .40)) * (1 - smooth(rel));
-    mark.style.opacity = mk;
-    mark.style.transform = `translate(-50%,-50%) scale(${lerp(.84, 1, smooth(seg(p, .22, .40))) * lerp(1, .1, smooth(rel))})`;
-    const ln = smooth(seg(p, .34, .46)) * (1 - smooth(seg(p, .54, .62)));
-    line.style.opacity = ln;
-    line.style.transform = `translateX(-50%) translateY(${lerp(8, 0, smooth(seg(p, .34, .46)))}px)`;
   }
-  return { resize, update };
+
+  resize();
+  addEventListener("resize", resize);
+  return { draw, el: canvas.parentElement };
 }
 
 /* ---------- atto 01 · la persona — dal caos una traccia ---------- */
@@ -171,7 +138,7 @@ function initIntro(stage, ctx) {
 function initS1(stage, ctx) {
   let W = 0, H = 0, parts = [], grain = null;
   const intro = stage.querySelector(".intro"), cap = stage.querySelector("[data-cap]");
-  const eyebrow = intro.querySelector(".eyebrow"), h1 = intro.querySelector("h1"), sub = intro.querySelector(".sub");
+  const eyebrow = intro.querySelector(".eyebrow"), h1 = intro.querySelector("h2"), sub = intro.querySelector(".sub");
   let geo = null; // geometria della traccia, calcolata al resize
 
   function resize() {
@@ -757,11 +724,11 @@ function initEvent(stage, ctx) {
   const FC = ECO ? ECO.byId.farmacomm.palette : { rgbAccent: "79,216,224" };
 
   const LOG = [
-    { t: "diritto — riconosciuto, ancora promessa",  at: .12 },
-    { t: "assegnazione — il diritto è affidato",     at: .34 },
-    { t: "presa in carico — entra nel percorso",     at: .52 },
-    { t: "erogazione — accade davvero",              at: .72 },
-    { t: "evento datato — osservabile nel tempo",    at: .86 },
+    { t: "la prestazione è riconosciuta — ancora promessa", at: .12 },
+    { t: "assegnazione — la prestazione è affidata",        at: .34 },
+    { t: "presa in carico — entra nel percorso",            at: .52 },
+    { t: "erogazione — accade davvero",                     at: .72 },
+    { t: "evento datato — osservabile nel tempo",           at: .86 },
   ];
   const caps = captionLog(stage.querySelector("#elog"), LOG, .91);
   const title = titleStager(stage, { in: [.02, .12], out: [.22, .32], sub: [.40, .50], subOut: [.70, .78] });
@@ -905,24 +872,26 @@ function initEvent(stage, ctx) {
         ctx.font = "10px 'DM Mono', monospace";
         ctx.textAlign = "center";
         ctx.fillStyle = `rgba(241,200,71,${.85 * dated})`;
-        ctx.fillText("giorno 147 — erogata", ex, ey + H * .07);
+        ctx.fillText("giorno 147 — erogata · esempio", ex, ey + H * .07);
       }
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM — gli ambiti di tutela appaiono durante la presa in carico
-    // e si ritirano prima del picco: l'evento datato resta solo
+    // DOM — gli ambiti di tutela vivono ora nella sezione Articolo 32;
+    // qui resta solo la prestazione che diventa evento
     title(p); caps(p);
-    const sOut = 1 - smooth(seg(p, .70, .78));
-    let sMax = 0;
-    services.forEach((el, i) => {
-      const v = smooth(seg(p, .42 + i * .02, .50 + i * .02)) * sOut;
-      sMax = Math.max(sMax, v);
-      el.style.opacity = v;
-      el.style.transform = `translateY(${10 * (1 - v)}px)`;
-    });
-    services[0].parentElement.style.opacity = Math.min(1, sMax * 3);
+    if (services.length) {
+      const sOut = 1 - smooth(seg(p, .70, .78));
+      let sMax = 0;
+      services.forEach((el, i) => {
+        const v = smooth(seg(p, .42 + i * .02, .50 + i * .02)) * sOut;
+        sMax = Math.max(sMax, v);
+        el.style.opacity = v;
+        el.style.transform = `translateY(${10 * (1 - v)}px)`;
+      });
+      services[0].parentElement.style.opacity = Math.min(1, sMax * 3);
+    }
     cap.style.opacity = seg(p, .92, .97);
   }
   return { resize, update };
@@ -2003,13 +1972,77 @@ function initSep(stage, ctx) {
   return { resize, update };
 }
 
+/* ---------- mondi dell'ecosistema — si compongono scrollando ----------
+   Un init condiviso: il territorio cromatico arriva dalle CSS custom
+   property della scena, gli elementi [data-beat] entrano in sequenza,
+   il canvas aggiunge atmosfera viva nel colore del brand.            */
+
+function initWorld(stage, ctx) {
+  let W = 0, H = 0, grain = null, dust = [];
+  const beats = [...stage.querySelectorAll("[data-beat]")];
+  const route = stage.querySelector(".camit-route");
+  const css = getComputedStyle(stage.closest(".scene") || stage);
+  // --scene-accent è hex in CSS → serve "r,g,b" per rgba() nel canvas
+  const hexAcc = (css.getPropertyValue("--scene-accent") || "#9fd8c9").trim();
+  const hn = parseInt(hexAcc.slice(1), 16);
+  const ACC = `${(hn >> 16) & 255},${(hn >> 8) & 255},${hn & 255}`;
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+    dust = [];
+    for (let i = 0; i < 38; i++) dust.push({
+      x: rnd(i * 3.1) * W, y: rnd(i * 6.7) * H,
+      r: .5 + rnd(i * 2.3) * 1.3, ph: rnd(i) * 6.28,
+    });
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+
+    // respiro del territorio: bloom che cresce mentre il mondo si compone
+    const bloom = smooth(seg(p, .05, .55));
+    if (bloom > 0) {
+      const rg = ctx.createRadialGradient(W * .5, H * .55, 0, W * .5, H * .55, Math.max(W, H) * .55);
+      rg.addColorStop(0, `rgba(${ACC},${.06 * bloom})`);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    }
+    // pulviscolo nell'accento del brand
+    for (const d of dust) {
+      const a = (.04 + .04 * Math.sin(t * .0009 + d.ph)) * (.35 + .65 * bloom);
+      ctx.fillStyle = `rgba(${ACC},${Math.max(0, a)})`;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // gli elementi entrano in sequenza — il mondo si compone leggendo
+    const n = beats.length;
+    beats.forEach((el, i) => {
+      const a = .06 + i * (.68 / Math.max(1, n)), b = a + .09;
+      const v = smooth(seg(p, a, b));
+      el.style.opacity = v;
+      el.style.transform = `translateY(${lerp(30, 0, v)}px)`;
+    });
+
+    // CAMIT: il tracciato si disegna mentre il mondo si compone
+    if (route) route.style.setProperty("--route-progress", smooth(seg(p, .3, .75)).toFixed(3));
+  }
+  return { resize, update };
+}
+
 /* ---------- engine ---------- */
 
 const INITS = {
-  intro: initIntro,
   s1: initS1, sep: initSep, tempo: initTempo,
   relation: initRelation, event: initEvent, knowledge: initKnowledge,
   research: initResearch, system: initSystem, reveal: initReveal,
+  world: initWorld,
 };
 // scena senza init = stage statica, non rompe l'esperienza
 const NOOP_INIT = () => ({ resize() {}, update() {} });
@@ -2042,6 +2075,44 @@ if (typeof Lenis !== "undefined") {
     a.dataset.status = e.status;
     nl.appendChild(a);
   });
+}
+
+/* hero ambientale: la prima viewport respira da sola — il contenuto
+   non dipende dallo scroll, il campo vive di tempo, non di p         */
+const heroCv = document.getElementById("heroField");
+const heroFx = heroCv ? initHero(heroCv) : null;
+
+/* reveal editoriale guidato dalla posizione: gli elementi entrano quando
+   il lettore li raggiunge. In reduced-motion sono subito completi.     */
+const riseEls = [...document.querySelectorAll("[data-rise]")];
+if (reduce || !("IntersectionObserver" in window)) {
+  riseEls.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }), { rootMargin: "0px 0px -10% 0px", threshold: .1 });
+  riseEls.forEach(el => io.observe(el));
+}
+
+/* demo connessione CareProgram: autorizzata / revocata — principio
+   illustrato, non una simulazione di dati reali                      */
+{
+  const demo = document.getElementById("connDemo");
+  if (demo) {
+    const status = document.getElementById("connection-status");
+    const TXT = {
+      granted: "La connessione è autorizzata dalla persona.",
+      revoked: "Connessione revocata: il professionista non vede più nulla. Una segreteria non può riaprirla.",
+    };
+    demo.querySelectorAll("[data-connection]").forEach(b =>
+      b.addEventListener("click", () => {
+        const s = b.dataset.connection;
+        demo.dataset.state = s;
+        demo.querySelectorAll("[data-connection]")
+          .forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        status.textContent = TXT[s] || "";
+      }));
+  }
 }
 
 const controllers = [...document.querySelectorAll(".scene")].map(el => {
@@ -2140,6 +2211,12 @@ function loop(time) {
   requestAnimationFrame(loop);
   if (lenis) lenis.raf(time);
 
+  // hero ambientale: disegna solo quando la prima viewport è in vista
+  if (heroFx) {
+    const hr = heroFx.el.getBoundingClientRect();
+    if (hr.bottom > -40 && hr.top < innerHeight + 40) heroFx.draw(time);
+  }
+
   // progress globale + nav
   const max = document.documentElement.scrollHeight - innerHeight;
   const gp_ = max > 0 ? clamp(scrollY / max) : 0;
@@ -2151,7 +2228,7 @@ function loop(time) {
   nav.classList.toggle("nav-ghost",
     !!introEl && introEl.getBoundingClientRect().bottom > innerHeight * .45);
   // la struttura si rivela dopo l'intro + la persona — non prima
-  const navAt = (introEl ? introEl.offsetHeight : 0) + innerHeight * 1.2;
+  const navAt = (introEl ? introEl.offsetHeight : 0) + innerHeight * .5;
   nav.classList.toggle("nav-open", scrollY > navAt);
 
   const dbg = [];
