@@ -82,19 +82,19 @@
       name: "Articolo 32",
       type: "service",
       role: "Tutela legale del paziente",
-      relation: "Il diritto appartiene al lato identità — attraversa il confine come prestazione",
+      relation: "Servizio specifico di tutela legale; distinto dal meccanismo di accesso alle prestazioni",
       palette: pal("#9fd8c9", "#5f7a72", "#f1c847", "#0a1f1b"),
       logo: null,
       status: "current",
-      currentUrl: null, // articolo32.it NON verificato nel materiale — vedi note
+      currentUrl: "https://pbcare.it/articolo-32/", // verificato sul sito PB-CARe
       urlStatus: "da verificare",
       futureUrl: null,
-      layer: "identita",
-      layerMeta: "tutela del diritto",
-      layerAnchor: "#event",
+      layer: "tutela",
+      layerMeta: "servizio di tutela legale",
+      layerAnchor: "#tutela",
       narrative: true,
       footerLink: false,
-      notes: "Peso narrativo da collocare nel master model. URL legacy non confermato: nessun link finché non verificato.",
+      notes: "Non è il fondamento tecnico del token CareProgram/FarmaCOmm.",
     },
     {
       id: "farmacomm",
@@ -140,7 +140,7 @@
       palette: pal("#3f9fe0", "#6fd0ff", "#a8e4ff", "#0a1f30"),
       logo: "assets/brand/eventi-scientifici/logo.png", // SOLO versione fluida
       status: "current",
-      currentUrl: "https://eventiscientifici.com/",
+      currentUrl: null, // dominio storico eventiscientifici.com: 502 alla verifica
       urlStatus: "da verificare", // .com vs .it non confermato nel materiale
       futureUrl: "eventiscientifici.farmacomm.com",
       layer: "conoscenza",
@@ -178,7 +178,7 @@
       multicolor: true, // anello di cerchi colorati — mai ridurre a un colore
       logo: "assets/brand/prosperya/logo.png",
       status: "current",
-      currentUrl: "https://prosperya.it/",
+      currentUrl: "https://www.prosperya.it/",
       futureUrl: null,
       layer: "esterna",
       layerMeta: "società autonoma · advisory",
@@ -186,40 +186,6 @@
       narrative: true,
       footerLink: false,
       notes: "Marchio non reinventabile: anello + PROSPERYA + BUSINESS ADVISORY + IDEE·OPPORTUNITÀ·CRESCITA.",
-    },
-    {
-      id: "integralinea",
-      name: "Integralinea",
-      type: "shop",
-      role: "Superficie/shop distinta — ruolo da definire",
-      relation: "Da collocare nel master model",
-      palette: pal("#8a9a94", "#5f6f6a", "#aec3bb", "#101a17"), // placeholder neutro — ridefinire con l'asset
-      logo: null, // asset mancante — vedi docs/ASSET_MANIFEST.md
-      status: "future",
-      currentUrl: "https://integralinea.it/",
-      urlStatus: "da verificare",
-      futureUrl: null,
-      layer: null,
-      narrative: false, // non in narrativa finché il ruolo non è definito
-      footerLink: false,
-      notes: "Non inventare il ruolo oltre i materiali disponibili. Asset logo mancante.",
-    },
-    {
-      id: "gruppo-trua",
-      name: "Gruppo Trua",
-      type: "company",
-      role: "Finanza agevolata — posizione nel master model da chiarire",
-      relation: "LEGACY — fuori dal racconto principale della nuova home",
-      palette: pal("#c9a86a", "#8a7a58", "#e0c078", "#1c1810"),
-      logo: null,
-      status: "legacy",
-      currentUrl: "https://www.gruppotrua.it/",
-      urlStatus: "da verificare",
-      futureUrl: null,
-      layer: null,
-      narrative: false, // §11: rimosso dalla narrativa, resta documentato
-      footerLink: false,
-      notes: "⚠ Legacy. NON sostituire con Prosperya nello stesso ruolo: hanno natura diversa.",
     },
   ];
 

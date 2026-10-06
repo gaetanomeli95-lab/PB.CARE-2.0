@@ -1,85 +1,73 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#071513" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23071513'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23f1c847'/%3E%3C/svg%3E" />
-<title>PB-CARe — L'ecosistema della salute</title>
-<meta name="description" content="Un ecosistema coordinato di piattaforme, clinica e tutela legale, dove il dato della persona diventa il suo percorso di cura." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.css" />
-<link rel="stylesheet" href="style.css" />
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071a21">
+<title>PB-CARe — La persona al centro. Un ecosistema intorno.</title>
+<meta name="description" content="PB-CARe coordina identità, percorsi di cura, conoscenza, ricerca e tutela. Scopri il modello e trova il percorso per persone, professionisti e aziende.">
+<meta property="og:title" content="PB-CARe — La persona al centro. Un ecosistema intorno."><meta property="og:description" content="Un modello che coordina la cura, mantenendo distinti identità, dati clinici e servizi."><meta property="og:type" content="website">
+<link rel="icon" href="assets/brand/pbcare/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css">
 </head>
 <body>
-
+<noscript><style>#sep{height:auto}#sep .stage{height:auto;padding:90px 24px;background:#092522}#sep .sep-intro,#sep .persona,#sep .identityFacts,#sep .clinical,#sep .statement{position:relative;left:auto;right:auto;top:auto;bottom:auto;transform:none;opacity:1;margin:30px 0;width:auto;max-width:none;color:#edf2ec;mix-blend-mode:normal}#sep canvas,#sep .tag,#sep .sepcap,#sep .cue,#sep .token-label,#sep .scene-skip,#sep .scrollhint{display:none}#sep .pname{font-size:60px}#sep .clinicalTop{display:block}#sep .fact b,#sep .fact strong{color:#bbcec3}#sep .example-label{top:30px;left:24px;right:auto}.motion-toggle,.menu-toggle{display:none}.topnav nav{display:flex;position:static;flex-wrap:wrap;font-size:9px;gap:10px}.topnav{position:relative;flex-wrap:wrap;padding:18px 24px}.hero{padding-top:28px}</style></noscript>
+<a class="skip-link" href="#contenuto">Salta al contenuto</a>
 <header class="topnav" id="topnav">
-  <a class="brand" href="#intro">PB-CARe<sup>®</sup></a>
-  <nav aria-label="Sezioni">
-    <a href="#sep">Separazione</a>
-    <a href="#tempo">Il tempo</a>
-    <a href="#relation">Relazione</a>
-    <a href="#knowledge">Conoscenza</a>
-    <a href="#research">Ricerca</a>
-    <a href="#system">Il sistema</a>
-    <a href="#end">Contatti</a>
-  </nav>
-  <i class="gp" id="gp"></i>
+ <a class="brand" href="#intro" aria-label="PB-CARe, inizio pagina">PB-CARe<sup>®</sup></a>
+ <button class="menu-toggle" aria-expanded="false" aria-controls="navigation">Menu <span aria-hidden="true">+</span></button>
+ <nav id="navigation" aria-label="Navigazione principale">
+  <a href="#pbcare">PB-CARe</a><a href="#per-chi">Per chi</a><a href="#sep">Come funziona</a><a href="#ecosistema">Ecosistema</a><a href="#research">Ricerca</a><a href="#end">Contatti</a>
+ </nav>
+ <i class="gp" id="gp" aria-hidden="true"></i>
 </header>
-
-<main>
-
-<!-- ============ INTRO · L'IDENTITÀ ============
-     Il marchio non è uno splash: si apre, si nomina una volta,
-     poi si scioglie nella traccia che diventerà la persona. -->
-<section class="scene" id="intro" data-scene="intro">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>PB-CARe</span><i class="pb"></i></div>
-
-    <img class="imark" id="introMark" src="assets/brand/pbcare/logo.png"
-         alt="PB-CARe — Patient Based, Continue Applied Research" />
-    <p class="iline" id="introLine">Patient Based — Continue Applied Research</p>
-  </div>
+<main id="contenuto" tabindex="-1">
+<section class="hero" id="intro" aria-labelledby="hero-title">
+ <canvas id="hero-field" aria-hidden="true"></canvas>
+ <div class="hero-top"><img src="assets/brand/pbcare/logo.png" alt="Logo PB-CARe" width="1672" height="941" fetchpriority="high"><p>Patient Based<br>Continue Applied Research</p></div>
+ <div class="hero-copy"><p class="eyebrow">Un ecosistema, una regia</p><h1 id="hero-title">La persona<br>al <em>centro.</em><br><span>Un ecosistema intorno.</span></h1>
+ <p class="lede">PB-CARe coordina identità, percorsi di cura, conoscenza e ricerca. Ogni realtà ha un compito. La persona resta il punto di partenza.</p>
+ <div class="hero-actions"><a class="cta primary" href="#per-chi">Trova il tuo percorso <span aria-hidden="true">↗</span></a><a class="text-link" href="#pbcare">Conosci PB-CARe <span aria-hidden="true">↓</span></a></div></div>
+ <div class="hero-register" aria-hidden="true"><span>IDENTITÀ</span><span>CURA</span><span>CONOSCENZA</span><span>RICERCA</span></div>
+ <div class="hero-bottom"><span>La cura ha bisogno di continuità.</span><a href="#pbcare">Esplora il modello <span aria-hidden="true">↓</span></a></div>
 </section>
-
-<!-- ============ ATTO 01 · LA PERSONA ============ -->
-<section class="scene" id="s1" data-scene="s1">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 01 — la persona</span><i class="pb"></i></div>
-
-    <div class="intro">
-      <p class="eyebrow">Patient Based — Continue Applied Research</p>
-      <h1>Prima del sistema,<br />una <i>persona</i>.</h1>
-      <p class="sub">Ogni misura, ogni evento, ogni esito appartiene a qualcuno.
-      Il sistema esiste perché esiste una traccia — e quella traccia è una vita.</p>
-    </div>
-
-    <p class="cap" data-cap>dal caos emerge una traccia<small>scorri — il sistema si svela un elemento alla volta</small></p>
-  </div>
+<section class="editorial about" id="pbcare" aria-labelledby="about-title">
+ <p class="eyebrow section-label">PB-CARe / Il modello</p>
+ <div class="about-title"><h2 id="about-title">Tenere insieme.<br><em>Senza confondere.</em></h2><span class="small-note">Patient Based<br>Continue Applied Research</span></div>
+ <div class="about-body"><p class="large-copy">Una persona attraversa servizi, professionisti e momenti diversi. Il suo percorso ha bisogno di una regia.</p><div><p>PB-CARe nasce da questa esigenza: coordinare ciò che consente l'accesso alla cura, ciò che accade nel percorso e ciò che può diventare conoscenza.</p><p>Identità ed economia, clinica, ricerca e tutela hanno responsabilità diverse. Il modello le mette in relazione mantenendo chiaro il confine di ciascuna.</p><a class="text-link" href="#sep">La regola che tiene insieme il sistema <span aria-hidden="true">↘</span></a></div></div>
 </section>
-
-<!-- ============ SCENA 02 · SEPARAZIONE ============ -->
+<section class="editorial audiences" id="per-chi" aria-labelledby="audience-title">
+ <div class="section-head"><div><p class="eyebrow">Per chi / Ingressi</p><h2 id="audience-title">Da dove<br><em>vuoi cominciare?</em></h2></div><p>Puoi seguire il modello o raggiungere subito il mondo che ti riguarda.</p></div>
+ <div class="audience-list">
+ <a href="#careprogram"><span class="entry-index" aria-hidden="true">01</span><span><strong>Persone e famiglie</strong><small>Identità, nucleo e accesso alle prestazioni</small></span><span class="entry-destination">CareProgram <i aria-hidden="true">↗</i></span></a>
+ <a href="#farmacomm"><span class="entry-index" aria-hidden="true">02</span><span><strong>Professionisti e centri</strong><small>Ambiente clinico e strumenti operativi</small></span><span class="entry-destination">FarmaCOmm <i aria-hidden="true">↗</i></span></a>
+ <a href="#welfare"><span class="entry-index" aria-hidden="true">03</span><span><strong>Aziende e welfare</strong><small>Sostenere l'accesso, rispettando il confine clinico</small></span><span class="entry-destination">Il modello <i aria-hidden="true">↗</i></span></a>
+ <a href="#farmacomm"><span class="entry-index" aria-hidden="true">04</span><span><strong>Farmacie e operatori</strong><small>Comunicazione professionale e rete della cura</small></span><span class="entry-destination">FarmaCOmm <i aria-hidden="true">↗</i></span></a>
+ <a href="#research"><span class="entry-index" aria-hidden="true">05</span><span><strong>Ricerca e innovazione</strong><small>Il dipartimento R&amp;S di PB-CARe</small></span><span class="entry-destination">Enzima <i aria-hidden="true">↗</i></span></a>
+ <a href="#tutela"><span class="entry-index" aria-hidden="true">06</span><span><strong>Tutela del paziente</strong><small>Assistenza legale per l'accesso alle cure</small></span><span class="entry-destination">Articolo 32 <i aria-hidden="true">↗</i></span></a>
+ </div>
+ <a class="audience-clinic text-link" href="#camit">Cerchi il percorso cannabis medica? Scopri CAMIT <span aria-hidden="true">→</span></a>
+</section>
 <section class="scene" id="sep" data-scene="sep">
   <div class="stage">
-    <canvas></canvas>
-    <div class="tag"><span>atto 02 — il nome resta fuori</span><i class="pb"></i></div>
+    <canvas aria-hidden="true"></canvas>
+    <p class="example-label">Dati di esempio · persona e codice fittizi</p>
+    <a class="scene-skip" href="#tempo">Continua al modello ↓</a>
+    <div class="tag"><span>come funziona — identità ≠ clinica</span><i class="pb"></i></div>
 
     <section class="sep-intro" id="sepIntro">
       <div class="kicker">Una regola prima di tutto</div>
-      <h1>Il nome<br />resta fuori.</h1>
+      <h2>Il nome<br />resta fuori.</h2>
       <p>La parte economica sa chi sei. La parte clinica conosce ciò che accade
       nella cura. Le due informazioni non vengono fuse nello stesso luogo.</p>
-      <div class="scrollhint">scorri per attraversare la separazione</div>
+      <div class="scrollhint">scorri per osservare la separazione</div>
     </section>
 
     <section class="persona" id="persona" aria-label="Esempio di identità su careprogram">
       <div class="plabel">careprogram · identità</div>
-      <h2 class="pname"><span>Giulia</span><span>Ferri</span></h2>
-      <div class="prole">Una persona reale, riconosciuta dal sistema economico e dal proprio nucleo.</div>
+      <h3 class="pname"><span>Giulia</span><span>Ferri</span></h3>
+      <div class="prole">Una persona di esempio, riconosciuta dal sistema economico e dal proprio nucleo.</div>
     </section>
 
     <div class="identityFacts" id="identityFacts">
@@ -106,195 +94,58 @@
     <div class="sepcap" id="scap2">Dall'altra parte non arriva Giulia. Arriva solo ciò che serve alla cura.</div>
     <div class="sepcap" id="scap3">Il diritto attraversa il confine. L'identità no.</div>
 
-    <div class="statement" id="statement">Due sistemi possono collaborare <em>senza diventare lo stesso database.</em><small>Questa scena rappresenta il principio architetturale. Persona, codice e date sono inventati.</small></div>
+    <div class="statement" id="statement">Due sistemi possono collaborare <em>senza diventare lo stesso database.</em><small>Questa scena rappresenta il principio architetturale. Dati di esempio: persona e codice sono fittizi.</small></div>
   </div>
 </section>
 
-<!-- ============ ATTO 03 · IL TEMPO ============ -->
-<section class="scene" id="tempo" data-scene="tempo">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 03 — il tempo</span><i class="pb"></i></div>
 
-    <div class="manifest">
-      <p class="eyebrow">Dopo la separazione, ciò che conta scorre</p>
-      <h2>La misura,<br />non la <i>dichiarazione</i>.</h2>
-      <p class="sub">Una dichiarazione è una frase. Una misura è una sequenza
-      osservabile: giorni, eventi, aderenza, interruzioni, esiti.</p>
-    </div>
-    <!-- didascalie temporali: una alla volta, vicino al fenomeno (main.js) -->
-    <div class="tlog caps" id="tlog" aria-live="polite"></div>
-
-    <p class="cap" data-cap>il percorso non si racconta — si osserva<small>pseudonimizzato · nel tempo</small></p>
-  </div>
+<section class="editorial continuity" id="tempo" aria-labelledby="time-title">
+ <p class="eyebrow">Come funziona / La continuità</p>
+ <div class="continuity-grid"><h2 id="time-title">La misura,<br>non la <em>dichiarazione.</em></h2><div><p class="large-copy">Una frase descrive un momento.<br>Un percorso si osserva nel tempo.</p><p>Diario, eventi, aderenza, interruzioni ed esiti permettono di leggere ciò che accade nella cura. La conoscenza nasce dall'osservazione e dalla valutazione umana.</p></div></div>
+ <div class="time-track" aria-label="Elementi osservabili nel tempo"><span>Diario</span><span>Eventi</span><span>Aderenza</span><span>Interruzioni</span><span>Esiti</span></div>
+ <div class="welfare-note" id="welfare"><p class="eyebrow">Aziende e welfare</p><div><h3>Sostenere l'accesso.<br><em>Rispettare il confine.</em></h3><p>Nel modello PB-CARe, il welfare aziendale può finanziare le prestazioni senza vedere la clinica della persona.</p><a class="text-link" href="#end">Parliamo del tuo progetto welfare <span aria-hidden="true">→</span></a></div></div>
 </section>
-
-<!-- ============ ATTO 05 · LA RELAZIONE ============ -->
-<section class="scene" id="relation" data-scene="relation">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 04 — la relazione</span><i class="pb"></i></div>
-
-    <div class="manifest centered">
-      <p class="eyebrow">Ciò che accade nella cura passa da una fiducia</p>
-      <h2>La connessione<br />ti <i>appartiene</i>.</h2>
-      <p class="sub">Un professionista può chiedere accesso. Solo la persona
-      decide. Ciò che viene revocato non si riapre da solo.</p>
-    </div>
-    <div class="tlog caps" id="rlog" aria-live="polite"></div>
-
-    <img class="bsig" id="sigCare" src="assets/brand/careprogram/logo.png"
-         alt="CareProgram — il livello che gestisce identità e accessi" />
-
-    <p class="cap" data-cap>l'accesso si concede — e si ritira<small>la persona decide, il sistema obbedisce</small></p>
-  </div>
+<section class="ecosystem-intro editorial" id="ecosistema" aria-labelledby="ecosystem-title">
+ <p class="eyebrow">L'ecosistema / Ruoli distinti</p><h2 id="ecosystem-title">La stessa regia.<br><em>Mondi differenti.</em></h2><p>PB-CARe coordina. Le piattaforme gestiscono, i percorsi accompagnano, la conoscenza si apre, la ricerca trasforma.</p>
+ <nav class="world-nav" aria-label="Realtà dell'ecosistema"><a href="#careprogram">CareProgram</a><a href="#farmacomm">FarmaCOmm</a><a href="#camit">CAMIT</a><a href="#eventi">EventiScientifici</a><a href="#research">Enzima</a><a href="#tutela">Articolo 32</a><a href="#prosperya">Prosperya</a></nav>
 </section>
-
-<!-- ============ ATTO 06 · IL DIRITTO DIVENTA EVENTO ============ -->
-<section class="scene" id="event" data-scene="event">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 05 — il diritto diventa evento</span><i class="pb"></i></div>
-
-    <div class="manifest right">
-      <p class="eyebrow">Articolo 32 — tutela legale del paziente</p>
-      <h2>Un diritto, quando serve,<br />diventa <i>evento</i>.</h2>
-      <p class="sub">«La Repubblica tutela la salute come fondamentale diritto
-      dell'individuo.» <span class="cite">— Costituzione Italiana, art. 32</span></p>
-    </div>
-    <div class="tlog caps" id="elog" aria-live="polite"></div>
-
-    <ul class="services" id="eservices" aria-label="Ambiti di tutela Articolo 32">
-      <li><span>cure negate o ritardate</span><em>assistenza legale</em></li>
-      <li><span>accesso urgente a terapie e diagnosi</span><em>ricorsi</em></li>
-      <li><span>ASL · INPS · INAIL · ospedali</span><em>azioni legali</em></li>
-      <li><span>minori, disabili, anziani</span><em>pazienti fragili</em></li>
-      <li><span>cure fuori regione o all'estero</span><em>supporto</em></li>
-      <li><span>LEA e liste d'attesa</span><em>verifica adempienza</em></li>
-    </ul>
-
-    <p class="cap" data-cap>la promessa diventa un fatto datato<small>assegnazione · presa in carico · erogazione</small></p>
-  </div>
+<section class="world world-care" id="careprogram" aria-labelledby="care-title">
+ <div class="world-copy"><p class="eyebrow">La piattaforma / Identità e accesso</p><img class="world-logo" src="assets/brand/careprogram/logo.png" alt="CareProgram" width="2172" height="724" loading="lazy"><h2 id="care-title">Il tuo accesso.<br><em>La tua scelta.</em></h2><p>Identità, nucleo, pagamenti, beneficiari e diritti di accesso alle prestazioni. CareProgram è il livello della persona e dell'economia.</p><p class="world-detail">La connessione con il professionista è controllata dalla persona. Una revoca non può essere ripristinata arbitrariamente da una segreteria.</p><a class="cta" href="https://careprogram.it/" target="_blank" rel="noopener noreferrer">Scopri CareProgram <span aria-hidden="true">↗</span><span class="sr-only"> (nuova scheda)</span></a></div>
+ <div class="connection-demo" data-state="granted"><p class="eyebrow">La relazione / Schema illustrativo</p><div class="connection-field" aria-hidden="true"><div class="connection-person">Persona</div><div class="connection-wire"><span></span></div><div class="connection-pro">Professionista</div><div class="connection-gate">La persona decide</div></div><p class="connection-status" id="connection-status" aria-live="polite">La connessione è autorizzata dalla persona.</p><div class="demo-controls" role="group" aria-label="Osserva i due stati della connessione"><button aria-pressed="true" data-connection="granted">Autorizzata</button><button aria-pressed="false" data-connection="revoked">Dopo la revoca</button></div><p class="small-note">Esempio del principio. Nessuna connessione reale viene modificata.</p></div>
 </section>
-
-<!-- ============ ATTO 07 · DALL'INDIVIDUO ALLA CONOSCENZA ============ -->
-<section class="scene" id="knowledge" data-scene="knowledge">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 06 — la conoscenza</span><i class="pb"></i></div>
-
-    <div class="manifest centered">
-      <p class="eyebrow">Tracce separate, mai fuse</p>
-      <h2>Una vita<br />è una <i>traccia</i>.</h2>
-      <p class="sub">Le tracce restano pseudonimizzate e separate. Sotto soglia
-      non si osserva nulla. Da cinque, il campo mostra ciò che hanno in comune —
-      osservazione, ipotesi, valutazione umana.</p>
-    </div>
-    <div class="tlog caps" id="klog" aria-live="polite"></div>
-
-    <!-- il momento k≥5: il titolo torna, trasformato -->
-    <h2 class="kpeak" id="kpeak">Molte vite,<br />una <i>conoscenza</i>.</h2>
-
-    <img class="bsig hero" id="sigFC" src="assets/brand/farmacomm/logo.png"
-         alt="FarmaCOmm — l'ambiente clinico dove vive la conoscenza" />
-    <img class="bsig surface" id="sigES" src="assets/brand/eventi-scientifici/logo.png"
-         alt="Eventi Scientifici — la conoscenza che si condivide" />
-    <img class="bsig path" id="sigCAM" src="assets/brand/camit/logo.png"
-         alt="Cannabis Medica Italia — un percorso clinico dentro l'ambiente" />
-
-    <p class="cap" data-cap>la conoscenza trova una superficie<small>EventiScientifici</small></p>
-  </div>
+<div id="farmacomm" class="anchor-target"></div>
+<section class="scene world-film" id="knowledge" data-scene="knowledge" aria-labelledby="fc-title">
+ <div class="stage"><canvas class="field" aria-hidden="true"></canvas><div class="world-copy"><p class="eyebrow">L'ambiente / Clinica e conoscenza</p><img class="world-logo" src="assets/brand/farmacomm/logo.png" alt="FarmaCOmm" width="2184" height="720" loading="lazy"><h2 id="fc-title">Ciò che accade.<br><em>Ciò che si impara.</em></h2><p>Cartella pseudonimizzata, diario, eventi, aderenza ed esiti. FarmaCOmm è l'ambiente clinico e tecnico operativo del sistema.</p><p class="world-detail">La continuità rende le osservazioni leggibili. I professionisti le interpretano: una misura sostiene la valutazione, senza sostituirla.</p><a class="cta" href="https://www.farmacomm.com/" target="_blank" rel="noopener noreferrer">Esplora FarmaCOmm <span aria-hidden="true">↗</span><span class="sr-only"> (nuova scheda)</span></a></div><div class="film-note"><span>OSSERVARE</span><span>CONDENSARE</span><p>Visualizzazione illustrativa.<br>Tracce sintetiche, senza dati clinici.</p></div><div class="film-meter" aria-hidden="true"><i></i></div></div>
 </section>
-
-<!-- ============ ATTO 08 · RICERCA ============ -->
-<section class="scene" id="research" data-scene="research">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 07 — ricerca</span><i class="pb"></i></div>
-
-    <div class="enz">
-      <p class="eyebrow">Enzima — il dipartimento R&amp;S di PB-CARe</p>
-      <h2>L'osservazione<br />torna <i>domanda</i>.</h2>
-      <div class="specs" id="specs">
-        <div class="spec"><span class="sdot"></span><span class="spec-name">osservazione — ciò che il campo ha mostrato</span><em>fase 1</em></div>
-        <div class="spec"><span class="sdot"></span><span class="spec-name">ricerca — la domanda prende forma</span><em>fase 2</em></div>
-        <div class="spec"><span class="sdot"></span><span class="spec-name">progetto — l'ipotesi si trasforma</span><em>fase 3</em></div>
-        <div class="spec"><span class="sdot"></span><span class="spec-name">applicazione — il progetto torna alla cura</span><em>fase 4</em></div>
-        <div class="spec"><span class="sdot"></span><span class="spec-name">impatto — il feedback riapre il ciclo</span><em>fase 5</em></div>
-      </div>
-    </div>
-
-    <img class="bsig" id="sigENZ" src="assets/brand/enzima/logo.png"
-         alt="Enzima — dipartimento ricerca e sviluppo" />
-
-    <p class="cap" data-cap>un ciclo, non una linea<small>ciò che ritorna riapre l'osservazione</small></p>
-  </div>
+<section class="world world-camit" id="camit" aria-labelledby="camit-title">
+ <div class="camit-route" aria-hidden="true"><svg viewBox="0 0 450 650" fill="none"><path class="route-base" d="M340 0 C340 180 85 110 85 285 S355 380 355 480 S210 530 210 650"/><path class="route-progress" d="M340 0 C340 180 85 110 85 285 S355 380 355 480 S210 530 210 650" pathLength="1"/></svg><span class="route-word first">VALUTAZIONE</span><span class="route-word second">PERCORSO</span><span class="route-word third">CONTINUITÀ</span></div>
+ <div class="world-copy"><p class="eyebrow">Il percorso / Cannabis medica</p><img class="world-logo camit-logo" src="assets/brand/camit/logo.png" alt="CAMIT — Cannabis Medica Italia" width="1774" height="887" loading="lazy"><h2 id="camit-title">Un percorso clinico.<br><em>Da accompagnare.</em></h2><p>CAMIT è la superficie dedicata al percorso cannabis medica: valutazione clinica, presa in carico, follow-up e teleassistenza.</p><p class="world-detail">Un'esperienza clinica specifica, con un sito e un ingresso dedicati.</p><a class="cta" href="https://cannabismedicaitalia.it/" target="_blank" rel="noopener noreferrer">Scopri il percorso CAMIT <span aria-hidden="true">↗</span><span class="sr-only"> (nuova scheda)</span></a></div>
 </section>
-
-<!-- ============ ATTO 09 · IL SISTEMA ============ -->
-<section class="scene" id="system" data-scene="system">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>atto 08 — il sistema</span><i class="pb"></i></div>
-
-    <div class="manifest">
-      <p class="eyebrow">Ciò che hai attraversato ha una struttura</p>
-      <h2>Adesso lo riconosci:<br />è un <i>sistema</i>.</h2>
-      <!-- layer e righe generate da data/ecosystem.js (source of truth) -->
-      <div class="layers" id="layers"></div>
-    </div>
-
-    <!-- loghi per layer: generati da data/ecosystem.js, mostrati quando il
-         layer è dominante — firma, non parete di brand -->
-    <div class="sigs" id="layerSigs" aria-hidden="true"></div>
-
-    <p class="cap" data-cap>ogni cosa è già passata dal suo livello<small>ruoli diversi, profondità diverse — un solo coordinamento</small></p>
-  </div>
+<section class="world world-events" id="eventi" aria-labelledby="events-title">
+ <div class="event-aperture" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><span>La conoscenza<br>si apre.</span></div>
+ <div class="world-copy"><p class="eyebrow">La superficie / Conoscenza condivisa</p><img class="world-logo" src="assets/brand/eventi-scientifici/logo.png" alt="EventiScientifici" width="2172" height="724" loading="lazy"><h2 id="events-title">Sapere.<br><em>Condividere.</em></h2><p>La conoscenza trova una superficie pubblica: formazione, confronto e divulgazione scientifica collegati all'ambiente FarmaCOmm.</p><a class="cta" href="#end">Informazioni su EventiScientifici <span aria-hidden="true">→</span></a></div>
 </section>
-
-<!-- ============ ATTO 10 · REVEAL ============ -->
-<section class="scene" id="reveal" data-scene="reveal">
-  <div class="stage">
-    <canvas class="field" aria-hidden="true"></canvas>
-    <div class="tag"><span>epilogo — il campo madre</span><i class="pb"></i></div>
-
-    <div class="reveal-wrap">
-      <p class="eyebrow" id="revealEyebrow">tutto ciò che hai attraversato</p>
-      <p class="reveal-line" id="revealLine">Una persona.<br />Un percorso.<br />Un sistema.</p>
-      <img class="pbc-logo" id="pbcLogo" src="assets/brand/pbcare/logo.png"
-           alt="PB-CARe — Patient Based, Continue Applied Research" />
-    </div>
-
-    <p class="cap" data-cap>ora questa parola ha un significato<small>questo è PB-CARe — Patient Based, Continue Applied Research</small></p>
-  </div>
+<section class="scene world-film research-film" id="research" data-scene="research" aria-labelledby="research-title">
+ <div class="stage"><canvas class="field" aria-hidden="true"></canvas><div class="world-copy"><p class="eyebrow">PB-CARe / Ricerca e sviluppo</p><img class="world-logo" src="assets/brand/enzima/logo.png" alt="Enzima — Dipartimento Ricerca e Sviluppo" width="2172" height="724" loading="lazy"><h2 id="research-title">Una domanda.<br><em>Un nuovo ciclo.</em></h2><p>Enzima è il dipartimento R&amp;S di PB-CARe. Trasforma osservazioni e domande in ricerca, progetti e applicazioni.</p><ol class="research-cycle"><li>Osservazione</li><li>Ricerca</li><li>Progetto</li><li>Applicazione</li><li>Impatto / feedback</li></ol><a class="cta" href="#end">Confrontati con PB-CARe sulla ricerca <span aria-hidden="true">→</span></a></div><div class="research-word" aria-hidden="true">Osservazione</div><div class="film-meter" aria-hidden="true"><i></i></div></div>
 </section>
-
-<!-- ============ FINALE ============ -->
-<section class="end" id="end">
-  <div class="end-inner">
-    <p class="mini">PB-CARe · il principio che regge tutto</p>
-    <h3>La misura al posto della <i>dichiarazione</i>.</h3>
-    <p class="end-sub">La prescrizione è un evento verificabile. L'aderenza si conta in giorni reali.
-    Gli esiti emergono nel tempo. Ogni dato nasce strutturato — e serve la cura e la ricerca insieme.</p>
-
-    <div class="contacts">
-      <a class="contact" href="mailto:info.pbcare@gmail.com"><span>email</span>info.pbcare@gmail.com</a>
-      <a class="contact" href="tel:+390918395492"><span>telefono</span>091 839 54 92</a>
-      <a class="contact" href="http://wa.link/d9y210" target="_blank" rel="noopener"><span>whatsapp</span>+39 389 858 9011</a>
-      <div class="contact"><span>sede</span>Via Torino, 8 — Altavilla Milicia (PA)</div>
-    </div>
-
-    <!-- link generati da data/ecosystem.js (footerLink: true) -->
-    <nav class="netlinks" aria-label="Siti del network"></nav>
-
-    <p class="legal">PB-CARe srl · P.IVA 07242090822</p>
-  </div>
+<section class="editorial legal" id="tutela" aria-labelledby="legal-title">
+ <div><p class="eyebrow">Il servizio / Tutela legale del paziente</p><span class="legal-name">Articolo <b>32</b></span></div><div><h2 id="legal-title">Quando l'accesso<br>ha bisogno di <em>tutela.</em></h2><p>Cure negate o ritardate, accesso urgente a terapie e diagnosi, ostacoli amministrativi: Articolo 32 offre assistenza legale per il diritto alla salute.</p><p class="world-detail">Un servizio specifico dell'ecosistema, dedicato alle persone che incontrano barriere nell'accesso alle cure.</p><a class="cta" href="https://pbcare.it/articolo-32/" target="_blank" rel="noopener noreferrer">Scopri il servizio Articolo 32 <span aria-hidden="true">↗</span><span class="sr-only"> (nuova scheda)</span></a></div>
 </section>
-
+<section class="world world-prosperya" id="prosperya" aria-labelledby="prosperya-title">
+ <div class="prosperya-boundary"><span class="eyebrow">Costellazione relazionale</span><div class="autonomy"><img src="assets/brand/prosperya/logo.png" alt="Prosperya — Business Advisory — Idee, Opportunità, Crescita" width="1448" height="1086" loading="lazy"></div><span class="autonomy-caption">Società autonoma</span></div>
+ <div class="world-copy"><p class="eyebrow">La relazione / Autonomia</p><h2 id="prosperya-title">Connessa.<br><em>Con la propria identità.</em></h2><p>Prosperya è una società distinta e autonoma di business advisory, collegata alla costellazione relazionale dell'ecosistema.</p><p class="world-detail">Ha una propria identità, un proprio ambito di attività e un sito dedicato.</p><a class="cta" href="https://www.prosperya.it/" target="_blank" rel="noopener noreferrer">Conosci Prosperya <span aria-hidden="true">↗</span><span class="sr-only"> (nuova scheda)</span></a></div>
+</section>
+<section class="editorial principles" id="principi" aria-labelledby="principles-title">
+ <p class="eyebrow">PB-CARe / La regia, nel tempo</p><h2 id="principles-title">Il sistema ha un centro.<br><em>È la persona.</em></h2>
+ <div class="principle-lines"><div><span>Identità distinta dalla clinica</span><p>Ogni livello custodisce le informazioni che gli competono.</p></div><div><span>Connessioni controllate dalla persona</span><p>Accesso e revoca seguono la scelta della persona.</p></div><div><span>Continuità osservabile</span><p>Il percorso si legge attraverso eventi e misure nel tempo.</p></div><div><span>Conoscenza con valutazione umana</span><p>Osservazione, confronto e ricerca mantengono ruoli distinti.</p></div></div>
+ <p class="closing-line">Coordinare significa dare a ogni parte il suo posto.<br>Perché la persona possa trovare il proprio.</p>
+</section>
+<section class="editorial contact" id="end" aria-labelledby="contact-title">
+ <p class="eyebrow">Parliamo / PB-CARe</p><h2 id="contact-title">Il prossimo passo<br>comincia da <em>qui.</em></h2><p>Per orientarti nel sistema, parlare di welfare, ricerca o di un progetto: contatta PB-CARe.</p>
+ <a class="contact-email" href="mailto:info.pbcare@gmail.com">info.pbcare@gmail.com <span aria-hidden="true">↗</span></a>
+ <div class="contact-details"><a href="tel:+390918395492">+39 091 839 5492</a><span>Via Torino, 8<br>90010 Altavilla Milicia (PA)</span><span>P. IVA 07242090822</span></div>
+</section>
 </main>
-
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
-<script src="data/ecosystem.js"></script>
-<script src="main.js"></script>
-</body>
-</html>
+<footer><a class="brand" href="#intro">PB-CARe<sup>®</sup></a><p>Patient Based — Continue Applied Research</p><button class="motion-toggle" aria-pressed="false">Riduci movimento</button><a href="#per-chi">Trova il tuo percorso ↑</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" defer></script><script src="data/ecosystem.js" defer></script><script src="main.js" defer></script>
+</body></html>
