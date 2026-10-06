@@ -30,3 +30,9 @@
 #sep .scene-skip{bottom:16px}
 @media(max-width:800px){#sep .example-label{top:calc(var(--nav) + 49px)}#sep .tag{top:calc(var(--nav) + 13px)}#sep .sepcap{bottom:8%}.world-camit .world-logo{max-height:112px}}
 .reduced-motion #sep .codeMeta,.reduced-motion #sep .noIdentity{opacity:1!important}
+
+.reduced-motion #sep .example-label{position:static;grid-column:1/-1;justify-self:start;margin:0 0 14px}
+.reduced-motion #sep .persona{grid-row:3}
+.reduced-motion #sep .identityFacts{grid-row:4}
+.reduced-motion #sep .clinical{grid-row:3/5}
+.reduced-motion #sep .statement{grid-row:5}
