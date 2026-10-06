@@ -183,7 +183,7 @@ function initS2(stage, ctx) {
   function hub() {
     const mob = W < 760;
     return mob
-      ? { x: W * .5, y: H * .74, rx: W * .36, ry: H * .17 }
+      ? { x: W * .5, y: H * .77, rx: W * .36, ry: H * .14 }
       : { x: W * .71, y: H * .52, rx: W * .245, ry: H * .34 };
   }
   const satPos = (s, h) => {
@@ -669,7 +669,7 @@ function initSep(stage, ctx) {
     const enter = smooth(seg(p, .12, .20));
     persona.style.opacity = enter * (1 - .30 * smooth(seg(p, .90, .97)));
     persona.style.left = lerp(50, mobile ? 50 : 18, split) + "%";
-    persona.style.top = lerp(44, mobile ? 18 : 33, split) + "%";
+    persona.style.top = lerp(44, mobile ? 27 : 33, split) + "%";
     persona.style.transform = `translate(-50%,-50%) scale(${lerp(1, .92, split)})`;
     persona.classList.toggle("on", split > .97);
     prole.style.opacity = smooth(seg(p, .50, .58));

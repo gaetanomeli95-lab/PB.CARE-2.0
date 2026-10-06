@@ -245,9 +245,10 @@ a.contact:hover{background:#0c1f1c}
   .topnav nav a:not(:last-child){display:none}
   #s1{height:440vh}#s2{height:680vh}#s3{height:560vh}#s4{height:500vh}
   #s1 .intro{top:20vh;max-width:86vw}
-  #s2 .manifest{top:12vh;width:min(430px,88vw)}
-  #s2 h2{font-size:clamp(30px,9vw,44px)}
-  .sat{padding:7px 4px}.sat .sname{font-size:15px}
+  #s2 .manifest{top:11vh;width:min(430px,88vw)}
+  #s2 h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
+  .sat{padding:5px 4px}.sat .sname{font-size:14px}
+  .sat .smeta{font-size:9px}
   #s3 .quote-wrap{top:14vh}
   .services{grid-template-columns:repeat(2,minmax(0,1fr))}
   #s4 .enz{top:13vh;width:86vw}
