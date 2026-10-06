@@ -17,6 +17,7 @@
    la palette dell'identità nel cui territorio entra lo scroll */
 #s1 {--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#071b24}
 #sep{--scene-accent:#f1c847;--scene-accent2:#e5e2d7;--scene-atmo:#0a1f1b}
+#tempo{--scene-accent:#4fd8e0;--scene-accent2:#9fd8c9;--scene-atmo:#071b2b}
 #s2 {--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#071b24}
 #s3 {--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#0a1f1b}
 #s4 {--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#06222a}
@@ -71,6 +72,7 @@ a{color:inherit}
 
 #s1{height:340vh}
 #sep{height:800vh}
+#tempo{height:560vh}
 #s2{height:640vh}
 #s3{height:520vh}
 #s4{height:480vh}
@@ -159,9 +161,21 @@ a{color:inherit}
 
 /* ---------- scena 03 ---------- */
 
-#s2 .manifest{position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)}
-#s2 h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
-.sats{display:grid;gap:2px;border-top:1px solid rgba(159,216,201,.14)}
+#s2 .manifest,#tempo .manifest{position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)}
+#s2 h2,#tempo h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
+#tempo .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
+/* atto 03 — il log della traccia: testo DOM reale, appare in sync col canvas */
+.tlog{display:grid;border-top:1px solid rgba(79,216,224,.16);max-width:420px}
+.tlog .tl{
+  padding:9px 2px;border-bottom:1px solid rgba(79,216,224,.10);
+  font:11px/1.5 var(--mono);letter-spacing:.03em;color:rgba(198,230,238,.85);
+  opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s;
+}
+.tlog .tl.on{opacity:1;transform:none}
+/* atto 04 — il sistema a profondità: layer, non satelliti */
+.layers{display:grid}
+.layer{border-top:1px solid rgba(159,216,201,.14)}
+.lname{display:block;padding:14px 6px 6px;font:9px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(138,164,157,.5)}
 .sat{
   display:grid;grid-template-columns:16px 1fr;grid-template-rows:auto auto;
   column-gap:12px;align-items:center;
@@ -253,10 +267,13 @@ a.contact:hover{background:#0c1f1c}
 
 @media (max-width:760px){
   .topnav nav a:not(:last-child){display:none}
-  #s1{height:440vh}#s2{height:680vh}#s3{height:560vh}#s4{height:500vh}
+  #s1{height:440vh}#tempo{height:600vh}#s2{height:680vh}#s3{height:560vh}#s4{height:500vh}
   #s1 .intro{top:20vh;max-width:86vw}
-  #s2 .manifest{top:11vh;width:min(430px,88vw)}
-  #s2 h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
+  #s2 .manifest,#tempo .manifest{top:11vh;width:min(430px,88vw)}
+  #s2 h2,#tempo h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
+  #tempo .sub{font-size:13px;max-width:88vw}
+  .tlog .tl{font-size:10px;padding:7px 2px}
+  .lname{padding:10px 6px 4px;font-size:8px}
   .sat{padding:5px 4px}.sat .sname{font-size:14px}
   .sat .smeta{font-size:9px}
   #s3 .quote-wrap{top:14vh}
