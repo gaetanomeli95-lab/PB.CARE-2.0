@@ -276,7 +276,7 @@ function initSep(stage, ctx) {
     if (cs !== code._s) { code.textContent = cs; code._s = cs; }
 
     // caption bicolore sul confine: scure sulla carta, chiare sul petrolio
-    const capW = Math.min(760, W * .70), capL = (W - capW) / 2;
+    const capW = Math.min(560, W * .44), capL = W * .74 - capW / 2;
     const rel = clamp((seamX() - capL) / capW) * 100;
     const capGrad = mobile ? null
       : `linear-gradient(90deg,#23382e ${rel}%,#f6f4ec ${rel}%)`;
@@ -300,6 +300,9 @@ function initSep(stage, ctx) {
     cue.style.color = !mobile && split > .97 ? "#4c5d57" : "#8faea4";
     cue.style.opacity = 1 - smooth(seg(p, .90, .97));
 
+    const metadataOpacity = mobile ? 1 - smooth(seg(p, .88, .94)) : 1;
+    stage.querySelector(".codeMeta").style.opacity = metadataOpacity;
+    stage.querySelector(".noIdentity").style.opacity = metadataOpacity;
     const st = smooth(seg(p, .90, .97));
     statement.style.opacity = st;
     statement.style.transform = `translateY(${lerp(24, 0, st)}px)`;
