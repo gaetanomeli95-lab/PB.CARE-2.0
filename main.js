@@ -75,6 +75,97 @@ function captionLog(el, LOG, off) {
   };
 }
 
+/* ---------- intro · l'identità — il marchio si scioglie in traccia ----------
+
+   Prima dichiarazione del mondo: non uno splash screen, un'inquadratura.
+   Fenditura di luce fredda → marchio reale → si contrae in un seme →
+   il seme scende e diventa la traccia che apre #s1.                    */
+
+function initIntro(stage, ctx) {
+  let W = 0, H = 0, grain = null, dust = [];
+  const mark = stage.querySelector("#introMark");
+  const line = stage.querySelector("#introLine");
+  const COLD = "168,216,240"; // luce fredda dell'identità
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+    dust = [];
+    for (let i = 0; i < 34; i++) dust.push({ x: rnd(i * 3.7) * W, y: rnd(i * 7.3) * H, r: .5 + rnd(i * 2.1) * 1.1, ph: rnd(i) * 6.28 });
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+    const cx = W * .5, cy = H * .45;
+
+    // pulviscolo freddo, sparso — il vuoto prima della luce
+    for (const d of dust) {
+      ctx.fillStyle = `rgba(${COLD},${.05 + .04 * Math.sin(t * .0008 + d.ph)})`;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // la fenditura: una linea di luce fredda verticale che si apre al centro
+    const slit = smooth(seg(p, .05, .20));
+    if (slit > 0) {
+      const hh = H * .30 * slit;
+      const g = ctx.createLinearGradient(cx, cy - hh, cx, cy + hh);
+      g.addColorStop(0, "rgba(168,216,240,0)");
+      g.addColorStop(.5, `rgba(${COLD},${.8 * slit})`);
+      g.addColorStop(1, "rgba(168,216,240,0)");
+      ctx.strokeStyle = g;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = "rgba(120,200,240,.6)"; ctx.shadowBlur = 18;
+      ctx.beginPath(); ctx.moveTo(cx, cy - hh); ctx.lineTo(cx, cy + hh); ctx.stroke();
+      ctx.shadowBlur = 0;
+      // alone freddo che respira dietro la fenditura
+      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * .30 * slit);
+      rg.addColorStop(0, `rgba(90,160,200,${.10 * slit})`); rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    }
+
+    // rilascio: il marchio si contrae nel punto-seme
+    const rel = smooth(seg(p, .60, .80));
+    if (rel > 0) {
+      const k = smooth(rel);
+      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30 + k * 20);
+      rg.addColorStop(0, `rgba(230,248,255,${.9 * k})`); rg.addColorStop(1, "rgba(168,216,240,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 30 + k * 20, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(240,252,255,${k})`;
+      ctx.beginPath(); ctx.arc(cx, cy, 3.2, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // il seme scende: una traccia che lascia il centro e prosegue in #s1
+    const drop = smooth(seg(p, .78, .98));
+    if (drop > 0) {
+      const hy = lerp(cy, H * 1.05, smooth(drop));
+      ctx.strokeStyle = `rgba(${MINT},${.5 * drop})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([1, 6]);
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, hy); ctx.stroke();
+      ctx.setLineDash([]);
+      const rg = ctx.createRadialGradient(cx, hy, 0, cx, hy, 20);
+      rg.addColorStop(0, `rgba(${MINT},${.7 * drop})`); rg.addColorStop(1, `rgba(${MINT},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, hy, 20, 0, Math.PI * 2); ctx.fill();
+    }
+
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM — il marchio sta nella luce, si nomina una volta, poi si scioglie
+    const mk = smooth(seg(p, .22, .40)) * (1 - smooth(rel));
+    mark.style.opacity = mk;
+    mark.style.transform = `translate(-50%,-50%) scale(${lerp(.84, 1, smooth(seg(p, .22, .40))) * lerp(1, .1, smooth(rel))})`;
+    const ln = smooth(seg(p, .34, .46)) * (1 - smooth(seg(p, .54, .62)));
+    line.style.opacity = ln;
+    line.style.transform = `translateX(-50%) translateY(${lerp(8, 0, smooth(seg(p, .34, .46)))}px)`;
+  }
+  return { resize, update };
+}
+
 /* ---------- atto 01 · la persona — dal caos una traccia ---------- */
 
 function initS1(stage, ctx) {
@@ -133,6 +224,21 @@ function initS1(stage, ctx) {
     ctx.clearRect(0, 0, W, H);
     const t = reduce ? 0 : time;
     const { cx, cy, R, ly, lx0, lx1 } = geo;
+
+    // handoff dall'intro: il seme del marchio continua a scendere qui —
+    // un filo che arriva dall'alto e si dissolve nel campo disperso
+    const incoming = 1 - smooth(seg(p, .02, .18));
+    if (incoming > 0) {
+      const hy = lerp(-H * .05, cy - R * .55, 1 - incoming);
+      ctx.strokeStyle = `rgba(${MINT},${.4 * incoming})`;
+      ctx.lineWidth = 1.1;
+      ctx.setLineDash([1, 6]);
+      ctx.beginPath(); ctx.moveTo(cx, -H * .05); ctx.lineTo(cx, hy); ctx.stroke();
+      ctx.setLineDash([]);
+      const rg = ctx.createRadialGradient(cx, hy, 0, cx, hy, 18);
+      rg.addColorStop(0, `rgba(${MINT},${.6 * incoming})`); rg.addColorStop(1, `rgba(${MINT},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, hy, 18, 0, Math.PI * 2); ctx.fill();
+    }
 
     // posizioni attuali — emersione lenta: il campo resta disperso a lungo
     const pos = [];
@@ -490,14 +596,20 @@ function initRelation(stage, ctx) {
     const rev = smooth(seg(p, .76, .88));      // revoca → ritiro
     const live = con * (1 - rev);              // connessione attiva
 
-    // contaminazione CareProgram durante l'accesso: verde + micro-arancio
-    const wash = acc * (1 - rev * .5);
-    if (wash > 0) {
-      let g = ctx.createRadialGradient(ax, ay, 0, ax, ay, R * 3.4);
-      g.addColorStop(0, `rgba(${CP.rgbAccent},${.06 * wash})`); g.addColorStop(1, "rgba(0,0,0,0)");
+    // territorio CareProgram: il campo si scalda PRIMA del marchio —
+    // verde dal respiro del campo, arancio quando l'accesso è concesso.
+    // Il colore anticipa l'identità; la firma sarà una conseguenza.
+    const warm = (in_ * .4 + req * .3 + acc * .6) * (1 - rev * .55);
+    if (warm > 0) {
+      let g = ctx.createRadialGradient(ax, ay, 0, ax, ay, R * 4.2);
+      g.addColorStop(0, `rgba(${CP.rgbAccent},${.085 * warm})`); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      g = ctx.createRadialGradient(ax, ay - R, 0, ax, ay - R, R * 1.8);
-      g.addColorStop(0, `rgba(${CP.rgbSecondary},${.035 * wash})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      g = ctx.createRadialGradient(ax, ay - R, 0, ax, ay - R, R * 2.2);
+      g.addColorStop(0, `rgba(${CP.rgbSecondary},${.05 * acc * (1 - rev)})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // calore anche dalla parte del professionista durante l'accesso
+      g = ctx.createRadialGradient(bx, by, 0, bx, by, R * 3);
+      g.addColorStop(0, `rgba(${CP.rgbAccent},${.05 * acc * (1 - rev)})`); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
@@ -613,14 +725,19 @@ function initRelation(stage, ctx) {
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM
+    // DOM — durante il brand beat il marchio è il messaggio dominante:
+    // le didascalie cedono leggermente e un alone caldo lo accoglie
     title(p); caps(p);
-    // la firma: quando identità + accesso sono leggibili, il marchio condensa
-    // accanto alla persona — e si ritira con la revoca
-    const so = seg(p, .56, .64) * (1 - seg(p, .78, .86));
+    const so = seg(p, .56, .64) * (1 - seg(p, .80, .88));
     sig.style.opacity = so;
     sig.style.transform = `translate(-50%,0) scale(${lerp(.92, 1, so)})`;
-    cap.style.opacity = seg(p, .91, .97);
+    if (so > .3) {
+      const lx = mob() ? W * .5 : W * .30, ly = mob() ? H * .56 : H * .70;
+      const g = ctx.createRadialGradient(lx, ly + 20, 0, lx, ly + 20, W * .16);
+      g.addColorStop(0, `rgba(${CP.rgbAccent},${.10 * so})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    cap.style.opacity = seg(p, .92, .97);
   }
   return { resize, update };
 }
@@ -694,6 +811,21 @@ function initEvent(stage, ctx) {
     const care = smooth(seg(p, .38, .56));     // presa in carico
     const drop = smooth(seg(p, .56, .74));     // erogazione
     const dated = smooth(seg(p, .76, .90));    // evento datato
+
+    // energia semantica: ambra mentre il diritto viaggia, poi il campo
+    // si RAFFREDDA verso il ciano clinico — il colore passa il testimone
+    const amber = smooth(seg(p, .10, .55)) * (1 - smooth(seg(p, .82, .97)));
+    const cool = smooth(seg(p, .82, .97));
+    if (amber > 0) {
+      const g = ctx.createRadialGradient(W * .55, H * .5, 0, W * .55, H * .5, W * .5);
+      g.addColorStop(0, `rgba(212,169,79,${.055 * amber})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    if (cool > 0) {
+      const g = ctx.createRadialGradient(W * .5, H * .85, 0, W * .5, H * .85, W * .6);
+      g.addColorStop(0, `rgba(${FC.rgbAccent},${.05 * cool})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
 
     // il diritto: lo stesso anello del confine della scena separazione
     if (seed > 0) {
@@ -866,7 +998,7 @@ function initKnowledge(stage, ctx) {
     const t = reduce ? 0 : time;
     const agg = smoother(seg(p, .58, .72));      // condensazione k≥5
     const camIn = smooth(seg(p, .86, .92));      // percorso CAMIT
-    const esIn = smooth(seg(p, .92, .98));       // superficie EventiScientifici
+    const esIn = smooth(seg(p, .93, .99));       // superficie EventiScientifici
     calm = agg;
     const ind = lerp(1, .55, agg);               // le tracce restano, si lasciano leggere
 
@@ -889,15 +1021,21 @@ function initKnowledge(stage, ctx) {
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
-    // EventiScientifici: la parte alta del campo si apre in superficie
-    // editoriale — chiara, respirabile, con righe come colonne di testo
+    // EventiScientifici: la parte alta del campo SI APRE — più luce,
+    // più aria, meno densità: la conoscenza diventa una superficie
+    // pubblica. È il momento più luminoso del viaggio.
     if (esIn > 0) {
-      const ey0 = mob() ? H * .06 : H * .07, ey1 = mob() ? H * .24 : H * .27;
+      const ey0 = mob() ? H * .06 : H * .07, ey1 = mob() ? H * .24 : H * .30;
       const g = ctx.createLinearGradient(0, ey0, 0, ey1);
-      g.addColorStop(0, `rgba(168,228,255,${.09 * esIn})`);
+      g.addColorStop(0, `rgba(210,244,255,${.22 * esIn})`);
+      g.addColorStop(.6, `rgba(168,228,255,${.11 * esIn})`);
       g.addColorStop(1, "rgba(168,228,255,0)");
       ctx.fillStyle = g; ctx.fillRect(0, ey0, W, ey1 - ey0);
-      ctx.strokeStyle = `rgba(168,228,255,${.45 * esIn})`;
+      // l'apertura respira: un alone chiaro sopra la superficie
+      const hg = ctx.createRadialGradient(W * .5, ey0, 0, W * .5, ey0, W * .6);
+      hg.addColorStop(0, `rgba(225,248,255,${.15 * esIn})`); hg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = hg; ctx.fillRect(0, 0, W, ey1 * 1.4);
+      ctx.strokeStyle = `rgba(190,236,255,${.55 * esIn})`;
       ctx.lineWidth = 1;
       const ew = (x1() - x0()) * smooth(esIn);
       ctx.beginPath(); ctx.moveTo(x0(), ey1); ctx.lineTo(x0() + ew, ey1); ctx.stroke();
@@ -907,7 +1045,7 @@ function initKnowledge(stage, ctx) {
         const a = smooth(seg(esIn, r * .12, r * .12 + .4));
         const ww = (x1() - x0()) * (.18 + rnd(r * 7.7) * .14) * a;
         const xx = x0() + (r % 2 ? (x1() - x0()) * .62 : (x1() - x0()) * .10);
-        ctx.fillStyle = `rgba(168,228,255,${.26 * a})`;
+        ctx.fillStyle = `rgba(200,240,255,${.34 * a})`;
         ctx.fillRect(xx, yy, ww, 1);
       }
     }
@@ -1006,14 +1144,19 @@ function initKnowledge(stage, ctx) {
       ctx.shadowBlur = 0; ctx.lineWidth = 1;
     }
 
-    // il nome dell'ambiente: una luce chiara si raccoglie dove apparirà
+    // il nome dell'ambiente: una luce chiara si raccoglie dove apparirà,
+    // e il resto del campo arretra — il marchio è il messaggio dominante
     const fc = smooth(seg(p, .82, .90));
     if (fc > 0) {
       const lx = W * .5, ly = H * .44;
-      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .22);
-      g.addColorStop(0, `rgba(234,252,255,${.16 * fc})`);
+      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .26);
+      g.addColorStop(0, `rgba(234,252,255,${.22 * fc})`);
       g.addColorStop(1, "rgba(234,252,255,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const v = ctx.createRadialGradient(lx, ly, Math.min(W, H) * .18, lx, ly, Math.max(W, H) * .72);
+      v.addColorStop(0, "rgba(0,0,0,0)");
+      v.addColorStop(1, `rgba(3,10,18,${.30 * fc})`);
+      ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
@@ -1024,12 +1167,12 @@ function initKnowledge(stage, ctx) {
     kpeak.style.opacity = pk;
     kpeak.style.transform = `translate(-50%,-50%) translateY(${lerp(14, 0, smooth(seg(p, .62, .70)))}px)`;
     // le firme: tre autorità diverse — ambiente, percorso, superficie
-    sigFC.style.opacity = fc * lerp(1, .65, esIn);
+    sigFC.style.opacity = fc * lerp(1, .15, esIn);
     sigFC.style.transform = `translate(-50%,-50%) scale(${lerp(.92, 1, fc)})`;
     const cm = seg(p, .88, .93);
     sigCAM.style.opacity = cm * .9;
     sigCAM.style.transform = `translateY(-50%) scale(${lerp(.92, 1, cm)})`;
-    const es = seg(p, .94, .98);
+    const es = seg(p, .945, .985);
     sigES.style.opacity = es;
     sigES.style.transform = `translate(-50%,-50%) scale(${lerp(.92, 1, es)})`;
     cap.style.opacity = seg(p, .96, .99);
@@ -1216,8 +1359,13 @@ function initResearch(stage, ctx) {
     stage.querySelectorAll(".enz .eyebrow, .enz h2").forEach(el => {
       el.style.opacity = ta; el.style.transform = `translateY(${ty}px)`;
     });
-    specs.forEach((el, i) => el.classList.toggle("done", p > .16 + i * .15));
     const so = seg(p, .74, .82);
+    // durante il beat la lista delle fasi arretra: Enzima è il messaggio
+    const beat = smooth(so) * (1 - smooth(seg(p, .86, .92)));
+    specs.forEach((el, i) => {
+      el.classList.toggle("done", p > .16 + i * .15);
+      el.style.opacity = lerp(1, .30, beat);
+    });
     sig.style.opacity = so;
     sig.style.transform = `scale(${lerp(.92, 1, so)})`;
     cap.style.opacity = seg(p, .90, .97);
@@ -1276,7 +1424,7 @@ function initSystem(stage, ctx) {
     const holder = [];
     logos.forEach((e, i) => {
       const img = document.createElement("img");
-      img.className = "lsig" + (i > 0 ? " minor" : "");
+      img.className = "lsig e-" + e.id + (i > 0 ? " minor" : "");
       img.src = e.logo; img.alt = e.name;
       img.dataset.li = li; img.dataset.n = i;
       sigsEl.appendChild(img);
@@ -1399,14 +1547,40 @@ function initSystem(stage, ctx) {
       ctx.beginPath(); ctx.arc(nx, y, 3.2 * pop, 0, Math.PI * 2); ctx.fill();
       // i nomi vivono nell'indice DOM: qui il nodo è un'eco luminosa,
       // non un'etichetta — la scena è riconoscimento, non inventario
+
+      // Prosperya: il suo multicolore vive SOLO intorno alla sua presenza
+      // autonoma — tre archi cromatici locali, non un ambiente arcobaleno
+      if (ext) {
+        const pr = smooth(seg(p, startOf(idx) + .04, startOf(idx) + .16));
+        if (pr > 0) {
+          const cols = ["229,138,58", "79,216,224", "241,200,71"];
+          cols.forEach((col, ci) => {
+            const a0 = ci * 2.1 + t * .0007, a1 = a0 + 1.5;
+            ctx.strokeStyle = `rgba(${col},${.55 * pr})`;
+            ctx.lineWidth = 1.3;
+            ctx.beginPath(); ctx.arc(nx, y, 10 + ci * 3.5, a0, a1); ctx.stroke();
+          });
+        }
+      }
+    }
+
+    // territorio cromatico localizzato: il layer dominante tinge appena
+    // il suo piano — convivenza controllata, non un'unica tinta
+    let focusLi = -1;
+    for (const n of NODES) if (p > startOf(n.idx) + .02) focusLi = Math.max(focusLi, n.li);
+    if (focusLi >= 0) {
+      const fl = ECO.NARRATIVE[focusLi];
+      const ac = fl.entities[0].palette.rgbAccent;
+      const fy = layerY(focusLi) + H * .05;
+      const fg = ctx.createRadialGradient(W * .62, fy, 0, W * .62, fy, W * .42);
+      fg.addColorStop(0, `rgba(${ac},.07)`); fg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = fg; ctx.fillRect(0, 0, W, H);
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
     // DOM: un layer dominante alla volta — gli altri contesto;
     // quando un livello è dominante il suo marchio emerge e torna indietro
-    let focusLi = -1;
-    for (const n of NODES) if (p > startOf(n.idx) + .02) focusLi = Math.max(focusLi, n.li);
     layerBoxes.forEach((b, li) => b.classList.toggle("dim", focusLi >= 0 && li !== focusLi));
     layerSigs.forEach((holder, li) => holder.forEach(img => img.classList.toggle("on", li === focusLi)));
     rows.forEach((r, i) => r.classList.toggle("lit", p > startOf(i) + .04));
@@ -1432,7 +1606,7 @@ function layerIndexWithin(nodes, li, idx) {
 function initReveal(stage, ctx) {
   let W = 0, H = 0, grain = null, streams = [], dust = [];
   const cap = stage.querySelector("[data-cap]");
-  const mask = stage.querySelector("#pbcMask");
+  const logo = stage.querySelector("#pbcLogo");
   const line = stage.querySelector("#revealLine");
   const eyebrow = stage.querySelector("#revealEyebrow");
 
@@ -1508,30 +1682,43 @@ function initReveal(stage, ctx) {
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
     }
 
-    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // la fenditura: una linea di luce verticale al centro (la grammatica del
-    // confine) che si apre — e dentro, il marchio
-    const slit = smooth(seg(p, .50, .60)) * (1 - smooth(seg(p, .78, .86)));
-    const open = smooth(seg(p, .58, .80));
-    if (slit > 0) {
-      ctx.strokeStyle = `rgba(${GOLD},${.55 * slit})`;
-      ctx.lineWidth = 1;
-      ctx.shadowColor = `rgba(${GOLD},.3)`; ctx.shadowBlur = 16;
-      const hh = H * .22 * smooth(seg(p, .50, .60));
-      ctx.beginPath(); ctx.moveTo(cx2, cy2 - hh); ctx.lineTo(cx2, cy2 + hh); ctx.stroke();
+    // l'orizzonte: quando i fili si sono unificati, il campo si calma in
+    // una linea di luce orizzontale — la superficie madre ritrovata
+    const calm = smooth(seg(p, .62, .82));
+    if (calm > 0) {
+      const hy = cy2 + H * .10;
+      const g = ctx.createLinearGradient(W * .1, 0, W * .9, 0);
+      g.addColorStop(0, "rgba(159,216,201,0)");
+      g.addColorStop(.5, `rgba(${MINT},${.38 * calm})`);
+      g.addColorStop(1, "rgba(159,216,201,0)");
+      ctx.strokeStyle = g; ctx.lineWidth = 1;
+      ctx.shadowColor = "rgba(159,216,201,.35)"; ctx.shadowBlur = 10;
+      ctx.beginPath();
+      const ext2 = smooth(calm) * W * .4;
+      ctx.moveTo(cx2 - ext2, hy); ctx.lineTo(cx2 + ext2, hy); ctx.stroke();
       ctx.shadowBlur = 0;
+      // respiro appena accennato sotto l'orizzonte — il campo vive
+      ctx.strokeStyle = `rgba(${MINT},${.07 * calm})`;
+      ctx.beginPath();
+      for (let x = cx2 - ext2; x <= cx2 + ext2; x += 8) {
+        const u = (x - (cx2 - ext2)) / (ext2 * 2 || 1);
+        const yy = hy + Math.sin(u * 5 + t * .0009) * 3;
+        x === cx2 - ext2 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
+      }
+      ctx.stroke();
     }
 
-    // DOM — dichiarazione → silenzio → segno
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM — dichiarazione → silenzio → risoluzione.
+    // Il marchio non viene svelato: il mondo si risolve in esso.
     eyebrow.style.opacity = seg(p, .04, .12) * (1 - seg(p, .40, .48));
     const ln = smooth(seg(p, .14, .26)) * (1 - smooth(seg(p, .42, .52)));
     line.style.opacity = ln;
     line.style.transform = `translateY(${lerp(14, 0, smooth(seg(p, .14, .26))) - smooth(seg(p, .42, .52)) * 12}px)`;
-    // il marchio: rivelato dalla fenditura che si apre, non scalato
-    const half = 50 * (1 - open);
-    mask.style.clipPath = `inset(0 ${half}% 0 ${half}%)`;
-    mask.style.opacity = smooth(seg(p, .56, .64));
+    const res = smooth(seg(p, .56, .74));
+    logo.style.opacity = res;
+    logo.style.transform = `scale(${lerp(.92, 1, res)}) translateY(${lerp(12, 0, res)}px)`;
     cap.style.opacity = seg(p, .84, .92);
   }
   return { resize, update };
@@ -1819,6 +2006,7 @@ function initSep(stage, ctx) {
 /* ---------- engine ---------- */
 
 const INITS = {
+  intro: initIntro,
   s1: initS1, sep: initSep, tempo: initTempo,
   relation: initRelation, event: initEvent, knowledge: initKnowledge,
   research: initResearch, system: initSystem, reveal: initReveal,
@@ -1883,6 +2071,54 @@ if (DBG) {
   document.body.appendChild(dbgEl);
 }
 
+/* ---------- ?debugLayout=1 — bounding box e collisioni, solo sviluppo ----------
+   Disegna i rettangoli degli elementi DOM visibili della scena attiva;
+   le intersezioni tra box con opacità significativa sono evidenziate
+   in rosso. Mai visibile in modalità normale.                        */
+const DBL = new URLSearchParams(location.search).has("debugLayout");
+let dblCtx = null, dblCanvas = null;
+if (DBL) {
+  dblCanvas = document.createElement("canvas");
+  dblCanvas.style.cssText = "position:fixed;inset:0;z-index:9998;pointer-events:none";
+  document.body.appendChild(dblCanvas);
+  dblCtx = dblCanvas.getContext("2d");
+  const fit = () => { dblCanvas.width = innerWidth; dblCanvas.height = innerHeight; };
+  fit(); addEventListener("resize", fit);
+}
+const DBL_SEL = ".manifest .eyebrow,.manifest h2,.manifest .sub," +
+  ".tlog .tl.cur,.bsig,.kpeak,.services,.specs,.cap,.tag,.imark,.iline," +
+  ".pbc-logo,.reveal-line,#revealEyebrow,.sigs .lsig,.intro";
+function debugLayout() {
+  dblCtx.clearRect(0, 0, dblCanvas.width, dblCanvas.height);
+  const boxes = [];
+  for (const c of controllers) {
+    if (c.state !== "active") continue;
+    c.stage.querySelectorAll(DBL_SEL).forEach(el => {
+      const r = el.getBoundingClientRect();
+      const o = parseFloat(getComputedStyle(el).opacity) || 0;
+      if (o < .06 || r.width < 3 || r.height < 3) return;
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      boxes.push({ r, name: (el.id || el.className || el.tagName).toString().split(" ")[0] });
+    });
+  }
+  dblCtx.font = "9px monospace";
+  for (const b of boxes) {
+    dblCtx.strokeStyle = "rgba(80,220,160,.85)"; dblCtx.lineWidth = 1;
+    dblCtx.strokeRect(b.r.x, b.r.y, b.r.width, b.r.height);
+    dblCtx.fillStyle = "rgba(80,220,160,.85)";
+    dblCtx.fillText(b.name, b.r.x, b.r.y - 3);
+  }
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const a = boxes[i].r, b = boxes[j].r;
+    const ix = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+    const iy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    if (ix > 4 && iy > 4) {
+      dblCtx.strokeStyle = "rgba(255,80,80,.95)"; dblCtx.lineWidth = 2;
+      dblCtx.strokeRect(Math.max(a.left, b.left), Math.max(a.top, b.top), ix, iy);
+    }
+  }
+}
+
 /* ---------- ?snap=<sceneId>:<p> — salto deterministico per test/screenshot ---------- */
 const snapM = location.search.match(/snap=([\w-]+):([\d.]+)/);
 function doSnap() {
@@ -1906,8 +2142,14 @@ function loop(time) {
   const gp_ = max > 0 ? clamp(scrollY / max) : 0;
   gp.style.setProperty("--gp", gp_);
   nav.classList.toggle("scrolled", scrollY > 30);
-  // la struttura si rivela dopo la prima scena — non prima della persona
-  nav.classList.toggle("nav-open", scrollY > innerHeight * 1.2);
+  // durante l'intro la nav è quasi assente: il testo PB-CARe non compete
+  // col marchio reale (resta raggiungibile con hover/focus)
+  const introEl = document.getElementById("intro");
+  nav.classList.toggle("nav-ghost",
+    !!introEl && introEl.getBoundingClientRect().bottom > innerHeight * .45);
+  // la struttura si rivela dopo l'intro + la persona — non prima
+  const navAt = (introEl ? introEl.offsetHeight : 0) + innerHeight * 1.2;
+  nav.classList.toggle("nav-open", scrollY > navAt);
 
   const dbg = [];
   for (const c of controllers) {
@@ -1963,6 +2205,7 @@ function loop(time) {
     }
   }
   if (dbgEl) dbgEl.textContent = dbg.join("\n");
+  if (dblCtx) try { debugLayout(); } catch (e) { /* diagnostica, mai fatale */ }
 }
 requestAnimationFrame(loop);
 })();
