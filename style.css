@@ -429,7 +429,7 @@ a.contact:hover{background:#0c1f1c}
   .tlog.caps .tl{font-size:16px}
   .bsig{height:38px}
   #sigCare{left:50%;top:56%;height:60px}
-  #sigENZ{height:46px;top:13vh}
+  #sigENZ{height:42px;top:auto;bottom:16vh;right:24px}
   #knowledge .bsig.hero{height:66px;top:30%}
   #knowledge .bsig.surface{height:52px;top:14%}
   #knowledge .bsig.path{height:30px;right:24px;top:86%}

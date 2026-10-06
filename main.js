@@ -1167,7 +1167,7 @@ function initKnowledge(stage, ctx) {
     kpeak.style.opacity = pk;
     kpeak.style.transform = `translate(-50%,-50%) translateY(${lerp(14, 0, smooth(seg(p, .62, .70)))}px)`;
     // le firme: tre autorità diverse — ambiente, percorso, superficie
-    sigFC.style.opacity = fc * lerp(1, .15, esIn);
+    sigFC.style.opacity = fc * lerp(1, .07, esIn);
     sigFC.style.transform = `translate(-50%,-50%) scale(${lerp(.92, 1, fc)})`;
     const cm = seg(p, .88, .93);
     sigCAM.style.opacity = cm * .9;
