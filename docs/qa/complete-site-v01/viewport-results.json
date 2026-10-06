@@ -1,0 +1,524 @@
+[
+  {
+    "viewport": [
+      1920,
+      1080
+    ],
+    "height": 18841,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 1080
+      },
+      {
+        "id": "pbcare",
+        "height": 776
+      },
+      {
+        "id": "per-chi",
+        "height": 1158
+      },
+      {
+        "id": "sep",
+        "height": 5184
+      },
+      {
+        "id": "tempo",
+        "height": 865
+      },
+      {
+        "id": "ecosistema",
+        "height": 534
+      },
+      {
+        "id": "careprogram",
+        "height": 690
+      },
+      {
+        "id": "farmacomm",
+        "height": 2052
+      },
+      {
+        "id": "camit",
+        "height": 690
+      },
+      {
+        "id": "eventi",
+        "height": 650
+      },
+      {
+        "id": "research",
+        "height": 1944
+      },
+      {
+        "id": "tutela",
+        "height": 649
+      },
+      {
+        "id": "prosperya",
+        "height": 690
+      },
+      {
+        "id": "principi",
+        "height": 1017
+      },
+      {
+        "id": "end",
+        "height": 758
+      }
+    ],
+    "hero": {
+      "ctaBottom": 972,
+      "height": 1080
+    }
+  },
+  {
+    "viewport": [
+      1536,
+      864
+    ],
+    "height": 16690,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 864
+      },
+      {
+        "id": "pbcare",
+        "height": 746
+      },
+      {
+        "id": "per-chi",
+        "height": 1144
+      },
+      {
+        "id": "sep",
+        "height": 4147
+      },
+      {
+        "id": "tempo",
+        "height": 911
+      },
+      {
+        "id": "ecosistema",
+        "height": 519
+      },
+      {
+        "id": "careprogram",
+        "height": 690
+      },
+      {
+        "id": "farmacomm",
+        "height": 1642
+      },
+      {
+        "id": "camit",
+        "height": 690
+      },
+      {
+        "id": "eventi",
+        "height": 650
+      },
+      {
+        "id": "research",
+        "height": 1555
+      },
+      {
+        "id": "tutela",
+        "height": 620
+      },
+      {
+        "id": "prosperya",
+        "height": 690
+      },
+      {
+        "id": "principi",
+        "height": 988
+      },
+      {
+        "id": "end",
+        "height": 729
+      }
+    ],
+    "hero": {
+      "ctaBottom": 756,
+      "height": 864
+    }
+  },
+  {
+    "viewport": [
+      1440,
+      900
+    ],
+    "height": 16898,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 900
+      },
+      {
+        "id": "pbcare",
+        "height": 741
+      },
+      {
+        "id": "per-chi",
+        "height": 1127
+      },
+      {
+        "id": "sep",
+        "height": 4320
+      },
+      {
+        "id": "tempo",
+        "height": 883
+      },
+      {
+        "id": "ecosistema",
+        "height": 503
+      },
+      {
+        "id": "careprogram",
+        "height": 690
+      },
+      {
+        "id": "farmacomm",
+        "height": 1710
+      },
+      {
+        "id": "camit",
+        "height": 690
+      },
+      {
+        "id": "eventi",
+        "height": 650
+      },
+      {
+        "id": "research",
+        "height": 1620
+      },
+      {
+        "id": "tutela",
+        "height": 601
+      },
+      {
+        "id": "prosperya",
+        "height": 690
+      },
+      {
+        "id": "principi",
+        "height": 965
+      },
+      {
+        "id": "end",
+        "height": 703
+      }
+    ],
+    "hero": {
+      "ctaBottom": 792,
+      "height": 900
+    }
+  },
+  {
+    "viewport": [
+      1366,
+      768
+    ],
+    "height": 15475,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 768
+      },
+      {
+        "id": "pbcare",
+        "height": 711
+      },
+      {
+        "id": "per-chi",
+        "height": 1101
+      },
+      {
+        "id": "sep",
+        "height": 3686
+      },
+      {
+        "id": "tempo",
+        "height": 861
+      },
+      {
+        "id": "ecosistema",
+        "height": 489
+      },
+      {
+        "id": "careprogram",
+        "height": 690
+      },
+      {
+        "id": "farmacomm",
+        "height": 1459
+      },
+      {
+        "id": "camit",
+        "height": 690
+      },
+      {
+        "id": "eventi",
+        "height": 650
+      },
+      {
+        "id": "research",
+        "height": 1382
+      },
+      {
+        "id": "tutela",
+        "height": 574
+      },
+      {
+        "id": "prosperya",
+        "height": 690
+      },
+      {
+        "id": "principi",
+        "height": 939
+      },
+      {
+        "id": "end",
+        "height": 679
+      }
+    ],
+    "hero": {
+      "ctaBottom": 664,
+      "height": 768
+    }
+  },
+  {
+    "viewport": [
+      430,
+      932
+    ],
+    "height": 15983,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 932
+      },
+      {
+        "id": "pbcare",
+        "height": 707
+      },
+      {
+        "id": "per-chi",
+        "height": 975
+      },
+      {
+        "id": "sep",
+        "height": 3728
+      },
+      {
+        "id": "tempo",
+        "height": 802
+      },
+      {
+        "id": "ecosistema",
+        "height": 414
+      },
+      {
+        "id": "careprogram",
+        "height": 1017
+      },
+      {
+        "id": "farmacomm",
+        "height": 1491
+      },
+      {
+        "id": "camit",
+        "height": 741
+      },
+      {
+        "id": "eventi",
+        "height": 703
+      },
+      {
+        "id": "research",
+        "height": 1491
+      },
+      {
+        "id": "tutela",
+        "height": 584
+      },
+      {
+        "id": "prosperya",
+        "height": 785
+      },
+      {
+        "id": "principi",
+        "height": 895
+      },
+      {
+        "id": "end",
+        "height": 570
+      }
+    ],
+    "hero": {
+      "ctaBottom": 778,
+      "height": 932
+    }
+  },
+  {
+    "viewport": [
+      390,
+      844
+    ],
+    "height": 15628,
+    "scrollY": 0,
+    "overflow": false,
+    "h1": 1,
+    "failedImages": [],
+    "lazyImagesPending": [
+      "assets/brand/careprogram/logo.png",
+      "assets/brand/farmacomm/logo.png",
+      "assets/brand/camit/logo.png",
+      "assets/brand/eventi-scientifici/logo.png",
+      "assets/brand/enzima/logo.png",
+      "assets/brand/prosperya/logo.png"
+    ],
+    "missingAnchors": [],
+    "motion": "full",
+    "sections": [
+      {
+        "id": "intro",
+        "height": 844
+      },
+      {
+        "id": "pbcare",
+        "height": 791
+      },
+      {
+        "id": "per-chi",
+        "height": 975
+      },
+      {
+        "id": "sep",
+        "height": 3376
+      },
+      {
+        "id": "tempo",
+        "height": 893
+      },
+      {
+        "id": "ecosistema",
+        "height": 436
+      },
+      {
+        "id": "careprogram",
+        "height": 1050
+      },
+      {
+        "id": "farmacomm",
+        "height": 1350
+      },
+      {
+        "id": "camit",
+        "height": 761
+      },
+      {
+        "id": "eventi",
+        "height": 703
+      },
+      {
+        "id": "research",
+        "height": 1350
+      },
+      {
+        "id": "tutela",
+        "height": 584
+      },
+      {
+        "id": "prosperya",
+        "height": 804
+      },
+      {
+        "id": "principi",
+        "height": 995
+      },
+      {
+        "id": "end",
+        "height": 566
+      }
+    ],
+    "hero": {
+      "ctaBottom": 690,
+      "height": 844
+    }
+  }
+]

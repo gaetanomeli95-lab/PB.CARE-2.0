@@ -1,3 +1,5 @@
+> Complete-site v01 update: see [COMPLETE_SITE_V01.md](COMPLETE_SITE_V01.md). The product reframe supersedes the long-film scene durations. Articolo 32 is a legal protection service, not the technical origin of CareProgram/FarmaCOmm tokens; Prosperya is autonomous.
+
 # PB-CARe 2.0 — SOURCE OF TRUTH
 
 Questo documento è la fonte di verità progettuale del nuovo ecosistema digitale.
