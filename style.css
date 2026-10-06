@@ -61,6 +61,8 @@ a{color:inherit}
 /* ---------- scene scaffolding ---------- */
 
 .scene{position:relative}
+/* lifecycle: la scena che ha ceduto la viewport non intercetta eventi */
+.scene.is-after .stage{pointer-events:none}
 .stage{
   position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate;
   background:
@@ -174,7 +176,10 @@ a{color:inherit}
 .tlog .tl.on{opacity:1;transform:none}
 /* atto 04 — il sistema a profondità: layer, non satelliti */
 .layers{display:grid}
-.layer{border-top:1px solid rgba(159,216,201,.14)}
+.layer{border-top:1px solid rgba(159,216,201,.14);transition:opacity .5s}
+/* focus progressivo: il layer non attivo resta contesto leggibile,
+   non svanisce — il dominante si distingue perché gli altri calano */
+.layer.dim{opacity:.55}
 .lname{display:block;padding:14px 6px 6px;font:9px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(138,164,157,.5)}
 .sat{
   display:grid;grid-template-columns:16px 1fr;grid-template-rows:auto auto;
@@ -281,6 +286,18 @@ a.contact:hover{background:#0c1f1c}
   #s4 .enz{top:13vh;width:86vw}
   .cap{bottom:4vh}
   .contacts{grid-template-columns:1fr}
+}
+
+/* laptop bassi (1366×768): il manifest di #s2 deve entrare tutto
+   nella stage — compattazione verticale, non riduzione dei contenuti */
+@media (min-width:761px) and (max-height:830px){
+  #s2 .manifest{top:12vh}
+  #s2 h2{font-size:clamp(30px,4vw,44px);margin-bottom:16px}
+  #s2 .eyebrow{margin-bottom:10px}
+  .lname{padding:8px 6px 4px}
+  .sat{padding:6px 6px}
+  .sat .sname{font-size:15px}
+  .sat .smeta{font-size:9px;line-height:1.4}
 }
 
 /* separazione — il piano identità scende dall'alto */
