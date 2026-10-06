@@ -346,11 +346,11 @@ function initTempo(stage, ctx) {
     }
 
     // uscita: la traccia piega verso il basso e a sinistra —
-    // diventerà la spina verticale del sistema nella scena seguente
+    // nella scena seguente diventa la presenza della persona
     const drop = smooth(seg(p, .88, .99));
     if (drop > 0) {
       const hx = ux(1), hy = traceY(1);
-      const ex = lerp(hx, W * .80, smooth(drop)); // → spineX della scena dopo
+      const ex = lerp(hx, mob() ? W * .5 : W * .30, smooth(drop)); // → persona in #relation
       ctx.strokeStyle = `rgba(${GOLD},${.6 * drop})`;
       ctx.lineWidth = 1.4;
       ctx.shadowColor = `rgba(${GOLD},.3)`; ctx.shadowBlur = 8;
@@ -370,21 +370,737 @@ function initTempo(stage, ctx) {
   return { resize, update };
 }
 
-/* ---------- atto 04 · il sistema — profondità, non satelliti ----------
+/* ---------- atto 05 · la relazione — la persona controlla la connessione ----------
 
-   Le entità non orbitano attorno a un hub: occupano livelli diversi del
-   percorso. La traccia della persona (dalla scena tempo) attraversa i
-   livelli come una spina verticale; ogni entità si aggancia al suo layer.
-   Prosperya (esterna) si collega tratteggiato — non appartiene al sistema. */
+   Due presenze, non icone: la persona (calda, con il suo campo di consenso)
+   e il professionista (freddo, a distanza). La richiesta si ferma al confine;
+   il consenso apre la linea DALLA persona verso il professionista; la revoca
+   ritira la connessione — il professionista resta, perde solo l'accesso.    */
 
-function initS2(stage, ctx) {
+function initRelation(stage, ctx) {
+  let W = 0, H = 0, grain = null;
+  const cap = stage.querySelector("[data-cap]");
+  const sig = stage.querySelector("#sigCare");
+  const ECO = window.PBCARE_ECOSYSTEM;
+  const CP = ECO ? ECO.byId.careprogram.palette
+                 : { rgbAccent: "90,191,120", rgbSecondary: "229,138,58", rgbAtmosphere: "10,36,24" };
+
+  const LOG = [
+    { t: "proposta — la richiesta attende al confine",    at: .22 },
+    { t: "consenso — la persona apre la connessione",     at: .46 },
+    { t: "accesso — ciò che serve, per ciò che serve",    at: .62 },
+    { t: "revoca — la connessione si ritira",             at: .82 },
+  ];
+  const rlog = stage.querySelector("#rlog");
+  const rows = LOG.map(item => {
+    const d = document.createElement("div");
+    d.className = "tl"; d.textContent = item.t;
+    rlog.appendChild(d);
+    return d;
+  });
+
+  const mob = () => W <= 800;
+  const px = () => mob() ? W * .50 : W * .30, py = () => mob() ? H * .36 : H * .55;
+  const qx = () => mob() ? W * .50 : W * .72, qy = () => mob() ? H * .80 : H * .48;
+  const fieldR = () => Math.min(W, H) * (mob() ? .13 : .16);
+
+  // la connessione: curva appena arcuata dal bordo del campo al professionista
+  function connPoint(t) {
+    const ax = px(), ay = py(), bx = qx(), by = qy();
+    const dx = bx - ax, dy = by - ay;
+    const len = Math.hypot(dx, dy) || 1;
+    const ex = ax + dx / len * fieldR(), ey = ay + dy / len * fieldR();
+    const mx = (ex + bx) / 2 - dy / len * len * .10;
+    const my = (ey + by) / 2 + dx / len * len * .10;
+    const m = 1 - t;
+    return { x: m * m * ex + 2 * m * t * mx + t * t * bx,
+             y: m * m * ey + 2 * m * t * my + t * t * by };
+  }
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+    const ax = px(), ay = py(), bx = qx(), by = qy(), R = fieldR();
+
+    const in_ = smooth(seg(p, .04, .16));
+    const req = smooth(seg(p, .18, .34));      // richiesta al confine
+    const con = smooth(seg(p, .38, .52));      // consenso → connessione
+    const acc = smooth(seg(p, .56, .68));      // accesso appropriato
+    const rev = smooth(seg(p, .76, .88));      // revoca → ritiro
+    const live = con * (1 - rev);              // connessione attiva
+
+    // contaminazione CareProgram durante l'accesso: verde + micro-arancio
+    const wash = acc * (1 - rev * .5);
+    if (wash > 0) {
+      let g = ctx.createRadialGradient(ax, ay, 0, ax, ay, R * 3.4);
+      g.addColorStop(0, `rgba(${CP.rgbAccent},${.06 * wash})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      g = ctx.createRadialGradient(ax, ay - R, 0, ax, ay - R, R * 1.8);
+      g.addColorStop(0, `rgba(${CP.rgbSecondary},${.035 * wash})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+
+    // campo di consenso della persona — confine tratteggiato che respira
+    if (in_ > 0) {
+      const breathe = 1 + .04 * Math.sin(t * .0012);
+      ctx.setLineDash([2, 6]);
+      ctx.lineDashOffset = -t * .008;
+      ctx.strokeStyle = `rgba(${GOLD},${.30 * in_})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(ax, ay, R * breathe, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]); ctx.lineDashOffset = 0;
+    }
+
+    // la persona — presenza calda
+    if (in_ > 0) {
+      const rg = ctx.createRadialGradient(ax, ay, 0, ax, ay, R * .55);
+      rg.addColorStop(0, `rgba(${GOLD},${.35 * in_})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ax, ay, R * .55, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff9dc";
+      ctx.beginPath(); ctx.arc(ax, ay, 3.4, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // il professionista — presenza fredda, si spegne (non muore) alla revoca
+    const qDim = lerp(1, .35, rev);
+    if (in_ > 0) {
+      const rg = ctx.createRadialGradient(bx, by, 0, bx, by, R * .45);
+      rg.addColorStop(0, `rgba(${MINT},${.30 * in_ * qDim})`); rg.addColorStop(1, `rgba(${MINT},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bx, by, R * .45, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(214,244,236,${.95 * in_ * qDim})`;
+      ctx.beginPath(); ctx.arc(bx, by, 3, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // la richiesta: si ferma al confine del campo — attende, non entra
+    if (req > 0 && con < 1) {
+      const a = lerp(0, 1, req);
+      const tip = connPoint(0); // bordo del campo
+      const from = { x: bx, y: by };
+      const ix = lerp(from.x, tip.x, a), iy = lerp(from.y, tip.y, a);
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = `rgba(${MINT},${.4 * req * (1 - con)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(ix, iy); ctx.stroke();
+      ctx.setLineDash([]);
+      // "knock": piccolo impulso dove la richiesta tocca il campo
+      if (req > .95) {
+        const k = (t * .001) % 1;
+        ctx.strokeStyle = `rgba(${MINT},${.5 * (1 - k) * (1 - con)})`;
+        ctx.beginPath(); ctx.arc(tip.x, tip.y, 4 + k * 16, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // il consenso: impulso che nasce DALLA persona e disegna la connessione
+    if (live > 0) {
+      const draw = rev > 0 ? 1 - smooth(rev) : smooth(seg(con, .3, 1));
+      // scia viva
+      ctx.lineCap = "round";
+      for (let i = 26; i >= 0; i--) {
+        const u0 = Math.max(0, draw - i * .012), u1 = Math.max(0, u0 - .012);
+        if (u0 <= 0) continue;
+        const a0 = connPoint(u0), a1 = connPoint(u1);
+        const f = 1 - i / 27;
+        ctx.strokeStyle = `rgba(${GOLD},${.7 * f * live})`;
+        ctx.lineWidth = .5 + 2.2 * f;
+        ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+      }
+      // impulsi che viaggiano in entrambe le direzioni — la relazione è viva
+      if (draw >= .98 && !reduce) {
+        for (const u of [(t * .00018) % 1, 1 - (t * .00018) % 1]) {
+          const q = connPoint(u);
+          ctx.fillStyle = `rgba(255,249,220,${.8 * live})`;
+          ctx.beginPath(); ctx.arc(q.x, q.y, 2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      ctx.lineCap = "butt";
+    }
+
+    // l'accesso: presso il professionista si accendono frammenti appropriati
+    if (acc > 0) {
+      const fade = 1 - smooth(rev);
+      for (let i = 0; i < 4; i++) {
+        const yy = by + (i - 1.5) * 16;
+        const ww = (14 + rnd(i * 3.3) * 26) * acc;
+        ctx.fillStyle = `rgba(${MINT},${.5 * acc * fade})`;
+        ctx.fillRect(bx - ww / 2, yy, ww, 1.6);
+      }
+    }
+
+    // la revoca: secondo impulso dalla persona — la connessione rientra
+    if (rev > 0) {
+      const k = smooth(rev);
+      ctx.strokeStyle = `rgba(${GOLD},${.35 * (1 - k)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(ax, ay, R * (1 + k * .5), 0, Math.PI * 2); ctx.stroke();
+      // il campo torna chiuso: anello pieno che si riprende il suo respiro
+      ctx.strokeStyle = `rgba(${GOLD},${.25 * k})`;
+      ctx.beginPath(); ctx.arc(ax, ay, R * .8, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM
+    LOG.forEach((item, i) => rows[i].classList.toggle("on", p > item.at));
+    // la firma: quando identità + accesso sono leggibili, il marchio condensa
+    const so = seg(p, .52, .60) * (1 - seg(p, .80, .88));
+    sig.style.opacity = so;
+    sig.style.transform = `scale(${lerp(.92, 1, so)})`;
+    cap.style.opacity = seg(p, .90, .97);
+  }
+  return { resize, update };
+}
+
+/* ---------- atto 06 · il diritto diventa evento ----------
+
+   Continuità col token della scena separazione: il DIRITTO (anello oro)
+   si assegna, viene preso in carico, viene erogato — e quando accade
+   diventa un EVENTO DATATO sull'asse del tempo. Articolo 32 resta come
+   fonte della tutela, non più come macro-scena.                         */
+
+function initEvent(stage, ctx) {
+  let W = 0, H = 0, grain = null, ticks = [];
+  const cap = stage.querySelector("[data-cap]");
+  const services = [...stage.querySelectorAll("#eservices li")];
+  const ECO = window.PBCARE_ECOSYSTEM;
+  const FC = ECO ? ECO.byId.farmacomm.palette : { rgbAccent: "79,216,224" };
+
+  const LOG = [
+    { t: "diritto — riconosciuto, ancora promessa",  at: .12 },
+    { t: "assegnazione — il diritto è affidato",     at: .34 },
+    { t: "presa in carico — entra nel percorso",     at: .52 },
+    { t: "erogazione — accade davvero",              at: .72 },
+    { t: "evento datato — osservabile nel tempo",    at: .86 },
+  ];
+  const elog = stage.querySelector("#elog");
+  const rows = LOG.map(item => {
+    const d = document.createElement("div");
+    d.className = "tl"; d.textContent = item.t;
+    elog.appendChild(d);
+    return d;
+  });
+
+  const mob = () => W <= 800;
+  const ox = () => mob() ? W * .50 : W * .30, oy = () => mob() ? H * .34 : H * .30;
+  const cx2 = () => mob() ? W * .50 : W * .60, cy2 = () => mob() ? H * .52 : H * .40;
+  const axisY = () => mob() ? H * .86 : H * .80;
+  const ax0 = () => W * .14, ax1 = () => W * .86;
+  const landX = () => ax0() + (ax1() - ax0()) * .62;
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+    ticks = [];
+    for (let i = 0; i < 42; i++) {
+      ticks.push({ u: .45 + rnd(i * 7.1) * .34, h: (.006 + rnd(i * 4.7) * .018) * H });
+    }
+  }
+
+  // traiettoria del token: origine → presa in carico → asse del tempo
+  function tokenAt(u) {
+    // u 0..1 = viaggio completo (due gambe)
+    const a = { x: ox(), y: oy() }, b = { x: cx2(), y: cy2() }, c = { x: landX(), y: axisY() };
+    if (u < .5) {
+      const q = u * 2, m = 1 - q;
+      const mx = (a.x + b.x) / 2 - (b.y - a.y) * .18, my = (a.y + b.y) / 2 + (b.x - a.x) * .18;
+      return { x: m * m * a.x + 2 * m * q * mx + q * q * b.x,
+               y: m * m * a.y + 2 * m * q * my + q * q * b.y };
+    }
+    const q = (u - .5) * 2, m = 1 - q;
+    const mx = (b.x + c.x) / 2 + (c.y - b.y) * .14, my = (b.y + c.y) / 2 - (c.x - b.x) * .14;
+    return { x: m * m * b.x + 2 * m * q * mx + q * q * c.x,
+             y: m * m * b.y + 2 * m * q * my + q * q * c.y };
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+
+    const seed = smooth(seg(p, .04, .14));     // l'anello del diritto
+    const ride = smooth(seg(p, .14, .38));     // assegnazione
+    const care = smooth(seg(p, .38, .56));     // presa in carico
+    const drop = smooth(seg(p, .56, .74));     // erogazione
+    const dated = smooth(seg(p, .76, .90));    // evento datato
+
+    // il diritto: lo stesso anello del confine della scena separazione
+    if (seed > 0) {
+      const sx0 = ox(), sy0 = oy();
+      ctx.globalAlpha = seed;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(${GOLD},.6)`;
+      ctx.shadowColor = `rgba(${GOLD},.25)`; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(sx0, sy0, 30, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = `rgba(${GOLD},.28)`;
+      ctx.beginPath(); ctx.arc(sx0, sy0, 19, 0, Math.PI * 2); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    }
+
+    // l'asse del tempo appare quando serve — stessa grammatica di #tempo
+    const axIn = smooth(seg(p, .50, .64));
+    if (axIn > 0) {
+      ctx.strokeStyle = `rgba(${FC.rgbAccent},${.26 * axIn})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(ax0(), axisY()); ctx.lineTo(ax1(), axisY()); ctx.stroke();
+      for (const tk of ticks) {
+        const x = ax0() + (ax1() - ax0()) * tk.u;
+        ctx.strokeStyle = `rgba(${FC.rgbAccent},${.28 * axIn})`;
+        ctx.beginPath(); ctx.moveTo(x, axisY() - tk.h); ctx.lineTo(x, axisY() + tk.h); ctx.stroke();
+      }
+    }
+
+    // la presa in carico: un punto clinico che accoglie il token
+    if (care > 0) {
+      const rg = ctx.createRadialGradient(cx2(), cy2(), 0, cx2(), cy2(), 30);
+      rg.addColorStop(0, `rgba(${FC.rgbAccent},${.5 * care})`); rg.addColorStop(1, `rgba(${FC.rgbAccent},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx2(), cy2(), 30, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(234,252,255,${.9 * care})`;
+      ctx.beginPath(); ctx.arc(cx2(), cy2(), 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // il token in viaggio — promessa finché non atterra
+    const journey = clamp((ride * .5 + drop * .5) / .999);
+    const u = ride < 1 ? ride * .5 : .5 + drop * .5;
+    if ((ride > 0 && ride < 1) || (drop > 0 && drop < 1)) {
+      const pt = tokenAt(u);
+      ctx.lineCap = "round";
+      for (let i = 22; i >= 0; i--) {
+        const pu = Math.max(0, u - i * .008), pu2 = Math.max(0, pu - .008);
+        const a0 = tokenAt(pu), a1 = tokenAt(pu2);
+        const f = 1 - i / 23;
+        ctx.strokeStyle = `rgba(244,203,106,${.75 * f})`;
+        ctx.lineWidth = .5 + 3 * f;
+        ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+      }
+      ctx.lineCap = "butt";
+      const rg = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 34);
+      rg.addColorStop(0, "rgba(255,238,187,.85)"); rg.addColorStop(1, "rgba(242,205,121,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(pt.x, pt.y, 34, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff3cf";
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.8, 0, Math.PI * 2); ctx.fill();
+      // durante la presa in carico il token respira attorno al punto clinico
+      if (care > .6 && drop < .05) {
+        const a2 = t * .003;
+        ctx.strokeStyle = `rgba(${FC.rgbAccent},.4)`;
+        ctx.beginPath(); ctx.arc(cx2(), cy2(), 12 + 3 * Math.sin(a2), 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // l'evento datato: il token si fissa sull'asse — da promessa a fatto
+    if (dated > 0) {
+      const ex = landX(), ey = axisY();
+      ctx.strokeStyle = `rgba(${GOLD},${.8 * dated})`;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(ex, ey - H * .10); ctx.lineTo(ex, ey + H * .03); ctx.stroke();
+      const rg = ctx.createRadialGradient(ex, ey - H * .10, 0, ex, ey - H * .10, 26 * dated);
+      rg.addColorStop(0, `rgba(${GOLD},${.7 * dated})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ex, ey - H * .10, 26 * dated, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff9dc";
+      ctx.beginPath(); ctx.arc(ex, ey - H * .10, 3, 0, Math.PI * 2); ctx.fill();
+      if (W >= 760) {
+        ctx.font = "10px 'DM Mono', monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = `rgba(241,200,71,${.85 * dated})`;
+        ctx.fillText("giorno 147 — erogata", ex, ey + H * .07);
+      }
+    }
+
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM
+    LOG.forEach((item, i) => rows[i].classList.toggle("on", p > item.at));
+    services.forEach((el, i) => {
+      const v = smooth(seg(p, .44 + i * .025, .52 + i * .025));
+      el.style.opacity = v;
+      el.style.transform = `translateY(${10 * (1 - v)}px)`;
+    });
+    cap.style.opacity = seg(p, .92, .97);
+  }
+  return { resize, update };
+}
+
+/* ---------- atto 07 · dall'individuo alla conoscenza ----------
+
+   UNA traccia → altre entrano e RESTANO SEPARATE → sotto soglia il campo
+   non produce nulla → alla quinta (k≥5) condensa una banda aggregata.
+   Da qui emergono: l'ambiente FarmaCOmm, un percorso clinico (CAMIT),
+   la superficie che condivide (Eventi Scientifici).                   */
+
+function initKnowledge(stage, ctx) {
+  let W = 0, H = 0, grain = null;
+  const cap = stage.querySelector("[data-cap]");
+  const sigFC = stage.querySelector("#sigFC");
+  const sigES = stage.querySelector("#sigES");
+  const sigCAM = stage.querySelector("#sigCAM");
+  const ECO = window.PBCARE_ECOSYSTEM;
+  const FC = ECO ? ECO.byId.farmacomm.palette
+                 : { rgbAccent: "79,216,224", rgbAtmosphere: "7,27,43" };
+  const CAM = ECO ? ECO.byId.camit.palette : { rgbAccent: "95,212,180" };
+
+  const LOG = [
+    { t: "una traccia — il percorso di una persona",        at: .10 },
+    { t: "due, tre, quattro — entrano e restano separate",  at: .36 },
+    { t: "k ≥ 5 — il campo produce un pattern condiviso",   at: .64 },
+    { t: "FarmaCOmm — l'ambiente della conoscenza",         at: .76 },
+    { t: "un percorso clinico — CAMIT dentro l'ambiente",   at: .84 },
+    { t: "Eventi Scientifici — ciò che si condivide",       at: .92 },
+  ];
+  const klog = stage.querySelector("#klog");
+  const rows = LOG.map(item => {
+    const d = document.createElement("div");
+    d.className = "tl"; d.textContent = item.t;
+    klog.appendChild(d);
+    return d;
+  });
+
+  const mob = () => W <= 800;
+  const x0 = () => W * .06, x1 = () => W * .94;
+  // 5 tracce organiche: stesse regole di #tempo, semi diversi
+  const TRACES = [
+    { base: .30, amp: .055, f: 7.1, ph: 1.2, at: .04 },
+    { base: .40, amp: .070, f: 9.3, ph: 4.4, at: .22 },
+    { base: .50, amp: .048, f: 6.2, ph: 2.8, at: .34 },
+    { base: .60, amp: .062, f: 10.4, ph: 5.7, at: .46 },
+    { base: .70, amp: .052, f: 8.1, ph: 3.3, at: .56 }, // la quinta: soglia
+  ];
+  const ty = (tr, u, t) => {
+    const b = mob() ? H * (.44 + TRACES.indexOf(tr) * .09) : H * tr.base;
+    return b - H * tr.amp * (.5 + .5 * Math.sin(u * tr.f + tr.ph))
+             - H * .012 * Math.sin(u * tr.f * 3.1 + tr.ph + t * .0003);
+  };
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+    const agg = smoother(seg(p, .60, .74));      // condensazione k≥5
+    const fcIn = smooth(seg(p, .68, .80));       // ambiente FarmaCOmm
+    const camIn = smooth(seg(p, .78, .88));      // percorso CAMIT
+    const esIn = smooth(seg(p, .86, .96));       // superficie EventiScientifici
+    const ind = lerp(1, .42, agg);               // le tracce restano, si raccolgono
+
+    // l'atmosfera si raffredda verso FarmaCOmm man mano che il pattern esiste
+    if (fcIn > 0) {
+      const g = ctx.createRadialGradient(W * .5, H * .5, 0, W * .5, H * .5, Math.max(W, H) * .75);
+      g.addColorStop(0, `rgba(${FC.rgbAtmosphere},${.5 * fcIn})`);
+      g.addColorStop(1, `rgba(${FC.rgbAtmosphere},0)`);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+
+    // le tracce entrano una alla volta — la quinta scatta la soglia
+    TRACES.forEach((tr, i) => {
+      const enter = smooth(seg(p, tr.at, tr.at + .10));
+      if (enter <= 0) return;
+      const isCam = i === 4; // l'ultima traccia diventa il percorso CAMIT
+      const col = isCam ? mixRGB(FC.rgbAccent, CAM.rgbAccent, camIn) : FC.rgbAccent;
+      const slide = (1 - enter) * W * .18;
+      ctx.strokeStyle = `rgba(${col},${.62 * ind * enter})`;
+      ctx.lineWidth = isCam ? 1.8 : 1.3;
+      ctx.beginPath();
+      for (let k = 0; k <= 80; k++) {
+        const u = k / 80;
+        const x = lerp(x0(), x1(), u) - slide;
+        let y = ty(tr, u, t);
+        // CAMIT: la traccia si struttura in percorso — solo nella metà
+        // destra, dove incontra l'ambiente (a sinistra resta organica)
+        if (isCam && camIn > 0) {
+          const su = smooth(seg(u, .42, .55));
+          const seg3 = Math.floor(clamp((u - .42) / .58) * 3.999);
+          const wy = H * (.55 + seg3 * .055);
+          y = lerp(y, wy, camIn * su);
+        }
+        k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      // testa che entra
+      if (enter < 1) {
+        const u = enter;
+        const hx = lerp(x0(), x1(), u) - slide, hy = ty(tr, u, t);
+        ctx.fillStyle = `rgba(234,252,255,${.9 * ind})`;
+        ctx.beginPath(); ctx.arc(hx, hy, 2.2, 0, Math.PI * 2); ctx.fill();
+      }
+      // waypoint del percorso CAMIT
+      if (isCam && camIn > 0) {
+        for (let s = 0; s < 4; s++) {
+          const u = .42 + (s / 3.999 + .001) * .58, x = lerp(x0(), x1(), u);
+          const wy = H * (.55 + s * .055);
+          ctx.fillStyle = `rgba(${CAM.rgbAccent},${.8 * camIn})`;
+          ctx.beginPath(); ctx.arc(x, wy, 2.6 * camIn, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    });
+
+    // contatore discreto: quante tracce sono entrate
+    if (W >= 760 && p > .04 && p < .66) {
+      let n = 0;
+      TRACES.forEach(tr => { if (p > tr.at + .04) n++; });
+      ctx.font = "10px 'DM Mono', monospace";
+      ctx.textAlign = "left";
+      ctx.fillStyle = `rgba(${FC.rgbAccent},.55)`;
+      ctx.fillText(`tracce ${n}/5 ${n < 5 ? "— sotto soglia, nessun pattern" : "— k ≥ 5"}`, x0(), H * .88);
+    }
+
+    // la banda aggregata: nasce solo a k≥5 — inviluppo condiviso, mai fusione
+    if (agg > 0) {
+      const ys = [];
+      for (let k = 0; k <= 60; k++) {
+        const u = k / 60;
+        let m = 0;
+        for (const tr of TRACES) m += ty(tr, u, t);
+        ys.push(m / TRACES.length);
+      }
+      // inviluppo luminoso
+      ctx.beginPath();
+      ys.forEach((y, k) => { const x = lerp(x0(), x1(), k / 60); k === 0 ? ctx.moveTo(x, y - H * .05) : ctx.lineTo(x, y - H * .05); });
+      for (let k = 60; k >= 0; k--) ctx.lineTo(lerp(x0(), x1(), k / 60), ys[k] + H * .05);
+      ctx.closePath();
+      const g = ctx.createLinearGradient(0, H * .3, 0, H * .8);
+      g.addColorStop(0, `rgba(${FC.rgbAccent},${.10 * agg})`);
+      g.addColorStop(1, `rgba(${FC.rgbAccent},${.04 * agg})`);
+      ctx.fillStyle = g; ctx.fill();
+      // la linea del pattern — ciò che le tracce hanno in comune
+      ctx.strokeStyle = `rgba(${FC.rgbAccent},${.85 * agg})`;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = `rgba(${FC.rgbAccent},.35)`; ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ys.forEach((y, k) => { const x = lerp(x0(), x1(), k / 60); k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
+      ctx.stroke();
+      ctx.shadowBlur = 0; ctx.lineWidth = 1;
+    }
+
+    // EventiScientifici: una parte del pattern diventa superficie condivisa
+    if (esIn > 0) {
+      const ey = mob() ? H * .34 : H * .24;
+      const ew = lerp(x0(), x1() - x0(), esIn);
+      ctx.strokeStyle = `rgba(168,228,255,${.5 * esIn})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0(), ey); ctx.lineTo(x0() + ew, ey); ctx.stroke();
+      const g = ctx.createLinearGradient(0, ey, 0, ey + H * .08);
+      g.addColorStop(0, `rgba(168,228,255,${.06 * esIn})`); g.addColorStop(1, "rgba(168,228,255,0)");
+      ctx.fillStyle = g; ctx.fillRect(x0(), ey, ew, H * .08);
+    }
+
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM — log e firme
+    LOG.forEach((item, i) => rows[i].classList.toggle("on", p > item.at));
+    sigFC.style.opacity = seg(p, .70, .78) * lerp(1, .55, esIn);
+    sigFC.style.transform = `scale(${lerp(.92, 1, seg(p, .70, .78))})`;
+    sigCAM.style.opacity = seg(p, .80, .86) * .9;
+    sigCAM.style.transform = `scale(${lerp(.92, 1, seg(p, .80, .86))})`;
+    sigES.style.opacity = seg(p, .88, .94);
+    sigES.style.transform = `scale(${lerp(.92, 1, seg(p, .88, .94))})`;
+    cap.style.opacity = seg(p, .93, .98);
+  }
+  return { resize, update };
+}
+
+/* ---------- atto 08 · Enzima — un ciclo, non una pipeline ----------
+
+   Il pattern osservato viene isolato, diventa domanda, attraversa un
+   ciclo chiuso (ricerca → progetto → applicazione), rientra nel campo e
+   perturba il sistema: nasce una nuova osservazione. Catalizza, non
+   conclude. Comportamento: circolare + ritorno perturbante.             */
+
+function initResearch(stage, ctx) {
+  let W = 0, H = 0, grain = null, dust = [], cluster = [];
+  const cap = stage.querySelector("[data-cap]");
+  const specs = [...stage.querySelectorAll(".spec")];
+  const sig = stage.querySelector("#sigENZ");
+  const ECO = window.PBCARE_ECOSYSTEM;
+  const ENZ = ECO ? ECO.byId.enzima.palette
+                  : { rgbAccent: "127,232,224", rgbSecondary: "79,216,176", rgbAtmosphere: "6,34,42" };
+  const TEAL = ENZ.rgbAccent, TEAL2 = ENZ.rgbSecondary;
+
+  const mob = () => W <= 800;
+  const cx = () => mob() ? W * .5 : W * .60, cy = () => mob() ? H * .60 : H * .52;
+  const rx = () => Math.min(W, H) * (mob() ? .20 : .23);
+  const ry = () => rx() * .74;
+  // punto sul ciclo — wobble organico, non ellisse perfetta
+  function loopPt(a, t) {
+    const w = 1 + .07 * Math.sin(3 * a + t * .0008);
+    return { x: cx() + Math.cos(a) * rx() * w, y: cy() + Math.sin(a) * ry() * w };
+  }
+  const STATIONS = [-.5, .7, 1.9, 3.1, 4.3]; // osservazione→…→impatto sul ciclo
+
+  function resize() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    const DPR = Math.min(1.5, devicePixelRatio || 1);
+    const c = stage.querySelector("canvas");
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    grain = makeGrain(ctx);
+    dust = [];
+    for (let i = 0; i < 50; i++) dust.push({ x: rnd(i * 3.1) * W, y: rnd(i * 7.9) * H, r: .6 + rnd(i * 2.2) * 1.1, ph: rnd(i) * 6.28 });
+    cluster = [];
+    for (let i = 0; i < 14; i++) {
+      const a = rnd(i * 5.3) * 6.28, r = rnd(i * 8.7) * 26;
+      cluster.push({ x: Math.cos(a) * r, y: Math.sin(a) * r * .7, ph: rnd(i) * 6.28 });
+    }
+  }
+
+  function update(p, time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = reduce ? 0 : time;
+
+    const obs = smooth(seg(p, .05, .18));      // osservazione isolata
+    const ask = smooth(seg(p, .20, .34));      // diventa domanda → entra nel ciclo
+    const spin = smooth(seg(p, .34, .78));     // circola: ricerca/progetto
+    const back = smooth(seg(p, .70, .84));     // ritorno al campo
+    const wake = smooth(seg(p, .80, .94));     // perturbazione → nuova osservazione
+
+    // campo di fondo — il pulviscolo che la perturbazione attraversa
+    for (const d of dust) {
+      const rip = wake > 0 ? .5 + .5 * Math.sin(t * .002 + d.ph + wake * 9) : 0;
+      ctx.fillStyle = `rgba(${MINT},${.07 + .08 * rip})`;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // il cluster dell'osservazione: il pattern della scena precedente
+    const hx = mob() ? W * .5 : W * .30, hy = mob() ? H * .76 : H * .70;
+    if (obs > 0) {
+      for (const d of cluster) {
+        const wob = Math.sin(t * .001 + d.ph) * 3;
+        ctx.fillStyle = `rgba(${TEAL},${.55 * obs})`;
+        ctx.beginPath(); ctx.arc(hx + d.x + wob, hy + d.y + wob * .6, 1.7, 0, Math.PI * 2); ctx.fill();
+      }
+      // "domanda": anello che oscilla — interrogativo senza simbolo
+      const q = ask * (1 - smooth(seg(p, .30, .36)));
+      if (q > 0) {
+        const rr = 34 + 4 * Math.sin(t * .002);
+        ctx.setLineDash([3, 5]);
+        ctx.strokeStyle = `rgba(${TEAL},${.5 * q})`;
+        ctx.beginPath(); ctx.arc(hx, hy, rr, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // il ciclo: si disegna quando la domanda entra — e non si chiude mai del tutto
+    if (ask > 0) {
+      const draw = smooth(seg(ask, .2, 1)) * Math.PI * 2 * .96;
+      ctx.strokeStyle = `rgba(${TEAL},${.22 * ask})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let k = 0; k <= 90; k++) {
+        const a = -Math.PI / 2 + (k / 90) * draw;
+        const q = loopPt(a, t);
+        k === 0 ? ctx.moveTo(q.x, q.y) : ctx.lineTo(q.x, q.y);
+      }
+      ctx.stroke();
+      // stazioni del ciclo — le fasi, sospese
+      STATIONS.forEach((a, i) => {
+        const q = loopPt(a, t);
+        const on = smooth(seg(p, .30 + i * .11, .38 + i * .11));
+        if (on <= 0) return;
+        ctx.strokeStyle = `rgba(${TEAL2},${.5 * on})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, 7, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = `rgba(${TEAL2},${.25 * on})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, 3, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    // la domanda circola nel ciclo — catalisi
+    if (spin > 0) {
+      const rev = spin * Math.PI * 2 * 1.4; // ~1.4 giri, poi esce
+      const a = -Math.PI / 2 + rev;
+      const q = loopPt(a, t);
+      // scia lungo il ciclo
+      ctx.lineCap = "round";
+      for (let i = 26; i >= 0; i--) {
+        const a0 = a - i * .03, a1 = a - (i + 1) * .03;
+        const q0 = loopPt(a0, t), q1 = loopPt(a1, t);
+        const f = 1 - i / 27;
+        ctx.strokeStyle = `rgba(${TEAL},${.75 * f * spin})`;
+        ctx.lineWidth = .5 + 2.4 * f;
+        ctx.beginPath(); ctx.moveTo(q0.x, q0.y); ctx.lineTo(q1.x, q1.y); ctx.stroke();
+      }
+      ctx.lineCap = "butt";
+      const rg = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, 26);
+      rg.addColorStop(0, `rgba(${TEAL},.8)`); rg.addColorStop(1, `rgba(${TEAL},0)`);
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(q.x, q.y, 26, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#eafdff";
+      ctx.beginPath(); ctx.arc(q.x, q.y, 2.8, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // il ritorno: una parte rientra nel campo — la trasformazione applicata
+    if (back > 0) {
+      const a = -Math.PI / 2 + 1.4 * Math.PI * 2; // punto di uscita del ciclo
+      const from = loopPt(a, t);
+      const to = { x: mob() ? W * .5 : W * .30, y: mob() ? H * .82 : H * .78 };
+      const bx2 = lerp(from.x, to.x, smooth(back)), by2 = lerp(from.y, to.y, smooth(back));
+      ctx.strokeStyle = `rgba(${TEAL2},${.6 * back})`;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(bx2, by2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = `rgba(${TEAL2},.95)`;
+      ctx.beginPath(); ctx.arc(bx2, by2, 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // la perturbazione: onda che attraversa il campo + nuova osservazione
+    if (wake > 0) {
+      const to = { x: mob() ? W * .5 : W * .30, y: mob() ? H * .82 : H * .78 };
+      const k = smooth(wake);
+      ctx.strokeStyle = `rgba(${TEAL2},${.35 * (1 - k)})`;
+      ctx.beginPath(); ctx.arc(to.x, to.y, 10 + k * W * .25, 0, Math.PI * 2); ctx.stroke();
+      // nuova piccola traccia — il ciclo riapre l'osservazione
+      const draw = k * 30;
+      ctx.strokeStyle = `rgba(${GOLD},${.75 * k})`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      for (let i = 0; i <= draw; i++) {
+        const u = i / 30;
+        const x = to.x + u * 90;
+        const y = to.y - Math.sin(u * 6) * 8 - u * 10;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.lineWidth = 1;
+    }
+
+    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+
+    // DOM
+    specs.forEach((el, i) => el.classList.toggle("done", p > .16 + i * .15));
+    const so = seg(p, .62, .70) * (1 - seg(p, .88, .96));
+    sig.style.opacity = so;
+    sig.style.transform = `scale(${lerp(.92, 1, so)})`;
+    cap.style.opacity = seg(p, .90, .97);
+  }
+  return { resize, update };
+}
+
+/* ---------- atto 09 · il sistema — sintesi, non inventario ----------
+
+   La scena a layer resta, ma cambia peso: arriva DOPO aver vissuto
+   relazione, evento, conoscenza e ricerca. Quando un layer è dominante
+   il suo marchio emerge per pochi istanti — firma, non parete.          */
+
+function initSystem(stage, ctx) {
   let W = 0, H = 0, dust = [], grain = null;
   const cap = stage.querySelector("[data-cap]");
+  const sigsEl = stage.querySelector("#layerSigs");
 
   /* manifest e nodi nascono dalla source of truth — mai duplicati qui */
   const ECO = window.PBCARE_ECOSYSTEM || { NARRATIVE: [], FOOTER_LINKS: [] };
   const layersEl = stage.querySelector("#layers");
-  const rows = [], NODES = [], layerBoxes = [];
+  const rows = [], NODES = [], layerBoxes = [], layerSigs = [];
   ECO.NARRATIVE.forEach((layer, li) => {
     const box = document.createElement("div");
     box.className = "layer";
@@ -415,13 +1131,24 @@ function initS2(stage, ctx) {
     });
     layersEl.appendChild(box);
     layerBoxes.push(box);
+    // loghi del layer: il marchio emerge quando il livello è dominante
+    const logos = layer.entities.filter(e => e.logo);
+    const holder = [];
+    logos.forEach((e, i) => {
+      const img = document.createElement("img");
+      img.className = "lsig" + (i > 0 ? " minor" : "");
+      img.src = e.logo; img.alt = e.name;
+      sigsEl.appendChild(img);
+      holder.push(img);
+    });
+    layerSigs.push(holder);
   });
   const startOf = i => .12 + i * .075; // soglia di attivazione
 
   const mob = () => W <= 800;
   // i livelli vivono in profondità: identità in superficie, ricerca sul fondo
   const layerY = li => mob() ? H * (.50 + li * .092) : H * (.20 + li * .155);
-  // la spina entra dall'alto a destra — continuità con l'uscita di #tempo
+  // la spina entra dall'alto a destra — la traccia della persona ritorna
   const spineX = () => mob() ? W * .80 : W * .72;
 
   function resize() {
@@ -452,11 +1179,11 @@ function initS2(stage, ctx) {
     }
 
     // la spina: la traccia della persona SCENDE dall'alto attraversando
-    // i livelli — è la stessa traccia uscita piegandosi dalla scena tempo
+    // i livelli — la stessa traccia che ha percorso tutta l'esperienza
     const spineIn = smooth(seg(p, .02, .16));
     if (spineIn > 0) {
-      const yTop = layerY(0) - H * .06, yBot = layerY(nLayers - 1) + H * .05;
-      const yDraw = lerp(-H * .12, yBot, spineIn); // cresce verso il basso
+      const yBot = layerY(nLayers - 1) + H * .05;
+      const yDraw = lerp(-H * .12, yBot, spineIn);
       const lg = ctx.createLinearGradient(0, 0, 0, yBot);
       lg.addColorStop(0, `rgba(${GOLD},${.55 * spineIn})`);
       lg.addColorStop(.35, `rgba(${PAPER},${.5 * spineIn})`);
@@ -466,7 +1193,6 @@ function initS2(stage, ctx) {
       ctx.setLineDash([1, 7]);
       ctx.beginPath(); ctx.moveTo(sx, -H * .12); ctx.lineTo(sx, yDraw); ctx.stroke();
       ctx.setLineDash([]);
-      // la testa della spina = la traccia della persona che arriva
       const hy = Math.min(yDraw, yBot);
       const rg = ctx.createRadialGradient(sx, hy, 0, sx, hy, 22);
       rg.addColorStop(0, `rgba(${GOLD},${.7 * spineIn})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
@@ -488,11 +1214,9 @@ function initS2(stage, ctx) {
       lg.addColorStop(1, `rgba(${ac},${.05 * on})`);
       ctx.strokeStyle = lg; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      // velo di profondità sotto la lamina
       const haze = ctx.createLinearGradient(0, y, 0, y + H * .10);
       haze.addColorStop(0, `rgba(${ac},${.045 * on})`); haze.addColorStop(1, `rgba(${ac},0)`);
       ctx.fillStyle = haze; ctx.fillRect(0, y, W, H * .10);
-      // label del layer sul bordo destro (solo desktop)
       if (W >= 760) {
         ctx.font = "9px 'DM Mono', monospace";
         ctx.textAlign = "right";
@@ -514,7 +1238,6 @@ function initS2(stage, ctx) {
       const nx = sx + dir * off;
       const c = e.palette.rgbAccent;
 
-      // connessione spina → nodo (tratteggiata se società esterna)
       const ext = !!e.external;
       ctx.strokeStyle = `rgba(${c},${(ext ? .30 : .5) * on})`;
       ctx.lineWidth = 1;
@@ -522,7 +1245,6 @@ function initS2(stage, ctx) {
       ctx.beginPath(); ctx.moveTo(sx, y); ctx.lineTo(nx, y); ctx.stroke();
       ctx.setLineDash([]);
 
-      // nodo con overshoot
       const pop = on * (1.18 - .18 * on);
       const rg = ctx.createRadialGradient(nx, y, 0, nx, y, 22);
       rg.addColorStop(0, `rgba(${c},${.5 * on})`); rg.addColorStop(1, `rgba(${c},0)`);
@@ -530,7 +1252,6 @@ function initS2(stage, ctx) {
       ctx.fillStyle = `rgba(${c},${.95 * on})`;
       ctx.beginPath(); ctx.arc(nx, y, 3.2 * pop, 0, Math.PI * 2); ctx.fill();
 
-      // label: solo desktop — su mobile i nomi sono nel manifest DOM
       const la = seg(p, startOf(idx) + .05, startOf(idx) + .15);
       if (la > 0 && W >= 760) {
         ctx.font = "11px 'DM Mono', monospace";
@@ -542,11 +1263,12 @@ function initS2(stage, ctx) {
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM: manifest si accende in sincrono; un layer dominante alla
-    // volta — gli altri restano come contesto secondario (dim)
+    // DOM: un layer dominante alla volta — gli altri contesto;
+    // quando un livello è dominante il suo marchio emerge e torna indietro
     let focusLi = -1;
     for (const n of NODES) if (p > startOf(n.idx) + .02) focusLi = Math.max(focusLi, n.li);
     layerBoxes.forEach((b, li) => b.classList.toggle("dim", focusLi >= 0 && li !== focusLi));
+    layerSigs.forEach((holder, li) => holder.forEach(img => img.classList.toggle("on", li === focusLi)));
     rows.forEach((r, i) => r.classList.toggle("lit", p > startOf(i) + .04));
     cap.style.opacity = seg(p, .86, .95);
   }
@@ -560,23 +1282,22 @@ function layerIndexWithin(nodes, li, idx) {
   return k;
 }
 
-/* ---------- scena 03 · il diritto che apre la burocrazia ---------- */
+/* ---------- atto 10 · reveal — questo è PB-CARe ----------
 
-function initS3(stage, ctx) {
-  let W = 0, H = 0, rows = [], grain = null;
-  const quote = stage.querySelector("#quote");
-  const cite = stage.querySelector(".quote-cite");
-  const services = [...stage.querySelectorAll(".services li")];
+   Il mondo si ricompone nella palette madre: fili di grammatica già vista
+   (tracce, confini, connessioni, eventi, pattern, cicli) convergono al
+   centro e perdono le loro separazioni. Poi il marchio reale — asset,
+   non ricostruzione.                                                      */
+
+function initReveal(stage, ctx) {
+  let W = 0, H = 0, grain = null, streams = [], dust = [];
   const cap = stage.querySelector("[data-cap]");
+  const logo = stage.querySelector("#pbcLogo");
+  const line = stage.querySelector("#revealLine");
+  const eyebrow = stage.querySelector("#revealEyebrow");
 
-  // spezza la citazione in parole
-  const KEY = new Set(["diritto", "salute"]);
-  const words = quote.textContent.trim().split(/\s+/);
-  quote.innerHTML = words.map(w => {
-    const clean = w.toLowerCase().replace(/[^a-zàèéìòù]/g, "");
-    return `<span class="w${KEY.has(clean) ? " key" : ""}">${w}</span>`;
-  }).join(" ");
-  const wEls = [...quote.querySelectorAll(".w")];
+  // i colori del mondo visto finora — tutti rientrano nell'identità madre
+  const STREAM_COLS = ["90,191,120", "79,216,224", "168,228,255", "127,232,224", "95,212,180", "212,169,79"];
 
   function resize() {
     W = stage.clientWidth; H = stage.clientHeight;
@@ -585,161 +1306,79 @@ function initS3(stage, ctx) {
     c.width = W * DPR; c.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     grain = makeGrain(ctx);
-    rows = [];
-    const n = Math.round(H / 26);
-    for (let i = 0; i < n; i++) {
-      rows.push({
-        y: (i + .5) / n,
-        w: .52 + rnd(i * 4.3) * .3,
-        j: (rnd(i * 8.8) - .5) * .05,   // jitter orizzontale
-        a: .05 + rnd(i * 3.3) * .10,
+    streams = [];
+    for (let i = 0; i < 26; i++) {
+      const a = (i / 26) * Math.PI * 2 + rnd(i * 3.3) * .4;
+      const r0 = Math.max(W, H) * (.55 + rnd(i * 7.7) * .3);
+      streams.push({
+        a, r0,
+        col: STREAM_COLS[i % STREAM_COLS.length],
+        wob: 2 + rnd(i * 5.1) * 4,
+        dly: rnd(i * 9.9) * .3,
       });
     }
-  }
-
-  function update(p, time) {
-    ctx.clearRect(0, 0, W, H);
-
-    // la "burocrazia": righe di pseudo-testo che si aprono al centro
-    const open = smoother(seg(p, .06, .42));
-    const gap = open * W * .30;
-    const cx = W * .5;
-    for (const r of rows) {
-      const w = r.w * W, x0 = cx - w / 2 + r.j * W;
-      const mid = x0 + w / 2;
-      ctx.fillStyle = `rgba(${MINT},${r.a})`;
-      const lw = Math.max(0, w / 2 - gap);
-      ctx.fillRect(x0, r.y * H, lw, 1.4);
-      ctx.fillRect(mid + gap, r.y * H, lw, 1.4);
-    }
-    // luce oro che filtra dalla fenditura
-    if (open > 0) {
-      const rg = ctx.createRadialGradient(cx, H * .42, 0, cx, H * .42, gap * 1.6);
-      rg.addColorStop(0, `rgba(${GOLD},${.10 * open})`);
-      rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
-    }
-
-    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // DOM — parola per parola
-    const step = .5 / wEls.length;
-    wEls.forEach((el, i) => el.classList.toggle("on", p > .08 + i * step));
-    cite.style.opacity = seg(p, .56, .64);
-    services.forEach((el, i) => {
-      const v = smooth(seg(p, .62 + i * .04, .70 + i * .04));
-      el.style.opacity = v;
-      el.style.transform = `translateY(${10 * (1 - v)}px)`;
-    });
-    cap.style.opacity = seg(p, .9, .97);
-  }
-  return { resize, update };
-}
-
-/* ---------- scena 04 · dal caos alle traiettorie ---------- */
-
-function initS4(stage, ctx) {
-  let W = 0, H = 0, parts = [], grain = null;
-  const specs = [...stage.querySelectorAll(".spec")];
-  const cta = stage.querySelector("#endcta");
-  const cap = stage.querySelector("[data-cap]");
-
-  function resize() {
-    W = stage.clientWidth; H = stage.clientHeight;
-    const DPR = Math.min(1.5, devicePixelRatio || 1);
-    const c = stage.querySelector("canvas");
-    c.width = W * DPR; c.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    grain = makeGrain(ctx);
-    parts = [];
-    const n = W < 760 ? 120 : 200;
-    for (let i = 0; i < n; i++) {
-      parts.push({
-        sx: rnd(i * 3.7) * W,
-        sy: rnd(i * 8.1) * H,
-        wx: (rnd(i * 5.5) - .5) * 60,
-        wy: (rnd(i * 9.9) - .5) * 60,
-        lane: i % 5,
-        u: rnd(i * 1.3),
-        sp: .6 + rnd(i * 4.4) * .5,
-        ph: rnd(i * 6.1) * 6.28,
-      });
-    }
-  }
-
-  // 5 corsie bezier che convergono verso un punto a destra
-  // (su mobile compresse nella metà bassa, sotto il testo)
-  function lanePoint(lane, u) {
-    const mob = W < 760;
-    const y0 = H * (mob ? .58 + lane * .07 : .18 + lane * .14);
-    const p0 = { x: W * .06, y: y0 + (rnd(lane * 7) - .5) * H * (mob ? .05 : .1) };
-    const p1 = { x: W * .42, y: y0 };
-    const p2 = { x: W * .62, y: H * (mob ? .60 + lane * .045 : .30 + lane * .08) };
-    const p3 = { x: W * (mob ? .85 : .88), y: H * (mob ? .82 : .52) };
-    const m = 1 - u;
-    return {
-      x: m * m * m * p0.x + 3 * m * m * u * p1.x + 3 * m * u * u * p2.x + u * u * u * p3.x,
-      y: m * m * m * p0.y + 3 * m * m * u * p1.y + 3 * m * u * u * p2.y + u * u * u * p3.y,
-    };
+    dust = [];
+    for (let i = 0; i < 70; i++) dust.push({ x: rnd(i * 4.1) * W, y: rnd(i * 8.3) * H, r: .6 + rnd(i * 2.9) * 1.2, ph: rnd(i) * 6.28 });
   }
 
   function update(p, time) {
     ctx.clearRect(0, 0, W, H);
     const t = reduce ? 0 : time;
-    const morph = smoother(seg(p, .28, .66));
+    const cx2 = W * .5, cy2 = H * .5;
+    const conv = seg(p, .04, .58);      // convergenza
+    const unify = smooth(seg(p, .52, .72)); // un'unica grammatica
+    const glow = smooth(seg(p, .50, .78));  // luce dietro il marchio
 
-    // corsie (faint) compaiono col morph
-    if (morph > 0) {
-      for (let l = 0; l < 5; l++) {
-        ctx.strokeStyle = `rgba(${MINT},${.10 * morph})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let k = 0; k <= 40; k++) {
-          const pt = lanePoint(l, k / 40);
-          k === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
-        }
-        ctx.stroke();
+    // pulviscolo — si raccoglie verso il centro
+    for (const d of dust) {
+      const dd = lerp(1, .45, unify);
+      const x = lerp(d.x, cx2 + (d.x - cx2) * .4, unify);
+      const y = lerp(d.y, cy2 + (d.y - cy2) * .4, unify);
+      ctx.fillStyle = `rgba(${MINT},${.07 + .06 * Math.sin(t * .0009 + d.ph)})`;
+      ctx.beginPath(); ctx.arc(x, y, d.r * dd, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // i fili: ogni grammatica attraversata rientra verso il centro
+    for (const s of streams) {
+      const u = clamp((conv - s.dly) / (1 - s.dly));
+      if (u <= 0) continue;
+      const fade = 1 - unify * .85;
+      const rr = s.r0 * (1 - smooth(u) * .82);
+      // i fili non sono linee rette: ricordano tracce, confini, cicli
+      ctx.strokeStyle = `rgba(${mixRGB(s.col, MINT, unify)},${.34 * u * fade})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let k = 0; k <= 40; k++) {
+        const v = k / 40;
+        const ang = s.a + v * s.wob * .06 * (1 - u);
+        const rad = lerp(s.r0, rr * .35, v * smooth(u));
+        const x = cx2 + Math.cos(ang) * rad;
+        const y = cy2 + Math.sin(ang) * rad * .86;
+        k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
+      ctx.stroke();
     }
 
-    // particelle: deriva caotica → traiettorie ordinate
-    for (const pt of parts) {
-      const wob = Math.sin(t * .001 + pt.ph);
-      const cx = pt.sx + pt.wx * Math.sin(t * .0006 + pt.ph);
-      const cy = pt.sy + pt.wy * wob;
-      const u = (pt.u + t * .00006 * pt.sp) % 1;
-      const lp = lanePoint(pt.lane, u);
-      const x = lerp(cx, lp.x, morph);
-      const y = lerp(cy, lp.y, morph);
-      const hot = morph > .7 && u > .85; // teste di corsia → oro
-      const col = hot ? GOLD : MINT;
-      const alpha = lerp(.28, .75, morph) * (hot ? 1 : .8);
-      ctx.fillStyle = `rgba(${col},${alpha})`;
-      ctx.beginPath(); ctx.arc(x, y, hot ? 2.1 : 1.4, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // nodo d'arrivo
-    const end = smooth(seg(p, .7, .85));
-    if (end > 0) {
-      const mob = W < 760;
-      const ex = W * (mob ? .85 : .88), ey = H * (mob ? .82 : .52);
-      const rg = ctx.createRadialGradient(ex, ey, 0, ex, ey, 40 * end);
-      rg.addColorStop(0, `rgba(${GOLD},${.7 * end})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ex, ey, 40 * end, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#fff9dc";
-      ctx.beginPath(); ctx.arc(ex, ey, 3.6 * end, 0, Math.PI * 2); ctx.fill();
-      ctx.font = "10px 'DM Mono', monospace";
-      ctx.textAlign = "center";
-      ctx.fillStyle = `rgba(241,200,71,${.9 * end})`;
-      ctx.fillText("impatto", ex, ey + 22);
+    // il nucleo di luce sotto il marchio — la madre che accoglie
+    if (glow > 0) {
+      const rg = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, Math.min(W, H) * .42);
+      rg.addColorStop(0, `rgba(79,180,220,${.16 * glow})`);
+      rg.addColorStop(.5, `rgba(${MINT},${.06 * glow})`);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM
-    specs.forEach((el, i) => el.classList.toggle("done", p > .30 + i * .10));
-    cta.classList.toggle("on", p > .82);
-    cap.style.opacity = seg(p, .9, .97);
+    // DOM — il marchio reale entra come conseguenza
+    eyebrow.style.opacity = seg(p, .06, .14) * (1 - seg(p, .55, .65) * .4);
+    const lo = smooth(seg(p, .56, .78));
+    logo.style.opacity = lo;
+    logo.style.transform = `scale(${lerp(.86, 1, lo)})`;
+    const ln = smooth(seg(p, .76, .88));
+    line.style.opacity = ln;
+    line.style.transform = `translateY(${10 * (1 - ln)}px)`;
+    cap.style.opacity = seg(p, .88, .96);
   }
   return { resize, update };
 }
@@ -1025,7 +1664,13 @@ function initSep(stage, ctx) {
 
 /* ---------- engine ---------- */
 
-const INITS = { s1: initS1, sep: initSep, tempo: initTempo, s2: initS2, s3: initS3, s4: initS4 };
+const INITS = {
+  s1: initS1, sep: initSep, tempo: initTempo,
+  relation: initRelation, event: initEvent, knowledge: initKnowledge,
+  research: initResearch, system: initSystem, reveal: initReveal,
+};
+// scena senza init = stage statica, non rompe l'esperienza
+const NOOP_INIT = () => ({ resize() {}, update() {} });
 const nav = document.getElementById("topnav");
 const gp = document.getElementById("gp");
 
@@ -1059,7 +1704,7 @@ const controllers = [...document.querySelectorAll(".scene")].map(el => {
   const canvas = stage.querySelector("canvas");
   const ctx = canvas ? canvas.getContext("2d") : null;
   const tag = stage.querySelector(".tag .pb");
-  const { resize, update } = INITS[el.dataset.scene](stage, ctx);
+  const { resize, update } = (INITS[el.dataset.scene] || NOOP_INIT)(stage, ctx);
   // le scene a canvas hanno animazioni legate al tempo: vanno sempre ridisegnate.
   // le scene DOM reagiscono solo a p: se p non cambia, non si ridisegnano affatto.
   const c = { el, stage, ctx, tag, cur: 0, last: -1, state: "", err: false,
@@ -1126,7 +1771,7 @@ function loop(time) {
     }
 
     const visible = rect.bottom > -60 && rect.top < innerHeight + 60;
-    if (DBG) dbg.push(`${c.el.id.padEnd(6)} p=${p.toFixed(2)} top=${Math.round(rect.top)} ${state}${visible ? "" : " [culled]"}`);
+    if (DBG) dbg.push(`${c.el.id.padEnd(6)} p=${p.toFixed(2)} top=${Math.round(rect.top)} ${state}${visible ? "" : " [culled]"}${c.err ? " [ERR: " + c.errMsg + "]" : ""}`);
     if (!visible) continue;
 
     // con Lenis lo scroll è già smorzato: la scena segue 1:1.
@@ -1156,6 +1801,7 @@ function loop(time) {
         c.update(c.cur, time);
       } catch (e) {
         if (!c.err) { console.error(`[scene #${c.el.id}]`, e); c.err = true; }
+        c.errMsg = e && e.message;
       }
       c.last = c.cur;
     }
