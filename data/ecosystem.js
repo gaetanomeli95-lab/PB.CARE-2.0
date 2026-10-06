@@ -28,6 +28,7 @@
   const pal = (primary, secondary, accent, atmosphere) => ({
     primary, secondary, accent, atmosphere,
     rgbPrimary: hex2rgb(primary),
+    rgbSecondary: hex2rgb(secondary),
     rgbAccent: hex2rgb(accent),
     rgbAtmosphere: hex2rgb(atmosphere),
   });
