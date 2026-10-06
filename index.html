@@ -107,9 +107,9 @@
       <h2>La misura,<br />non la <i>dichiarazione</i>.</h2>
       <p class="sub">Una dichiarazione è una frase. Una misura è una sequenza
       osservabile: giorni, eventi, aderenza, interruzioni, esiti.</p>
-      <!-- log della traccia: generato e pilotato da main.js -->
-      <div class="tlog" id="tlog"></div>
     </div>
+    <!-- didascalie temporali: una alla volta, vicino al fenomeno (main.js) -->
+    <div class="tlog caps" id="tlog" aria-live="polite"></div>
 
     <p class="cap" data-cap>il percorso non si racconta — si osserva<small>pseudonimizzato · nel tempo</small></p>
   </div>
@@ -121,14 +121,13 @@
     <canvas class="field" aria-hidden="true"></canvas>
     <div class="tag"><span>atto 05 — la relazione</span><i class="pb"></i></div>
 
-    <div class="manifest">
+    <div class="manifest centered">
       <p class="eyebrow">Ciò che accade nella cura passa da una fiducia</p>
       <h2>La connessione<br />ti <i>appartiene</i>.</h2>
       <p class="sub">Un professionista può chiedere accesso. Solo la persona
       decide. Ciò che viene revocato non si riapre da solo.</p>
-      <!-- log della relazione: generato e pilotato da main.js -->
-      <div class="tlog" id="rlog"></div>
     </div>
+    <div class="tlog caps" id="rlog" aria-live="polite"></div>
 
     <img class="bsig" id="sigCare" src="public/assets/brand/careprogram/logo.png"
          alt="CareProgram — il livello che gestisce identità e accessi" />
@@ -143,14 +142,13 @@
     <canvas class="field" aria-hidden="true"></canvas>
     <div class="tag"><span>atto 06 — il diritto diventa evento</span><i class="pb"></i></div>
 
-    <div class="manifest">
+    <div class="manifest right">
       <p class="eyebrow">Articolo 32 — tutela legale del paziente</p>
       <h2>Un diritto, quando serve,<br />diventa <i>evento</i>.</h2>
       <p class="sub">«La Repubblica tutela la salute come fondamentale diritto
       dell'individuo.» <span class="cite">— Costituzione Italiana, art. 32</span></p>
-      <!-- log delle fasi: generato e pilotato da main.js -->
-      <div class="tlog" id="elog"></div>
     </div>
+    <div class="tlog caps" id="elog" aria-live="polite"></div>
 
     <ul class="services" id="eservices" aria-label="Ambiti di tutela Articolo 32">
       <li><span>cure negate o ritardate</span><em>assistenza legale</em></li>
@@ -171,24 +169,24 @@
     <canvas class="field" aria-hidden="true"></canvas>
     <div class="tag"><span>atto 07 — la conoscenza</span><i class="pb"></i></div>
 
-    <div class="manifest">
+    <div class="manifest centered">
       <p class="eyebrow">Tracce separate, mai fuse</p>
-      <h2>Molte vite,<br />una <i>conoscenza</i>.</h2>
+      <h2>Una vita<br />è una <i>traccia</i>.</h2>
       <p class="sub">Le tracce restano pseudonimizzate e separate. Sotto soglia
-      non si osserva nulla: da cinque, il campo produce un pattern condiviso —
+      non si osserva nulla. Da cinque, il campo mostra ciò che hanno in comune —
       osservazione, ipotesi, valutazione umana.</p>
-      <!-- log dell'aggregazione: generato e pilotato da main.js -->
-      <div class="tlog" id="klog"></div>
     </div>
+    <div class="tlog caps" id="klog" aria-live="polite"></div>
 
-    <div class="sigstack" aria-hidden="false">
-      <img class="bsig" id="sigFC" src="public/assets/brand/farmacomm/logo.png"
-           alt="FarmaCOmm — l'ambiente clinico dove vive la conoscenza" />
-      <img class="bsig" id="sigES" src="public/assets/brand/eventi-scientifici/logo.png"
-           alt="Eventi Scientifici — la conoscenza che si condivide" />
-      <img class="bsig small" id="sigCAM" src="public/assets/brand/camit/logo.png"
-           alt="Cannabis Medica Italia — un percorso clinico dentro l'ambiente" />
-    </div>
+    <!-- il momento k≥5: il titolo torna, trasformato -->
+    <h2 class="kpeak" id="kpeak">Molte vite,<br />una <i>conoscenza</i>.</h2>
+
+    <img class="bsig hero" id="sigFC" src="public/assets/brand/farmacomm/logo.png"
+         alt="FarmaCOmm — l'ambiente clinico dove vive la conoscenza" />
+    <img class="bsig surface" id="sigES" src="public/assets/brand/eventi-scientifici/logo.png"
+         alt="Eventi Scientifici — la conoscenza che si condivide" />
+    <img class="bsig path" id="sigCAM" src="public/assets/brand/camit/logo.png"
+         alt="Cannabis Medica Italia — un percorso clinico dentro l'ambiente" />
 
     <p class="cap" data-cap>l'ambiente si chiama FarmaCOmm<small>da qui nasce ciò che si condivide</small></p>
   </div>
@@ -248,9 +246,11 @@
 
     <div class="reveal-wrap">
       <p class="eyebrow" id="revealEyebrow">tutto ciò che hai attraversato</p>
-      <img class="pbc-logo" id="pbcLogo" src="public/assets/brand/pbcare/logo.png"
-           alt="PB-CARe — Patient Based, Continue Applied Research" />
-      <p class="reveal-line" id="revealLine">Una persona. Un percorso. Un sistema.</p>
+      <p class="reveal-line" id="revealLine">Una persona.<br />Un percorso.<br />Un sistema.</p>
+      <div class="pbc-mask" id="pbcMask">
+        <img class="pbc-logo" id="pbcLogo" src="public/assets/brand/pbcare/logo.png"
+             alt="PB-CARe — Patient Based, Continue Applied Research" />
+      </div>
     </div>
 
     <p class="cap" data-cap>questo è PB-CARe<small>Patient Based — Continue Applied Research</small></p>

@@ -53,7 +53,11 @@ a{color:inherit}
 }
 .brand{font-family:var(--serif);font-size:16px;letter-spacing:.04em;text-transform:none;color:#fff;text-decoration:none}
 .brand sup{font-size:.55em;color:var(--gold)}
-.topnav nav{display:flex;gap:clamp(12px,2.4vw,30px)}
+/* la nav è quieta all'inizio: la struttura si rivela dopo la prima scena,
+   ma resta sempre raggiungibile con hover/focus (usabilità intatta) */
+.topnav nav{display:flex;gap:clamp(12px,2.4vw,30px);opacity:0;transform:translateY(-4px);
+  transition:opacity .6s ease,transform .6s ease}
+.topnav.nav-open nav,.topnav:hover nav,.topnav:focus-within nav{opacity:1;transform:none}
 .topnav nav a{color:rgba(236,244,239,.62);text-decoration:none;transition:color .25s}
 .topnav nav a:hover{color:#fff}
 .gp{position:absolute;left:0;right:0;bottom:0;height:2px;display:block}
@@ -108,9 +112,10 @@ a{color:inherit}
 
 /* ---------- scena 01 ---------- */
 
-#s1 .intro{position:absolute;z-index:10;left:var(--pad);top:24vh;max-width:min(640px,70vw)}
+#s1 .intro{position:absolute;z-index:10;left:var(--pad);top:50%;transform:translateY(-50%);max-width:min(680px,70vw)}
+#s1 .intro .eyebrow,#s1 h1,#s1 .sub{opacity:0;will-change:opacity,transform}
 #s1 h1{margin:0;font-size:clamp(44px,8.5vw,124px)}
-#s1 .sub{margin:26px 0 0;max-width:470px;font-size:clamp(16px,1.45vw,21px);line-height:1.4;color:rgba(236,244,239,.72)}
+#s1 .sub{margin:30px 0 0;max-width:470px;font-size:clamp(16px,1.45vw,21px);line-height:1.4;color:rgba(236,244,239,.72)}
 
 /* ---------- scena 02 · separazione (port Cut02) ---------- */
 
@@ -175,6 +180,34 @@ a{color:inherit}
 #system h2,#tempo h2,#relation h2,#event h2,#knowledge h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
 #tempo .sub,#relation .sub,#event .sub,#knowledge .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
 .cite{font:10px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.7)}
+
+/* il titolo è un momento, non un pannello: entra, cede il campo al
+   fenomeno, e il sottotesto torna solo alla fine come riflessione */
+.manifest .eyebrow,.manifest h2,.manifest .sub{opacity:0;will-change:opacity,transform}
+/* composizioni diverse per rompere la ripetizione */
+#relation .manifest.centered,#knowledge .manifest.centered{
+  left:50%;transform:translateX(-50%);width:min(760px,86vw);text-align:center;top:18vh}
+#relation .manifest.centered .sub,#knowledge .manifest.centered .sub{margin-left:auto;margin-right:auto;max-width:520px}
+#knowledge .manifest.centered h2{font-size:clamp(40px,6.2vw,92px)}
+#event .manifest.right{left:auto;right:var(--pad);text-align:right;top:14vh;width:min(520px,48vw)}
+#event .manifest.right .sub{margin-left:auto}
+
+/* didascalie temporali: una alla volta, vicino al fenomeno —
+   tutte le righe restano nel DOM (accessibilità), solo la corrente è visibile */
+.tlog.caps{
+  position:absolute;z-index:11;left:50%;bottom:16vh;transform:translateX(-50%);
+  width:min(680px,86vw);display:grid;text-align:center;border:0;max-width:none;
+  pointer-events:none;
+}
+.tlog.caps .tl{
+  grid-area:1/1;border:0;padding:0;
+  font:300 clamp(17px,1.6vw,23px)/1.3 var(--serif);letter-spacing:-.01em;color:rgba(236,244,239,.9);
+  text-shadow:0 2px 14px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(8px);transition:opacity .55s ease,transform .55s ease;
+}
+.tlog.caps .tl.on{opacity:0;transform:translateY(-6px)}
+.tlog.caps .tl.on.cur{opacity:1;transform:none}
+.tlog.caps.off .tl{opacity:0}
 /* atto 03 — il log della traccia: testo DOM reale, appare in sync col canvas */
 .tlog{display:grid;border-top:1px solid rgba(79,216,224,.16);max-width:420px}
 .tlog .tl{
@@ -200,7 +233,10 @@ a{color:inherit}
 .sat:hover{background:rgba(159,216,201,.06)}
 .sat .sdot{grid-row:1/3;width:7px;height:7px;border:1px solid rgba(138,164,157,.7);border-radius:50%;justify-self:center;transition:all .4s}
 .sat .sname{font-size:17px;font-weight:400;letter-spacing:-.01em}
-.sat .smeta{font:10px/1.5 var(--mono);color:rgba(138,164,157,.6);letter-spacing:.02em}
+.sat .smeta{font:10px/1.5 var(--mono);color:rgba(138,164,157,.6);letter-spacing:.02em;
+  opacity:0;transition:opacity .5s}
+/* riconoscimento: il dettaglio esiste solo nel layer dominante */
+.layer:not(.dim) .sat.lit .smeta{opacity:1}
 .sat.lit{color:rgba(236,244,239,.95)}
 /* l'accento del satellite arriva dalla palette dell'entità
    (--sat-accent / --sat-accent-rgb settati da data/ecosystem.js) */
@@ -209,16 +245,26 @@ a{color:inherit}
 /* ---------- brand signatures: il marchio come firma del concetto ---------- */
 
 .bsig{
-  position:absolute;z-index:14;height:44px;width:auto;max-width:72vw;
+  position:absolute;z-index:14;height:52px;width:auto;max-width:72vw;
   opacity:0;transform:scale(.92);will-change:opacity,transform;
   filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
-.bsig.small{height:36px}
-#sigCare{right:var(--pad);top:16vh}
-.sigstack{position:absolute;z-index:14;right:var(--pad);top:20vh;
-  display:grid;justify-items:end;gap:26px}
-.sigstack .bsig{position:static}
-#sigENZ{right:var(--pad);top:16vh}
+/* CareProgram: firma accanto alla persona, non in un angolo */
+#sigCare{left:30%;top:68%;transform:translate(-50%,0) scale(.92)}
+#sigENZ{right:var(--pad);top:16vh;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.3)) drop-shadow(0 8px 30px rgba(0,0,0,.55))}
+/* knowledge: tre autorità visive diverse — ambiente, superficie, percorso */
+#knowledge .bsig.hero{left:50%;top:44%;height:96px;transform:translate(-50%,-50%) scale(.92);
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.35)) drop-shadow(0 10px 40px rgba(0,0,0,.6))}
+#knowledge .bsig.surface{left:50%;top:17%;height:64px;transform:translate(-50%,-50%) scale(.92);
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.3)) drop-shadow(0 8px 30px rgba(0,0,0,.55))}
+#knowledge .bsig.path{right:var(--pad);top:70%;height:30px;transform:translateY(-50%) scale(.92);
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.28)) drop-shadow(0 6px 22px rgba(0,0,0,.5))}
+/* il momento k≥5 — il titolo torna, al centro del campo */
+.kpeak{position:absolute;z-index:12;left:50%;top:44%;transform:translate(-50%,-50%);
+  margin:0;width:min(900px,90vw);text-align:center;
+  font-size:clamp(40px,6.6vw,96px);opacity:0;will-change:opacity,transform;
+  text-shadow:0 10px 50px rgba(0,0,0,.5)}
 
 /* ---------- atto 06 · services (Art.32 integrato, non macro-scena) ---------- */
 
@@ -238,6 +284,7 @@ a{color:inherit}
 /* ---------- atto 08 · ricerca (Enzima) ---------- */
 
 #research .enz{position:absolute;z-index:10;left:var(--pad);top:17vh;width:min(560px,58vw)}
+#research .enz .eyebrow,#research .enz h2{opacity:0;will-change:opacity,transform}
 #research h2{margin:0 0 30px;font-size:clamp(38px,5.6vw,84px)}
 .specs{display:grid;gap:0;border-top:1px solid rgba(159,216,201,.14);max-width:520px}
 .spec{
@@ -254,28 +301,30 @@ a{color:inherit}
 
 /* ---------- atto 09 · sintesi: loghi per layer ---------- */
 
-#system .sigs{position:absolute;z-index:13;right:var(--pad);top:22vh;
-  display:grid;justify-items:end;gap:22px;pointer-events:none}
-#system .sigs .lsig{height:34px;width:auto;max-width:60vw;
-  opacity:0;transform:scale(.9) translateY(10px);
+#system .sigs{position:absolute;inset:0;z-index:13;pointer-events:none}
+#system .sigs .lsig{position:absolute;right:var(--pad);height:40px;width:auto;max-width:38vw;
+  opacity:0;transform:scale(.92);
   transition:opacity .6s,transform .6s;
-  filter:drop-shadow(0 6px 26px rgba(0,0,0,.4))}
-#system .sigs .lsig.on{opacity:1;transform:none}
-#system .sigs .lsig.minor{height:24px;opacity:0}
-#system .sigs .lsig.minor.on{opacity:.85}
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.3)) drop-shadow(0 6px 26px rgba(0,0,0,.5))}
+#system .sigs .lsig.on{opacity:.92;transform:none}
+#system .sigs .lsig.minor{height:22px;opacity:0}
+#system .sigs .lsig.minor.on{opacity:.8}
 
 /* ---------- atto 10 · reveal PB-CARe ---------- */
 
 #reveal .stage{background:linear-gradient(140deg,#04101c 0%,#071513 60%,#06202a 100%)}
-.reveal-wrap{position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-52%);
-  display:grid;justify-items:center;gap:0;text-align:center;width:min(680px,88vw)}
-#revealEyebrow{margin-bottom:34px}
-.pbc-logo{width:min(560px,80vw);height:auto;
-  opacity:0;transform:scale(.86);will-change:opacity,transform;
-  filter:drop-shadow(0 12px 60px rgba(79,180,220,.25))}
-.reveal-line{margin:36px 0 0;font-size:clamp(19px,2.3vw,30px);font-weight:300;
-  letter-spacing:-.01em;color:rgba(236,244,239,.85);opacity:0;transform:translateY(10px);
-  will-change:opacity,transform}
+.reveal-wrap{position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:grid;justify-items:center;text-align:center;width:min(720px,88vw)}
+.reveal-wrap > *{grid-area:1/1}
+#revealEyebrow{margin:0;align-self:start;transform:translateY(-22vh)}
+/* la frase arriva prima del marchio, poi si dissolve: dichiarazione → silenzio → segno */
+.reveal-line{margin:0;font-size:clamp(30px,4.6vw,66px);font-weight:300;line-height:1.08;
+  letter-spacing:-.03em;color:rgba(236,244,239,.92);opacity:0;will-change:opacity,transform}
+/* il marchio reale, rivelato da una fenditura di luce che si apre (la
+   grammatica del confine) — mai ridisegnato, solo svelato */
+.pbc-mask{width:min(560px,80vw);clip-path:inset(0 50% 0 50%);will-change:clip-path,opacity;opacity:0}
+.pbc-logo{display:block;width:100%;height:auto;
+  filter:drop-shadow(0 12px 60px rgba(79,180,220,.22))}
 
 /* ---------- finale ---------- */
 
@@ -319,13 +368,22 @@ a.contact:hover{background:#0c1f1c}
   .sat .smeta{font-size:9px}
   #event .services{left:24px;right:24px;bottom:12vh;width:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
   #event .services li{padding:9px 10px;font-size:9px}
-  .bsig{height:34px}
-  .bsig.small{height:24px}
-  .sigstack{top:auto;bottom:20vh;gap:16px}
+  #relation .manifest.centered,#knowledge .manifest.centered,#event .manifest.right{
+    left:24px;right:24px;width:auto;transform:none;text-align:left;top:11vh}
+  #knowledge .manifest.centered h2{font-size:clamp(34px,10vw,48px)}
+  .tlog.caps{bottom:13vh;width:86vw}
+  .tlog.caps .tl{font-size:16px}
+  .bsig{height:38px}
+  #sigCare{left:50%;top:50%}
+  #knowledge .bsig.hero{height:52px;top:30%}
+  #knowledge .bsig.surface{height:44px;top:14%}
+  #knowledge .bsig.path{height:24px;right:24px;top:86%}
+  .kpeak{top:30%;font-size:clamp(36px,10.5vw,52px)}
   #research .enz{top:13vh;width:86vw}
   #system .sigs{top:auto;bottom:18vh;gap:14px}
   #system .sigs .lsig{height:26px}
-  .pbc-logo{width:min(320px,84vw)}
+  .pbc-mask{width:min(320px,84vw)}
+  .reveal-line{font-size:clamp(28px,8.5vw,40px)}
   .cap{bottom:4vh}
   .contacts{grid-template-columns:1fr}
 }
