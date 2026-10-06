@@ -6,12 +6,15 @@
    queste informazioni altrove: legge sempre da qui.
 
    Convenzioni:
-   - palette in hex; `rgb` = stringa "r,g,b" pronta per canvas rgba()
-   - status: "current" (superficie attiva legacy) | "legacy" (da chiarire)
+   - palette in hex; `rgb*` = stringa "r,g,b" pronta per canvas rgba()
+   - status: "current" (superficie attiva) | "legacy" (da chiarire)
              | "target" (prossima superficie) | "future" (prevista)
-   - currentUrl = link legacy esistente; futureUrl = destinazione prevista
-   - constellation = presenza nella scena ecosistema attuale (angolo);
-     null = non rappresentata come satellite (es. Prosperya è autonoma)
+   - currentUrl = link esistente; urlStatus marca i link NON verificati
+   - futureUrl = destinazione prevista nel master model
+   - layer = livello di profondità nella narrativa del sistema
+     (NON satelliti equivalenti — vedi docs/SCENE_BLUEPRINT.md)
+   - narrative: false = l'entità NON entra nel racconto principale
+     della home (resta documentata, non rappresentata)
    - docs di riferimento: docs/ECOSYSTEM_MAP.md, docs/BRAND_ROLES.md
    ========================================================================== */
 
@@ -29,6 +32,16 @@
     rgbAtmosphere: hex2rgb(atmosphere),
   });
 
+  /* Livelli di profondità del sistema — ordine narrativo.
+     Le entità si collocano su un layer, mai come satelliti equivalenti. */
+  const LAYERS = [
+    { id: "identita",   label: "identità",   hint: "chi sei" },
+    { id: "clinica",    label: "clinica",    hint: "cosa accade nella cura" },
+    { id: "conoscenza", label: "conoscenza", hint: "ciò che si condivide" },
+    { id: "ricerca",    label: "ricerca",    hint: "ciò che trasforma" },
+    { id: "esterna",    label: "esterna",    hint: "società connesse" },
+  ];
+
   const ENTITIES = [
     {
       id: "pbcare",
@@ -41,7 +54,8 @@
       status: "target",
       currentUrl: "https://pbcare.it/",
       futureUrl: null, // questo sito
-      constellation: null, // è l'hub, non un satellite
+      layer: null, // è il sistema stesso, non un livello
+      narrative: false,
       footerLink: false,
       notes: "Non una holding con loghi: sistema di relazioni, accessi, continuità, misura, conoscenza, ricerca.",
     },
@@ -56,9 +70,47 @@
       status: "current",
       currentUrl: "https://careprogram.it/",
       futureUrl: null, // superficie dedicata futura
-      constellation: { angle: 197, meta: "per le persone · careprogram.it" },
+      layer: "identita",
+      layerMeta: "identità · economia · diritti",
+      narrative: true,
       footerLink: false,
       notes: "NON contiene la storia clinica completa. Flusso documentato: CareProgram → FarmaCOmm (RS256 v2).",
+    },
+    {
+      id: "articolo-32",
+      name: "Articolo 32",
+      type: "service",
+      role: "Tutela legale del paziente",
+      relation: "Il diritto appartiene al lato identità — attraversa il confine come prestazione",
+      palette: pal("#9fd8c9", "#5f7a72", "#f1c847", "#0a1f1b"),
+      logo: null,
+      status: "current",
+      currentUrl: null, // articolo32.it NON verificato nel materiale — vedi note
+      urlStatus: "da verificare",
+      futureUrl: null,
+      layer: "identita",
+      layerMeta: "tutela del diritto",
+      layerAnchor: "#s3",
+      narrative: true,
+      footerLink: false,
+      notes: "Peso narrativo da collocare nel master model. URL legacy non confermato: nessun link finché non verificato.",
+    },
+    {
+      id: "farmacomm",
+      name: "FarmaCOmm",
+      type: "platform",
+      role: "Livello clinico/tecnico-operativo: cartella pseudonimizzata, diario, aderenza, eventi, esiti — ambiente della conoscenza",
+      relation: "Sa COSA accade nella cura — identità pseudonimizzate",
+      palette: pal("#2e86c1", "#123c5a", "#4fd8e0", "#071b2b"),
+      logo: "public/assets/brand/farmacomm/logo.png",
+      status: "current",
+      currentUrl: "https://www.farmacomm.com/",
+      futureUrl: "hub conoscenza: eventiscientifici.farmacomm.com · pubblicazioni.farmacomm.com",
+      layer: "clinica",
+      layerMeta: "ambiente clinico · conoscenza",
+      narrative: true,
+      footerLink: true,
+      notes: "NON conosce nome/email in chiaro nella cartella. Flusso inverso → CareProgram NON chiarito: non rappresentare.",
     },
     {
       id: "camit",
@@ -66,89 +118,71 @@
       short: "CAMIT",
       type: "surface",
       role: "Esperienza clinica pubblica del percorso cannabis medica",
-      relation: "Percorso clinico pubblico — metodo CAMIT",
+      relation: "Percorso clinico dentro il sistema — non satellite",
       palette: pal("#2fae8f", "#9fb3ad", "#5fd4b4", "#0a2420"),
       logo: "public/assets/brand/camit/logo.png",
       status: "current",
       currentUrl: "https://cannabismedicaitalia.it/",
       futureUrl: null,
-      constellation: { angle: 241, meta: "per le persone · metodo camit" },
+      layer: "clinica",
+      layerMeta: "percorso clinico pubblico",
+      narrative: true,
       footerLink: true,
-      notes: "Superficie da rifare dopo PB-CARe 2.0.",
-    },
-    {
-      id: "articolo-32",
-      name: "Articolo 32",
-      type: "service",
-      role: "Tutela legale del paziente",
-      relation: "Il diritto dentro il sistema",
-      palette: pal("#9fd8c9", "#5f7a72", "#f1c847", "#0a1f1b"),
-      logo: null,
-      status: "current",
-      currentUrl: "https://articolo32.it/",
-      futureUrl: null,
-      constellation: { angle: 288, meta: "per le persone · tutela legale", anchor: "#s3" },
-      footerLink: false,
-      notes: "Peso narrativo da collocare nel master model — non eliminare automaticamente.",
-    },
-    {
-      id: "farmacomm",
-      name: "FarmaCOmm",
-      type: "platform",
-      role: "Livello clinico/tecnico-operativo: cartella pseudonimizzata, diario, aderenza, eventi, esiti, conoscenza",
-      relation: "Sa COSA accade nella cura — identità pseudonimizzate",
-      palette: pal("#2e86c1", "#123c5a", "#4fd8e0", "#071b2b"),
-      logo: "public/assets/brand/farmacomm/logo.png",
-      status: "current",
-      currentUrl: "https://www.farmacomm.com/",
-      futureUrl: "hub conoscenza: eventiscientifici.farmacomm.com · pubblicazioni.farmacomm.com",
-      constellation: { angle: 335, meta: "la piattaforma · arte galenica" },
-      footerLink: true,
-      notes: "NON conosce nome/email in chiaro nella cartella. Flusso inverso → CareProgram NON chiarito: non rappresentare.",
-    },
-    {
-      id: "enzima",
-      name: "Enzima",
-      type: "department",
-      role: "Dipartimento Ricerca & Sviluppo di PB-CARe: ricerca, progettualità, osservazione → progetto",
-      relation: "Dipartimento interno — NON società separata",
-      palette: pal("#2bb8c9", "#4fd8b0", "#7fe8e0", "#06222a"),
-      logo: "public/assets/brand/enzima/logo.png",
-      status: "current",
-      currentUrl: "https://enzimamilano.it/",
-      futureUrl: null,
-      constellation: { angle: 20, meta: "ricerca & sviluppo", anchor: "#s4" },
-      footerLink: false,
-      notes: "Le parti commerciali/finanza agevolata del prototipo NON sono automaticamente corrette. Non sovrapporre a Prosperya.",
+      notes: "Superficie da rifare dopo PB-CARe 2.0. Niente cliché visivi cannabis.",
     },
     {
       id: "eventi-scientifici",
       name: "Eventi Scientifici",
       type: "surface",
       role: "Formazione e conoscenza scientifica collegata all'ambiente FarmaCOmm",
-      relation: "Superficie della conoscenza — non entità orbitante casuale",
+      relation: "Superficie che emerge DALL'ambiente conoscenza FarmaCOmm",
       palette: pal("#3f9fe0", "#6fd0ff", "#a8e4ff", "#0a1f30"),
       logo: "public/assets/brand/eventi-scientifici/logo.png", // SOLO versione fluida
       status: "current",
       currentUrl: "https://eventiscientifici.com/",
+      urlStatus: "da verificare", // .com vs .it non confermato nel materiale
       futureUrl: "eventiscientifici.farmacomm.com",
-      constellation: { angle: 62, meta: "per le aziende · formazione" },
+      layer: "conoscenza",
+      layerMeta: "conoscenza condivisa",
+      narrative: true,
       footerLink: true,
       notes: "Usare solo 'Logo fluido EventiScientifici.png'.",
+    },
+    {
+      id: "enzima",
+      name: "Enzima",
+      type: "department",
+      role: "Dipartimento Ricerca & Sviluppo di PB-CARe: osservazione → ricerca → progetto → applicazione → impatto",
+      relation: "Dipartimento interno — NON società separata, NON Prosperya",
+      palette: pal("#2bb8c9", "#4fd8b0", "#7fe8e0", "#06222a"),
+      logo: "public/assets/brand/enzima/logo.png",
+      status: "current",
+      currentUrl: null, // enzimamilano.it NON verificato — nessun link finché non confermato
+      urlStatus: "da verificare",
+      futureUrl: null,
+      layer: "ricerca",
+      layerMeta: "dipartimento R&S · PB-CARe",
+      layerAnchor: "#s4",
+      narrative: true,
+      footerLink: false,
+      notes: "Ciclo: osservazione, ricerca, progetto, applicazione, impatto/feedback. Nessun claim commerciale/finanza agevolata finché non confermato.",
     },
     {
       id: "prosperya",
       name: "Prosperya",
       type: "company",
       role: "Società distinta e autonoma — business advisory",
-      relation: "Relazione con l'ecosistema, identità propria — NON satellite interno",
+      relation: "Relazione esterna — NON satellite interno, NON dipartimento",
       palette: pal("#d4a94f", "#5a8ac0", "#e07a5f", "#221c12"),
       multicolor: true, // anello di cerchi colorati — mai ridurre a un colore
       logo: "public/assets/brand/prosperya/logo.png",
       status: "current",
       currentUrl: "https://prosperya.it/",
       futureUrl: null,
-      constellation: null, // autonoma: non orbita come satellite
+      layer: "esterna",
+      layerMeta: "società autonoma · advisory",
+      external: true, // connessione tratteggiata, non appartiene all'anello
+      narrative: true,
       footerLink: false,
       notes: "Marchio non reinventabile: anello + PROSPERYA + BUSINESS ADVISORY + IDEE·OPPORTUNITÀ·CRESCITA.",
     },
@@ -162,8 +196,10 @@
       logo: null, // asset mancante — vedi docs/ASSET_MANIFEST.md
       status: "future",
       currentUrl: "https://integralinea.it/",
+      urlStatus: "da verificare",
       futureUrl: null,
-      constellation: null,
+      layer: null,
+      narrative: false, // non in narrativa finché il ruolo non è definito
       footerLink: false,
       notes: "Non inventare il ruolo oltre i materiali disponibili. Asset logo mancante.",
     },
@@ -172,23 +208,30 @@
       name: "Gruppo Trua",
       type: "company",
       role: "Finanza agevolata — posizione nel master model da chiarire",
-      relation: "LEGACY — in attesa di definizione",
+      relation: "LEGACY — fuori dal racconto principale della nuova home",
       palette: pal("#c9a86a", "#8a7a58", "#e0c078", "#1c1810"),
       logo: null,
       status: "legacy",
       currentUrl: "https://www.gruppotrua.it/",
+      urlStatus: "da verificare",
       futureUrl: null,
-      constellation: { angle: 112, meta: "per le aziende · finanza agevolata" },
-      footerLink: true,
-      notes: "⚠ Presente nel prototipo ma non definito nel master model. Mantenuto come legacy fino a chiarimento.",
+      layer: null,
+      narrative: false, // §11: rimosso dalla narrativa, resta documentato
+      footerLink: false,
+      notes: "⚠ Legacy. NON sostituire con Prosperya nello stesso ruolo: hanno natura diversa.",
     },
   ];
 
-  // ordine di attivazione nella costellazione = ordine del manifest
   const byId = {};
   ENTITIES.forEach(e => (byId[e.id] = e));
-  const CONSTELLATION = ENTITIES.filter(e => e.constellation);
+
+  // entità della narrativa, raggruppate per layer nell'ordine definito
+  const NARRATIVE = LAYERS.map(l => ({
+    ...l,
+    entities: ENTITIES.filter(e => e.narrative && e.layer === l.id),
+  })).filter(l => l.entities.length);
+
   const FOOTER_LINKS = ENTITIES.filter(e => e.footerLink && e.currentUrl);
 
-  window.PBCARE_ECOSYSTEM = { ENTITIES, CONSTELLATION, FOOTER_LINKS, byId };
+  window.PBCARE_ECOSYSTEM = { ENTITIES, LAYERS, NARRATIVE, FOOTER_LINKS, byId };
 })();

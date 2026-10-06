@@ -1,54 +1,61 @@
 # PB-CARe 2.0 — SCENE BLUEPRINT
 
-## Stato: NON DEFINITIVO
+## Stato: NARRATIVE PASS 02 — attiva
 
-La struttura narrativa attuale NON è finale. Abbiamo trovato il
-**formato** (scrollytelling, scene pinned, canvas+DOM), non ancora la
-**struttura** definitiva. Il numero delle scene e la frase
-"Un coordinamento, sette entità" non sono sacri. Orbite, costellazioni
-e satelliti restano solo se hanno senso nel nuovo racconto.
+La struttura non è più "slide": è un unico mondo che cambia stato.
+Master narrative: PERSONA → IDENTITÀ → SEPARAZIONE → CURA NEL TEMPO →
+RELAZIONE → EVENTO → MISURA → CONOSCENZA → RICERCA → ECOSISTEMA → PB-CARe.
 
-## Scene correnti
+L'utente deve prima VIVERE le regole del sistema; solo dopo capisce che
+ciò che ha attraversato è PB-CARe.
+
+## Atti implementati (pass 02)
 
 | # | id | Tipo | Contenuto | Stato |
 |---|---|---|---|---|
-| 01 | `#s1` | canvas+DOM | Apertura — "La salute, come sistema" (particelle → membrana) | formato ok, contenuto rivedibile |
-| 02 | `#sep` | canvas+DOM | "Il nome resta fuori" — separazione identità/clinica | DA PROTEGGERE — concetto definitivo, composizione da rifinire |
-| 03 | `#s2` | canvas+DOM | Ecosistema — costellazione hub + satelliti | rappresentazione provvisoria |
-| 04 | `#s3` | canvas+DOM | Articolo 32 — traiettorie | peso narrativo da definire |
-| 05 | `#s4` | canvas+DOM | Enzima — corsie/flussi R&S | contenuto da rivedere (no commerciale automatico) |
-| — | `#end` | DOM | Statement finale + contatti | ok |
+| 01 | `#s1` | canvas+DOM | LA PERSONA — dal campo disperso emerge una traccia (filo del tempo) + nucleo | riscritto |
+| 02 | `#sep` | canvas+DOM | IL NOME RESTA FUORI — separazione identità/clinica + contaminazione cromatica CareProgram→FarmaCOmm | mantenuto, contaminato |
+| 03 | `#tempo` | canvas+DOM | IL TEMPO — asse, giorni, traccia di aderenza con interruzione, eventi datati, esito | NUOVO |
+| 04 | `#s2` | canvas+DOM | IL SISTEMA — profondità/layer: la spina-traccia attraversa identità, clinica, conoscenza, ricerca; Prosperya esterna (tratteggiata) | riscritto — niente satelliti |
+| 05 | `#s3` | canvas+DOM | ARTICOLO 32 — mantenuto provvisoriamente come fallback | invariato, peso da definire |
+| 06 | `#s4` | canvas+DOM | ENZIMA — ciclo osservazione→ricerca→progetto→applicazione→impatto (rimossi claim commerciali/finanza agevolata) | copy riscritto |
+| — | `#end` | DOM | Statement finale + contatti + network links | invariato |
 
-## Scena 02 — "Il nome resta fuori" (protetta)
+## Atti pianificati (pass successivi)
 
-Traduce l'architettura reale in esperienza:
+- **RELAZIONE** (persona ↔ professionista): connessione che nasce, è
+  attiva, può essere revocata SOLO dalla persona. Prossimità, consenso,
+  distanza — niente network diagram generico.
+- **IL DIRITTO DIVENTA EVENTO**: il token della separazione si trasforma
+  in evento datato (assegnazione → presa in carico → erogazione → evento).
+- **DALL'INDIVIDUO ALLA CONOSCENZA**: molte tracce → pattern, con soglia
+  k≥5 rappresentata visivamente. FarmaCOmm emerge come ambiente (logo
+  reveal), EventiScientifici emerge DA quell'ambiente.
+- **REVEAL PB-CARe**: "questo è PB-CARe" — il nome arriva dopo
+  l'esperienza, non prima.
 
-- CareProgram → identità (nome su carta)
-- FarmaCOmm → clinica pseudonimizzata (codice oltre il confine)
-- Principio: **"Il diritto attraversa il confine. L'identità no."**
+## Decisioni documentate
 
-Elementi acquisiti (commit c8fc758): campo carta che cresce dal
-confine, seam oro, apertura, token-cometa con scia, righello temporale
-tagliato dalla separazione, caption bicolore sul confine, cue di fase.
+- Articolo 32 mantenuto come scena intera in questo pass (fallback
+  sicuro) — il suo peso narrativo definitivo resta da collocare.
+- Gruppo Trua rimosso dalla narrativa (legacy, documentato nel data
+  layer con `narrative:false`).
+- Prosperya presente come relazione esterna (connessione tratteggiata,
+  layer `esterna`) — non satellite, non dipartimento.
+- Integralinea esclusa finché il ruolo non è definito.
+- "Sette realtà. Una rete." smontato: sostituito dal sistema a layer.
 
-NON eliminarla. La composizione grafica sarà rifinita in un pass
-successivo.
+## Continuità tra scene (spina narrativa)
 
-## Scena 03 — Ecosistema (provvisoria)
+La TRACCIA è l'elemento conduttore: nasce nell'atto 01 (filo del tempo
+sotto il nucleo-persona), è tagliata dal confine nell'atto 02 (righello),
+diventa la misura nell'atto 03, e riappare come spina verticale che
+attraversa i livelli del sistema nell'atto 04.
 
-L'attuale "costellazione di satelliti" è una prima rappresentazione.
-Per il modello corretto vedi ECOSYSTEM_MAP.md:
+## Palette dinamica implementata
 
-- non è "holding + 7 loghi";
-- le entità NON sono tutte satelliti omogenei (Prosperya è autonoma,
-  EventiScientifici è sotto-ambito FarmaCOmm, Enzima è dipartimento,
-  Integralinea non definita);
-- evoluzione prevista: profondità reale (persona/primo piano →
-  servizi/intermedio → ricerca/fondo) con parallasse.
-
-## Note aperte
-
-- Posizione narrativa di Articolo 32: da collocare nel master model.
-- Ruolo di Gruppo Trua: LEGACY, da chiarire.
-- Sezione fiducia/consenso (revoca, fonti) dal prototipo esterno:
-  candidata a scena futura dedicata.
+- Atto 02: il lato identità si contamina verde+arancio (CareProgram),
+  la luce clinica raffredda verso ciano (FarmaCOmm) — `mixRGB` in
+  main.js legge le palette reali da `data/ecosystem.js`.
+- Atto 03: fondo raffreddato verso `palette.atmosphere` FarmaCOmm.
+- Atto 04: ogni layer tinto dall'accent dell'entità.
