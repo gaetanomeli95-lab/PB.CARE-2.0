@@ -103,43 +103,8 @@
     <div class="manifest">
       <p class="eyebrow">Un coordinamento, sette entità</p>
       <h2>Sette realtà.<br />Una <i>rete</i>.</h2>
-      <div class="sats" id="sats">
-        <a class="sat" href="https://careprogram.it/" target="_blank" rel="noopener">
-          <span class="sdot mint"></span>
-          <span class="sname">CareProgram</span>
-          <span class="smeta">per le persone · careprogram.it</span>
-        </a>
-        <a class="sat" href="https://cannabismedicaitalia.it/" target="_blank" rel="noopener">
-          <span class="sdot mint"></span>
-          <span class="sname">Cannabis Medica Italia</span>
-          <span class="smeta">per le persone · metodo camit</span>
-        </a>
-        <a class="sat" href="#s3">
-          <span class="sdot mint"></span>
-          <span class="sname">Articolo 32</span>
-          <span class="smeta">per le persone · tutela legale</span>
-        </a>
-        <a class="sat" href="https://www.farmacomm.com/" target="_blank" rel="noopener">
-          <span class="sdot paper"></span>
-          <span class="sname">FarmaCOmm</span>
-          <span class="smeta">la piattaforma · arte galenica</span>
-        </a>
-        <a class="sat" href="#s4">
-          <span class="sdot gold"></span>
-          <span class="sname">Enzima</span>
-          <span class="smeta">per le aziende · ricerca &amp; sviluppo</span>
-        </a>
-        <a class="sat" href="https://eventiscientifici.com/" target="_blank" rel="noopener">
-          <span class="sdot gold"></span>
-          <span class="sname">Eventi Scientifici</span>
-          <span class="smeta">per le aziende · formazione</span>
-        </a>
-        <a class="sat" href="https://www.gruppotrua.it/" target="_blank" rel="noopener">
-          <span class="sdot gold"></span>
-          <span class="sname">Gruppo Trua</span>
-          <span class="smeta">per le aziende · finanza agevolata</span>
-        </a>
-      </div>
+      <!-- righe generate da data/ecosystem.js (source of truth) — non duplicare qui -->
+      <div class="sats" id="sats"></div>
     </div>
 
     <p class="cap" data-cap>Ogni entità copre un pezzo del percorso.<small>il coordinamento è uno solo</small></p>
@@ -209,12 +174,8 @@
       <div class="contact"><span>sede</span>Via Torino, 8 — Altavilla Milicia (PA)</div>
     </div>
 
-    <nav class="netlinks" aria-label="Siti del network">
-      <a href="https://www.farmacomm.com/" target="_blank" rel="noopener">FarmaCOmm</a>
-      <a href="https://cannabismedicaitalia.it/" target="_blank" rel="noopener">CAMIT</a>
-      <a href="https://eventiscientifici.com/" target="_blank" rel="noopener">Eventi Scientifici</a>
-      <a href="https://www.gruppotrua.it/" target="_blank" rel="noopener">Gruppo Trua</a>
-    </nav>
+    <!-- link generati da data/ecosystem.js (footerLink: true) -->
+    <nav class="netlinks" aria-label="Siti del network"></nav>
 
     <p class="legal">PB-CARe srl · P.IVA 07242090822</p>
   </div>
@@ -223,6 +184,7 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script src="data/ecosystem.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

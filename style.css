@@ -12,6 +12,16 @@
   --nav:58px;
 }
 
+/* palette di scena — base del sistema cromatico dinamico
+   (docs/VISUAL_SYSTEM.md): il mondo PB-CARe assorbe progressivamente
+   la palette dell'identità nel cui territorio entra lo scroll */
+#s1 {--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#071b24}
+#sep{--scene-accent:#f1c847;--scene-accent2:#e5e2d7;--scene-atmo:#0a1f1b}
+#s2 {--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#071b24}
+#s3 {--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#0a1f1b}
+#s4 {--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#06222a}
+#end{--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#071b24}
+
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--deep);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
 html,body{overflow-x:hidden}
@@ -164,9 +174,9 @@ a{color:inherit}
 .sat .sname{font-size:17px;font-weight:400;letter-spacing:-.01em}
 .sat .smeta{font:10px/1.5 var(--mono);color:rgba(138,164,157,.6);letter-spacing:.02em}
 .sat.lit{color:rgba(236,244,239,.95)}
-.sat.lit .sdot.mint{background:var(--mint);border-color:var(--mint);box-shadow:0 0 14px rgba(159,216,201,.7)}
-.sat.lit .sdot.paper{background:var(--paper);border-color:var(--paper);box-shadow:0 0 14px rgba(229,226,215,.7)}
-.sat.lit .sdot.gold{background:var(--gold);border-color:var(--gold);box-shadow:0 0 14px rgba(241,200,71,.7)}
+/* l'accento del satellite arriva dalla palette dell'entità
+   (--sat-accent / --sat-accent-rgb settati da data/ecosystem.js) */
+.sat.lit .sdot{background:var(--sat-accent,var(--mint));border-color:var(--sat-accent,var(--mint));box-shadow:0 0 14px rgba(var(--sat-accent-rgb,159,216,201),.7)}
 
 /* ---------- scena 03 ---------- */
 

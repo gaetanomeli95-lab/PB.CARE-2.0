@@ -153,18 +153,33 @@ function initS1(stage, ctx) {
 function initS2(stage, ctx) {
   let W = 0, H = 0, dust = [], grain = null;
   const cap = stage.querySelector("[data-cap]");
-  const rows = [...stage.querySelectorAll(".sat")];
+
+  /* manifest e costellazione nascono dalla source of truth
+     (data/ecosystem.js) — mai duplicare entità/colori qui */
+  const ECO = window.PBCARE_ECOSYSTEM || { CONSTELLATION: [], FOOTER_LINKS: [] };
+  const satsEl = stage.querySelector("#sats");
+  const rows = ECO.CONSTELLATION.map(e => {
+    const a = document.createElement("a");
+    a.className = "sat";
+    a.dataset.entity = e.id;
+    a.dataset.status = e.status;
+    const href = e.constellation.anchor || e.currentUrl || "#";
+    a.href = href;
+    if (!href.startsWith("#")) { a.target = "_blank"; a.rel = "noopener"; }
+    a.style.setProperty("--sat-accent", e.palette.accent);
+    a.style.setProperty("--sat-accent-rgb", e.palette.rgbAccent);
+    const dot = document.createElement("span"); dot.className = "sdot";
+    const nm = document.createElement("span"); nm.className = "sname"; nm.textContent = e.name;
+    const mt = document.createElement("span"); mt.className = "smeta"; mt.textContent = e.constellation.meta;
+    a.append(dot, nm, mt);
+    satsEl.appendChild(a);
+    return a;
+  });
 
   // angoli in gradi attorno all'hub, nell'ordine del manifest
-  const SATS = [
-    { a: 197, c: MINT,  name: "CareProgram" },
-    { a: 241, c: MINT,  name: "Cannabis Medica Italia" },
-    { a: 288, c: MINT,  name: "Articolo 32" },
-    { a: 335, c: PAPER, name: "FarmaCOmm" },
-    { a: 20,  c: GOLD,  name: "Enzima" },
-    { a: 62,  c: GOLD,  name: "Eventi Scientifici" },
-    { a: 112, c: GOLD,  name: "Gruppo Trua" },
-  ];
+  const SATS = ECO.CONSTELLATION.map(e => ({
+    a: e.constellation.angle, c: e.palette.rgbAccent, name: e.name,
+  }));
   const startOf = i => .12 + i * .085; // soglia di attivazione
 
   function resize() {
@@ -731,6 +746,19 @@ if (!reduce && typeof Lenis !== "undefined") {
     anchors: { offset: 0 },
     smoothWheel: true,
     stopInertiaOnNavigate: true,
+  });
+}
+
+// link di rete nel finale: generati dalla source of truth, non duplicati
+{
+  const ECO = window.PBCARE_ECOSYSTEM;
+  const nl = document.querySelector(".netlinks");
+  if (ECO && nl) ECO.FOOTER_LINKS.forEach(e => {
+    const a = document.createElement("a");
+    a.href = e.currentUrl; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = e.short || e.name;
+    a.dataset.status = e.status;
+    nl.appendChild(a);
   });
 }
 
