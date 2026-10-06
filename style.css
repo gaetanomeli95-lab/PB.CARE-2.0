@@ -18,9 +18,12 @@
 #s1 {--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#071b24}
 #sep{--scene-accent:#f1c847;--scene-accent2:#e5e2d7;--scene-atmo:#0a1f1b}
 #tempo{--scene-accent:#4fd8e0;--scene-accent2:#9fd8c9;--scene-atmo:#071b2b}
-#s2 {--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#071b24}
-#s3 {--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#0a1f1b}
-#s4 {--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#06222a}
+#relation{--scene-accent:#5abf78;--scene-accent2:#e58a3a;--scene-atmo:#0a2418}
+#event{--scene-accent:#f1c847;--scene-accent2:#4fd8e0;--scene-atmo:#0a1f1b}
+#knowledge{--scene-accent:#4fd8e0;--scene-accent2:#a8e4ff;--scene-atmo:#071b2b}
+#research{--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#06222a}
+#system{--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#071b24}
+#reveal{--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#071b24}
 #end{--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#071b24}
 
 *{box-sizing:border-box}
@@ -75,9 +78,12 @@ a{color:inherit}
 #s1{height:340vh}
 #sep{height:800vh}
 #tempo{height:560vh}
-#s2{height:640vh}
-#s3{height:520vh}
-#s4{height:480vh}
+#relation{height:540vh}
+#event{height:480vh}
+#knowledge{height:720vh}
+#research{height:520vh}
+#system{height:620vh}
+#reveal{height:380vh}
 
 .tag{
   position:absolute;z-index:20;left:var(--pad);top:calc(var(--nav) + 14px);
@@ -161,11 +167,14 @@ a{color:inherit}
   display:flex;align-items:center;gap:10px;pointer-events:none}
 #sep .cue::before{content:"";width:22px;height:1px;background:currentColor}
 
-/* ---------- scena 03 ---------- */
+/* ---------- manifest condiviso (tempo, relation, event, knowledge, system) ---------- */
 
-#s2 .manifest,#tempo .manifest{position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)}
-#s2 h2,#tempo h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
-#tempo .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
+#system .manifest,#tempo .manifest,#relation .manifest,#event .manifest,#knowledge .manifest{
+  position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)
+}
+#system h2,#tempo h2,#relation h2,#event h2,#knowledge h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
+#tempo .sub,#relation .sub,#event .sub,#knowledge .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
+.cite{font:10px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.7)}
 /* atto 03 — il log della traccia: testo DOM reale, appare in sync col canvas */
 .tlog{display:grid;border-top:1px solid rgba(79,216,224,.16);max-width:420px}
 .tlog .tl{
@@ -197,31 +206,39 @@ a{color:inherit}
    (--sat-accent / --sat-accent-rgb settati da data/ecosystem.js) */
 .sat.lit .sdot{background:var(--sat-accent,var(--mint));border-color:var(--sat-accent,var(--mint));box-shadow:0 0 14px rgba(var(--sat-accent-rgb,159,216,201),.7)}
 
-/* ---------- scena 03 ---------- */
+/* ---------- brand signatures: il marchio come firma del concetto ---------- */
 
-#s3 .quote-wrap{position:absolute;z-index:10;left:50%;top:18vh;transform:translateX(-50%);width:min(860px,86vw);text-align:center}
-#s3 .quote{margin:0;font-size:clamp(30px,4.4vw,62px);line-height:1.14;letter-spacing:-.03em}
-#s3 .quote .w{opacity:.14;transition:opacity .5s ease}
-#s3 .quote .w.on{opacity:1}
-#s3 .quote .w.key{color:var(--gold)}
-.quote-cite{margin-top:18px;font:11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.services{
-  list-style:none;margin:44px auto 0;padding:0;display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;text-align:left;
-  background:rgba(159,216,201,.14);border:1px solid rgba(159,216,201,.14);
-  max-width:820px;
+.bsig{
+  position:absolute;z-index:14;height:44px;width:auto;max-width:72vw;
+  opacity:0;transform:scale(.92);will-change:opacity,transform;
+  filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
-.services li{
-  background:var(--deep);padding:14px 16px;
+.bsig.small{height:36px}
+#sigCare{right:var(--pad);top:16vh}
+.sigstack{position:absolute;z-index:14;right:var(--pad);top:20vh;
+  display:grid;justify-items:end;gap:26px}
+.sigstack .bsig{position:static}
+#sigENZ{right:var(--pad);top:16vh}
+
+/* ---------- atto 06 · services (Art.32 integrato, non macro-scena) ---------- */
+
+#event .services{
+  list-style:none;margin:0;padding:0;display:grid;position:absolute;z-index:10;
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;text-align:left;
+  right:var(--pad);bottom:16vh;width:min(460px,42vw);
+  background:rgba(159,216,201,.14);border:1px solid rgba(159,216,201,.14);
+}
+#event .services li{
+  background:var(--deep);padding:12px 14px;
   font:11px/1.5 var(--mono);color:rgba(236,244,239,.8);
   opacity:0;transform:translateY(10px);
 }
-.services li em{display:block;margin-top:4px;font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.65)}
+#event .services li em{display:block;margin-top:4px;font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.65)}
 
-/* ---------- scena 04 ---------- */
+/* ---------- atto 08 · ricerca (Enzima) ---------- */
 
-#s4 .enz{position:absolute;z-index:10;left:var(--pad);top:17vh;width:min(560px,58vw)}
-#s4 h2{margin:0 0 30px;font-size:clamp(38px,5.6vw,84px)}
+#research .enz{position:absolute;z-index:10;left:var(--pad);top:17vh;width:min(560px,58vw)}
+#research h2{margin:0 0 30px;font-size:clamp(38px,5.6vw,84px)}
 .specs{display:grid;gap:0;border-top:1px solid rgba(159,216,201,.14);max-width:520px}
 .spec{
   display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:12px;
@@ -234,14 +251,31 @@ a{color:inherit}
 .spec.done{color:rgba(236,244,239,.92)}
 .spec.done .sdot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 14px rgba(241,200,71,.6)}
 .spec.done em{color:rgba(241,200,71,.85)}
-.endcta{
-  display:inline-block;margin-top:34px;
-  font:12px/1 var(--mono);letter-spacing:.06em;text-decoration:none;color:var(--gold);
-  border:1px solid rgba(241,200,71,.3);border-radius:999px;padding:12px 20px;
-  opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s,background .3s;
-}
-.endcta.on{opacity:1;transform:none}
-.endcta:hover{background:rgba(241,200,71,.08)}
+
+/* ---------- atto 09 · sintesi: loghi per layer ---------- */
+
+#system .sigs{position:absolute;z-index:13;right:var(--pad);top:22vh;
+  display:grid;justify-items:end;gap:22px;pointer-events:none}
+#system .sigs .lsig{height:34px;width:auto;max-width:60vw;
+  opacity:0;transform:scale(.9) translateY(10px);
+  transition:opacity .6s,transform .6s;
+  filter:drop-shadow(0 6px 26px rgba(0,0,0,.4))}
+#system .sigs .lsig.on{opacity:1;transform:none}
+#system .sigs .lsig.minor{height:24px;opacity:0}
+#system .sigs .lsig.minor.on{opacity:.85}
+
+/* ---------- atto 10 · reveal PB-CARe ---------- */
+
+#reveal .stage{background:linear-gradient(140deg,#04101c 0%,#071513 60%,#06202a 100%)}
+.reveal-wrap{position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-52%);
+  display:grid;justify-items:center;gap:0;text-align:center;width:min(680px,88vw)}
+#revealEyebrow{margin-bottom:34px}
+.pbc-logo{width:min(560px,80vw);height:auto;
+  opacity:0;transform:scale(.86);will-change:opacity,transform;
+  filter:drop-shadow(0 12px 60px rgba(79,180,220,.25))}
+.reveal-line{margin:36px 0 0;font-size:clamp(19px,2.3vw,30px);font-weight:300;
+  letter-spacing:-.01em;color:rgba(236,244,239,.85);opacity:0;transform:translateY(10px);
+  will-change:opacity,transform}
 
 /* ---------- finale ---------- */
 
@@ -272,28 +306,36 @@ a.contact:hover{background:#0c1f1c}
 
 @media (max-width:760px){
   .topnav nav a:not(:last-child){display:none}
-  #s1{height:440vh}#tempo{height:600vh}#s2{height:680vh}#s3{height:560vh}#s4{height:500vh}
+  #s1{height:440vh}#tempo{height:600vh}#relation{height:580vh}#event{height:520vh}
+  #knowledge{height:780vh}#research{height:540vh}#system{height:680vh}#reveal{height:360vh}
   #s1 .intro{top:20vh;max-width:86vw}
-  #s2 .manifest,#tempo .manifest{top:11vh;width:min(430px,88vw)}
-  #s2 h2,#tempo h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
-  #tempo .sub{font-size:13px;max-width:88vw}
+  #system .manifest,#tempo .manifest,#relation .manifest,#event .manifest,#knowledge .manifest{
+    top:11vh;width:min(430px,88vw)}
+  #system h2,#tempo h2,#relation h2,#event h2,#knowledge h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
+  #tempo .sub,#relation .sub,#event .sub,#knowledge .sub{font-size:13px;max-width:88vw}
   .tlog .tl{font-size:10px;padding:7px 2px}
   .lname{padding:10px 6px 4px;font-size:8px}
   .sat{padding:5px 4px}.sat .sname{font-size:14px}
   .sat .smeta{font-size:9px}
-  #s3 .quote-wrap{top:14vh}
-  .services{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #s4 .enz{top:13vh;width:86vw}
+  #event .services{left:24px;right:24px;bottom:12vh;width:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #event .services li{padding:9px 10px;font-size:9px}
+  .bsig{height:34px}
+  .bsig.small{height:24px}
+  .sigstack{top:auto;bottom:20vh;gap:16px}
+  #research .enz{top:13vh;width:86vw}
+  #system .sigs{top:auto;bottom:18vh;gap:14px}
+  #system .sigs .lsig{height:26px}
+  .pbc-logo{width:min(320px,84vw)}
   .cap{bottom:4vh}
   .contacts{grid-template-columns:1fr}
 }
 
-/* laptop bassi (1366×768): il manifest di #s2 deve entrare tutto
+/* laptop bassi (1366×768): il manifest di #system deve entrare tutto
    nella stage — compattazione verticale, non riduzione dei contenuti */
 @media (min-width:761px) and (max-height:830px){
-  #s2 .manifest{top:12vh}
-  #s2 h2{font-size:clamp(30px,4vw,44px);margin-bottom:16px}
-  #s2 .eyebrow{margin-bottom:10px}
+  #system .manifest{top:12vh}
+  #system h2{font-size:clamp(30px,4vw,44px);margin-bottom:16px}
+  #system .eyebrow{margin-bottom:10px}
   .lname{padding:8px 6px 4px}
   .sat{padding:6px 6px}
   .sat .sname{font-size:15px}
