@@ -2019,9 +2019,12 @@ const gp = document.getElementById("gp");
 // smooth scroll alla sorgente: la rotellina diventa flusso continuo,
 // le scene seguono 1:1 — niente più "inseguimento" a scatti
 let lenis = null;
-if (!reduce && typeof Lenis !== "undefined") {
+if (typeof Lenis !== "undefined") {
+  // anche in reduced-motion lo scroll resta fluido: le animazioni autonome
+  // si fermano, ma la navigazione a rotellina non deve andare a scatti.
+  // lerp più deciso = meno coda percettibile.
   lenis = new Lenis({
-    lerp: .085,
+    lerp: reduce ? .42 : .085,
     anchors: { offset: 0 },
     smoothWheel: true,
     stopInertiaOnNavigate: true,
