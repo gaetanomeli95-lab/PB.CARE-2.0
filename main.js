@@ -345,6 +345,22 @@ function initTempo(stage, ctx) {
       ctx.beginPath(); ctx.arc(x, y, 3.6 * out, 0, Math.PI * 2); ctx.fill();
     }
 
+    // uscita: la traccia piega verso il basso e a sinistra —
+    // diventerà la spina verticale del sistema nella scena seguente
+    const drop = smooth(seg(p, .88, .99));
+    if (drop > 0) {
+      const hx = ux(1), hy = traceY(1);
+      const ex = lerp(hx, W * .80, smooth(drop)); // → spineX della scena dopo
+      ctx.strokeStyle = `rgba(${GOLD},${.6 * drop})`;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = `rgba(${GOLD},.3)`; ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.quadraticCurveTo(hx, lerp(hy, H * .92, drop), ex, H * 1.04);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
     // DOM: il log si accende in sincrono
@@ -368,7 +384,7 @@ function initS2(stage, ctx) {
   /* manifest e nodi nascono dalla source of truth — mai duplicati qui */
   const ECO = window.PBCARE_ECOSYSTEM || { NARRATIVE: [], FOOTER_LINKS: [] };
   const layersEl = stage.querySelector("#layers");
-  const rows = [], NODES = [];
+  const rows = [], NODES = [], layerBoxes = [];
   ECO.NARRATIVE.forEach((layer, li) => {
     const box = document.createElement("div");
     box.className = "layer";
@@ -398,13 +414,15 @@ function initS2(stage, ctx) {
       NODES.push({ e, li, idx });
     });
     layersEl.appendChild(box);
+    layerBoxes.push(box);
   });
   const startOf = i => .12 + i * .075; // soglia di attivazione
 
   const mob = () => W <= 800;
   // i livelli vivono in profondità: identità in superficie, ricerca sul fondo
   const layerY = li => mob() ? H * (.50 + li * .092) : H * (.20 + li * .155);
-  const spineX = () => mob() ? W * .80 : W * .60;
+  // la spina entra dall'alto a destra — continuità con l'uscita di #tempo
+  const spineX = () => mob() ? W * .80 : W * .72;
 
   function resize() {
     W = stage.clientWidth; H = stage.clientHeight;
@@ -433,24 +451,28 @@ function initS2(stage, ctx) {
       ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
     }
 
-    // la spina: la traccia della persona attraversa i livelli in verticale
-    const spineIn = smooth(seg(p, .02, .14));
+    // la spina: la traccia della persona SCENDE dall'alto attraversando
+    // i livelli — è la stessa traccia uscita piegandosi dalla scena tempo
+    const spineIn = smooth(seg(p, .02, .16));
     if (spineIn > 0) {
       const yTop = layerY(0) - H * .06, yBot = layerY(nLayers - 1) + H * .05;
-      const lg = ctx.createLinearGradient(0, yTop, 0, yBot);
-      lg.addColorStop(0, `rgba(${PAPER},${.5 * spineIn})`);
+      const yDraw = lerp(-H * .12, yBot, spineIn); // cresce verso il basso
+      const lg = ctx.createLinearGradient(0, 0, 0, yBot);
+      lg.addColorStop(0, `rgba(${GOLD},${.55 * spineIn})`);
+      lg.addColorStop(.35, `rgba(${PAPER},${.5 * spineIn})`);
       lg.addColorStop(1, `rgba(${MINT},${.28 * spineIn})`);
       ctx.strokeStyle = lg;
       ctx.lineWidth = 1.2;
       ctx.setLineDash([1, 7]);
-      ctx.beginPath(); ctx.moveTo(sx, yTop); ctx.lineTo(sx, yBot); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx, -H * .12); ctx.lineTo(sx, yDraw); ctx.stroke();
       ctx.setLineDash([]);
-      // la persona in cima alla spina — continuità con la scena tempo
-      const rg = ctx.createRadialGradient(sx, yTop, 0, sx, yTop, 22);
+      // la testa della spina = la traccia della persona che arriva
+      const hy = Math.min(yDraw, yBot);
+      const rg = ctx.createRadialGradient(sx, hy, 0, sx, hy, 22);
       rg.addColorStop(0, `rgba(${GOLD},${.7 * spineIn})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(sx, yTop, 22, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(sx, hy, 22, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = `rgba(255,249,220,${.95 * spineIn})`;
-      ctx.beginPath(); ctx.arc(sx, yTop, 2.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(sx, hy, 2.8, 0, Math.PI * 2); ctx.fill();
     }
 
     // piani di profondità: ogni layer è una lamina orizzontale
@@ -520,7 +542,11 @@ function initS2(stage, ctx) {
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM: manifest si accende in sincrono
+    // DOM: manifest si accende in sincrono; un layer dominante alla
+    // volta — gli altri restano come contesto secondario (dim)
+    let focusLi = -1;
+    for (const n of NODES) if (p > startOf(n.idx) + .02) focusLi = Math.max(focusLi, n.li);
+    layerBoxes.forEach((b, li) => b.classList.toggle("dim", focusLi >= 0 && li !== focusLi));
     rows.forEach((r, i) => r.classList.toggle("lit", p > startOf(i) + .04));
     cap.style.opacity = seg(p, .86, .95);
   }
@@ -1036,7 +1062,8 @@ const controllers = [...document.querySelectorAll(".scene")].map(el => {
   const { resize, update } = INITS[el.dataset.scene](stage, ctx);
   // le scene a canvas hanno animazioni legate al tempo: vanno sempre ridisegnate.
   // le scene DOM reagiscono solo a p: se p non cambia, non si ridisegnano affatto.
-  const c = { el, tag, cur: 0, last: -1, resize, update,
+  const c = { el, stage, ctx, tag, cur: 0, last: -1, state: "", err: false,
+              resize, update,
               ease: el.dataset.scene === "sep" ? .09 : .115,
               timeDriven: !!canvas };
   c.resize();
@@ -1045,7 +1072,34 @@ const controllers = [...document.querySelectorAll(".scene")].map(el => {
 
 addEventListener("resize", () => controllers.forEach(c => { c.resize(); c.last = -1; }));
 
+/* ---------- debug mode: ?debugScroll=1 — mai visibile di default ---------- */
+const DBG = new URLSearchParams(location.search).has("debugScroll");
+let dbgEl = null;
+if (DBG) {
+  dbgEl = document.createElement("pre");
+  dbgEl.style.cssText = "position:fixed;right:8px;bottom:8px;z-index:9999;margin:0;" +
+    "padding:10px 12px;font:10px/1.5 monospace;color:#8ff0c8;" +
+    "background:rgba(0,0,0,.78);border:1px solid rgba(143,240,200,.3);" +
+    "border-radius:6px;pointer-events:none;white-space:pre";
+  document.body.appendChild(dbgEl);
+}
+
+/* ---------- ?snap=<sceneId>:<p> — salto deterministico per test/screenshot ---------- */
+const snapM = location.search.match(/snap=([\w-]+):([\d.]+)/);
+function doSnap() {
+  if (!snapM) return;
+  const target = document.getElementById(snapM[1]);
+  if (!target) return;
+  const y = target.getBoundingClientRect().top + scrollY +
+            (target.offsetHeight - innerHeight) * parseFloat(snapM[2]);
+  lenis ? lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y);
+}
+doSnap(); // immediato: lo script è a fine body, il layout esiste già
+
 function loop(time) {
+  // il frame successivo è schedulato PRIMA del lavoro: un'eccezione
+  // in una scena non può mai congelare il resto dell'esperienza
+  requestAnimationFrame(loop);
   if (lenis) lenis.raf(time);
 
   // progress globale + nav
@@ -1054,21 +1108,59 @@ function loop(time) {
   gp.style.setProperty("--gp", gp_);
   nav.classList.toggle("scrolled", scrollY > 30);
 
+  const dbg = [];
   for (const c of controllers) {
     const rect = c.el.getBoundingClientRect();
-    if (rect.bottom < -60 || rect.top > innerHeight + 60) continue;
     const span = rect.height - innerHeight;
     const p = clamp(-rect.top / span);
+
+    /* LIFECYCLE — handoff deterministico tra scene:
+       before  = la scena non è ancora entrata
+       active  = possiede (o sta cedendo) la viewport
+       after   = ha ceduto definitivamente il controllo                */
+    const state = p <= 0 ? "before" : p >= 1 ? "after" : "active";
+    if (state !== c.state) {
+      c.el.classList.remove("is-before", "is-active", "is-after");
+      c.el.classList.add("is-" + state);
+      c.state = state;
+    }
+
+    const visible = rect.bottom > -60 && rect.top < innerHeight + 60;
+    if (DBG) dbg.push(`${c.el.id.padEnd(6)} p=${p.toFixed(2)} top=${Math.round(rect.top)} ${state}${visible ? "" : " [culled]"}`);
+    if (!visible) continue;
+
     // con Lenis lo scroll è già smorzato: la scena segue 1:1.
     // senza Lenis, fallback al lerp per-scena.
     c.cur = (lenis || reduce) ? p : c.cur + (p - c.cur) * c.ease;
     c.tag.style.setProperty("--p", c.cur);
+
+    /* EXIT ENVELOPE — la scena cede intenzionalmente la viewport:
+       ultima parte del progresso → lieve uscita in luminosità/quota.
+       Non è un fade-to-black: è la cessione del piano alla scena
+       successiva che sta entrando dal basso.                          */
+    const exit = smooth(seg(c.cur, .94, 1));
+    c.stage.style.opacity = 1 - exit * .5;
+    c.stage.style.transform = exit > 0 ? `translateY(${-exit * 26}px)` : "";
+
     if (c.timeDriven || c.cur !== c.last) {
-      c.update(c.cur, time);
+      // stato grafico deterministico a ogni frame + update protetto:
+      // una scena in errore non ferma le altre
+      if (c.ctx) {
+        c.ctx.globalAlpha = 1;
+        c.ctx.globalCompositeOperation = "source-over";
+        c.ctx.setLineDash([]);
+        c.ctx.shadowBlur = 0;
+        c.ctx.textAlign = "left";
+      }
+      try {
+        c.update(c.cur, time);
+      } catch (e) {
+        if (!c.err) { console.error(`[scene #${c.el.id}]`, e); c.err = true; }
+      }
       c.last = c.cur;
     }
   }
-  requestAnimationFrame(loop);
+  if (dbgEl) dbgEl.textContent = dbg.join("\n");
 }
 requestAnimationFrame(loop);
 })();
