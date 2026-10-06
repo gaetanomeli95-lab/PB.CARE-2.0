@@ -51,7 +51,7 @@
       role: "Orchestrazione, coordinamento e accesso pubblico dell'ecosistema",
       relation: "Grammatica madre — il coordinamento è uno solo",
       palette: pal("#155e75", "#0b3a4a", "#9fd8c9", "#071b24"),
-      logo: "public/assets/brand/pbcare/logo.png",
+      logo: "assets/brand/pbcare/logo.png",
       status: "target",
       currentUrl: "https://pbcare.it/",
       futureUrl: null, // questo sito
@@ -67,7 +67,7 @@
       role: "Livello identità/economia: persona, nucleo, acquisti, beneficiari, fatturazione, diritti, accesso rete",
       relation: "Sa CHI sei — separato strutturalmente dalla clinica",
       palette: pal("#3f9d63", "#e58a3a", "#5abf78", "#0a2418"), // CARE verde + PROGRAM arancione — non cambiare
-      logo: "public/assets/brand/careprogram/logo.png",
+      logo: "assets/brand/careprogram/logo.png",
       status: "current",
       currentUrl: "https://careprogram.it/",
       futureUrl: null, // superficie dedicata futura
@@ -103,7 +103,7 @@
       role: "Livello clinico/tecnico-operativo: cartella pseudonimizzata, diario, aderenza, eventi, esiti — ambiente della conoscenza",
       relation: "Sa COSA accade nella cura — identità pseudonimizzate",
       palette: pal("#2e86c1", "#123c5a", "#4fd8e0", "#071b2b"),
-      logo: "public/assets/brand/farmacomm/logo.png",
+      logo: "assets/brand/farmacomm/logo.png",
       status: "current",
       currentUrl: "https://www.farmacomm.com/",
       futureUrl: "hub conoscenza: eventiscientifici.farmacomm.com · pubblicazioni.farmacomm.com",
@@ -121,7 +121,7 @@
       role: "Esperienza clinica pubblica del percorso cannabis medica",
       relation: "Percorso clinico dentro il sistema — non satellite",
       palette: pal("#2fae8f", "#9fb3ad", "#5fd4b4", "#0a2420"),
-      logo: "public/assets/brand/camit/logo.png",
+      logo: "assets/brand/camit/logo.png",
       status: "current",
       currentUrl: "https://cannabismedicaitalia.it/",
       futureUrl: null,
@@ -138,7 +138,7 @@
       role: "Formazione e conoscenza scientifica collegata all'ambiente FarmaCOmm",
       relation: "Superficie che emerge DALL'ambiente conoscenza FarmaCOmm",
       palette: pal("#3f9fe0", "#6fd0ff", "#a8e4ff", "#0a1f30"),
-      logo: "public/assets/brand/eventi-scientifici/logo.png", // SOLO versione fluida
+      logo: "assets/brand/eventi-scientifici/logo.png", // SOLO versione fluida
       status: "current",
       currentUrl: "https://eventiscientifici.com/",
       urlStatus: "da verificare", // .com vs .it non confermato nel materiale
@@ -156,7 +156,7 @@
       role: "Dipartimento Ricerca & Sviluppo di PB-CARe: osservazione → ricerca → progetto → applicazione → impatto",
       relation: "Dipartimento interno — NON società separata, NON Prosperya",
       palette: pal("#2bb8c9", "#4fd8b0", "#7fe8e0", "#06222a"),
-      logo: "public/assets/brand/enzima/logo.png",
+      logo: "assets/brand/enzima/logo.png",
       status: "current",
       currentUrl: null, // enzimamilano.it NON verificato — nessun link finché non confermato
       urlStatus: "da verificare",
@@ -176,7 +176,7 @@
       relation: "Relazione esterna — NON satellite interno, NON dipartimento",
       palette: pal("#d4a94f", "#5a8ac0", "#e07a5f", "#221c12"),
       multicolor: true, // anello di cerchi colorati — mai ridurre a un colore
-      logo: "public/assets/brand/prosperya/logo.png",
+      logo: "assets/brand/prosperya/logo.png",
       status: "current",
       currentUrl: "https://prosperya.it/",
       futureUrl: null,

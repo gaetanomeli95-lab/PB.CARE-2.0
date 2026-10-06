@@ -45,5 +45,5 @@ Asset non ancora fornito. Ruolo da definire — non inventare.
 
 - Asset source: `C:\Users\utente\Desktop\PBCARE_ASSET_INBOX` (originali
   intoccabili, solo copia).
-- Copie di lavoro in `public/assets/brand/<id>/logo.png`.
+- Copie di lavoro in `assets/brand/<id>/logo.png`.
 - Ogni logo rappresenta l'identità REALE del brand, non decorazione.

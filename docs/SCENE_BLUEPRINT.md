@@ -58,7 +58,7 @@ tutti i nuovi id (relation, event, knowledge, research, system, reveal).
 
 ## Loghi — regole d'uso
 
-Asset reali RGBA in `public/assets/brand/<entità>/logo.png`.
+Asset reali RGBA in `assets/brand/<entità>/logo.png`.
 - Compaiono come FIRMA del concetto appena vissuto, mai come [LOGO]+testo.
 - Canvas crea il mondo; il logo resta il logo (DOM `<img>`, opacity+scale).
 - CareProgram: nella relazione, quando identità+accesso sono leggibili.
