@@ -1,61 +1,69 @@
 # PB-CARe 2.0 — SCENE BLUEPRINT
 
-## Stato: NARRATIVE PASS 02 — attiva
+## Stato: NARRATIVE PASS 03 — attiva
 
 La struttura non è più "slide": è un unico mondo che cambia stato.
-Master narrative: PERSONA → IDENTITÀ → SEPARAZIONE → CURA NEL TEMPO →
-RELAZIONE → EVENTO → MISURA → CONOSCENZA → RICERCA → ECOSISTEMA → PB-CARe.
+Master narrative: PERSONA → IDENTITÀ → SEPARAZIONE → TEMPO → RELAZIONE →
+EVENTO → MISURA → MOLTE TRACCE → CONOSCENZA → RICERCA → SISTEMA → PB-CARe.
 
 L'utente deve prima VIVERE le regole del sistema; solo dopo capisce che
-ciò che ha attraversato è PB-CARe.
+ciò che ha attraversato è PB-CARe. Per questo la scena "sistema" è stata
+spostata verso la fine: è sintesi, non inventario.
 
-## Atti implementati (pass 02)
+## Atti implementati (pass 03)
 
-| # | id | Tipo | Contenuto | Stato |
+| # | id | data-scene | Contenuto | Stato |
 |---|---|---|---|---|
-| 01 | `#s1` | canvas+DOM | LA PERSONA — dal campo disperso emerge una traccia (filo del tempo) + nucleo | riscritto |
-| 02 | `#sep` | canvas+DOM | IL NOME RESTA FUORI — separazione identità/clinica + contaminazione cromatica CareProgram→FarmaCOmm | mantenuto, contaminato |
-| 03 | `#tempo` | canvas+DOM | IL TEMPO — asse, giorni, traccia di aderenza con interruzione, eventi datati, esito | NUOVO |
-| 04 | `#s2` | canvas+DOM | IL SISTEMA — profondità/layer: la spina-traccia attraversa identità, clinica, conoscenza, ricerca; Prosperya esterna (tratteggiata) | riscritto — niente satelliti |
-| 05 | `#s3` | canvas+DOM | ARTICOLO 32 — mantenuto provvisoriamente come fallback | invariato, peso da definire |
-| 06 | `#s4` | canvas+DOM | ENZIMA — ciclo osservazione→ricerca→progetto→applicazione→impatto (rimossi claim commerciali/finanza agevolata) | copy riscritto |
-| — | `#end` | DOM | Statement finale + contatti + network links | invariato |
+| 01 | `#s1` | s1 | LA PERSONA — dal campo disperso emerge una traccia + nucleo | riscritto (pass 02) |
+| 02 | `#sep` | sep | IL NOME RESTA FUORI — separazione identità/clinica + contaminazione CareProgram→FarmaCOmm | mantenuto |
+| 03 | `#tempo` | tempo | IL TEMPO — asse, giorni, traccia di aderenza con interruzione, eventi datati, esito | mantenuto; uscita ora consegna a #relation |
+| 04 | `#relation` | relation | LA RELAZIONE — persona↔professionista: richiesta al confine, consenso, accesso, revoca. Firma CareProgram | NUOVO |
+| 05 | `#event` | event | IL DIRITTO DIVENTA EVENTO — anello oro → assegnazione → presa in carico → erogazione → evento datato. Art.32 integrato | NUOVO (assorbe ex #s3) |
+| 06 | `#knowledge` | knowledge | DALL'INDIVIDUO ALLA CONOSCENZA — 5 tracce separate, k≥5 condensa il pattern; FarmaCOmm, CAMIT, EventiScientifici emergono | NUOVO — scena cardine |
+| 07 | `#research` | research | ENZIMA — ciclo chiuso: osservazione→ricerca→progetto→applicazione→ritorno che perturba il campo | riscritto da ex #s4 |
+| 08 | `#system` | system | IL SISTEMA — sintesi a layer; i marchi emergono col layer dominante | spostato a fine (era #s2) |
+| 09 | `#reveal` | reveal | PB-CARe — le grammatiche convergono, il marchio reale compare come conseguenza | NUOVO |
+| — | `#end` | — | Statement finale + contatti + network links | invariato |
 
-## Atti pianificati (pass successivi)
+## Articolo 32 — ruolo definitivo
 
-- **RELAZIONE** (persona ↔ professionista): connessione che nasce, è
-  attiva, può essere revocata SOLO dalla persona. Prossimità, consenso,
-  distanza — niente network diagram generico.
-- **IL DIRITTO DIVENTA EVENTO**: il token della separazione si trasforma
-  in evento datato (assegnazione → presa in carico → erogazione → evento).
-- **DALL'INDIVIDUO ALLA CONOSCENZA**: molte tracce → pattern, con soglia
-  k≥5 rappresentata visivamente. FarmaCOmm emerge come ambiente (logo
-  reveal), EventiScientifici emerge DA quell'ambiente.
-- **REVEAL PB-CARe**: "questo è PB-CARe" — il nome arriva dopo
-  l'esperienza, non prima.
+Non più macro-scena autonoma: è la FONTE del diritto dentro `#event`
+(citazione costituzionale + servizi di tutela). Il suo valore narrativo
+(«il diritto») è ciò che il token porta nel tempo. Contenuti preservati,
+peso ridotto a momento integrato.
 
-## Decisioni documentate
+## Entità fuori narrativa
 
-- Articolo 32 mantenuto come scena intera in questo pass (fallback
-  sicuro) — il suo peso narrativo definitivo resta da collocare.
-- Gruppo Trua rimosso dalla narrativa (legacy, documentato nel data
-  layer con `narrative:false`).
-- Prosperya presente come relazione esterna (connessione tratteggiata,
-  layer `esterna`) — non satellite, non dipartimento.
-- Integralinea esclusa finché il ruolo non è definito.
-- "Sette realtà. Una rete." smontato: sostituito dal sistema a layer.
+- Gruppo Trua: legacy, `narrative:false` — mai incluso.
+- Integralinea: ruolo non definito — escluso.
+- Prosperya: solo relazione esterna nel layer `esterna` (connessione
+  tratteggiata + logo quando il layer è dominante).
 
 ## Continuità tra scene (spina narrativa)
 
-La TRACCIA è l'elemento conduttore: nasce nell'atto 01 (filo del tempo
-sotto il nucleo-persona), è tagliata dal confine nell'atto 02 (righello),
-diventa la misura nell'atto 03, e riappare come spina verticale che
-attraversa i livelli del sistema nell'atto 04.
+La TRACCIA è l'elemento conduttore: nasce nell'atto 01 (filo del tempo),
+è tagliata dal confine nell'atto 02, diventa misura nell'atto 03, piega
+verso il basso e riappare come presenza-persona nell'atto 05, l'evento
+datato dell'atto 06 siede sullo stesso asse, le tracce dell'atto 07 sono
+la stessa grammatica ripetuta, il ciclo dell'atto 08 le perturba, la spina
+dell'atto 09 le attraversa tutte, i fili dell'atto 10 le ricompongono.
 
-## Palette dinamica implementata
+## Scene lifecycle (Pass 02B — non regredibile)
 
-- Atto 02: il lato identità si contamina verde+arancio (CareProgram),
-  la luce clinica raffredda verso ciano (FarmaCOmm) — `mixRGB` in
-  main.js legge le palette reali da `data/ecosystem.js`.
-- Atto 03: fondo raffreddato verso `palette.atmosphere` FarmaCOmm.
-- Atto 04: ogni layer tinto dall'accent dell'entità.
+Ogni scena riceve `is-before` / `is-active` / `is-after` dal progresso
+normalizzato. `is-after` toglie pointer-events allo stage. Exit envelope
+sugli ultimi punti di progresso. Debug: `?debugScroll=1` (overlay
+p/rect/state/errori) e `?snap=<id>:<p>` per QA diretto — funziona con
+tutti i nuovi id (relation, event, knowledge, research, system, reveal).
+
+## Loghi — regole d'uso
+
+Asset reali RGBA in `public/assets/brand/<entità>/logo.png`.
+- Compaiono come FIRMA del concetto appena vissuto, mai come [LOGO]+testo.
+- Canvas crea il mondo; il logo resta il logo (DOM `<img>`, opacity+scale).
+- CareProgram: nella relazione, quando identità+accesso sono leggibili.
+- FarmaCOmm: quando la conoscenza esiste (k≥5 → ambiente).
+- CAMIT: percorso clinico dentro l'ambiente (traccia → percorso strutturato).
+- EventiScientifici: emerge DALL'ambiente FarmaCOmm (superficie condivisa).
+- Enzima: firma del ciclo.
+- PB-CARe: solo nel reveal finale, come conseguenza.

@@ -42,6 +42,25 @@ Il colore si esprime attraverso: luce, atmosfera, gradienti, canvas,
 micro-particelle, linee, halo, bordi, micro-interazioni, tipografia.
 NON riempire lo schermo col colore del brand.
 
+### Passaggi reali fra identità (Pass 03)
+
+Il mondo reagisce in continuità — ogni scena mixa la propria atmosfera
+verso il territorio che attraversa via `mixRGB` sulle palette del data
+layer:
+
+| Passaggio | Transizione |
+|---|---|
+| #relation → accesso | madre → verde CareProgram + micro-arancio (radial wash) |
+| #event → presa in carico | oro diritto → ciano clinico FarmaCOmm (punto di accoglienza + asse) |
+| #knowledge → k≥5 | ciano tracce → atmosfera blu FarmaCOmm (radial dal centro) |
+| #knowledge → ES | banda aggregata → azzurro aperto EventiScientifici (superficie) |
+| #knowledge → CAMIT | ultima traccia → teal CAMIT (percorso con waypoint) |
+| #research | teal/cyan Enzima (ciclo, stazioni, ritorno) |
+| #reveal | tutti gli accenti → mix verso menta madre (streams `STREAM_COLS`) |
+
+Nessun rainbow permanente: ogni colore arriva dalla palette reale
+dell'entità in `data/ecosystem.js` e ha una causa narrativa.
+
 ## Implementazione tecnica
 
 - Ogni entità definisce la propria palette in `data/ecosystem.js`
