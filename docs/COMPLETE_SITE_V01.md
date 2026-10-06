@@ -25,7 +25,7 @@ Navigation: PB-CARe, Per chi, Come funziona, Ecosistema, Ricerca, Contatti. Sepa
 - Prosperya: own original multicolor logo, dashed boundary, external relationship, autonomous company. No internal satellite or department depiction.
 - Mother-brand institutional principles and contact closing; no long final logo reveal.
 
-## Verified destinations — 2026-10-07
+## Verified destinations — 2026-10-06 (UTC)
 
 | Destination | Verification | Public action |
 |---|---|---|
@@ -51,4 +51,4 @@ Canvas frame rate capped at ~30fps, max DPR 1.5, only visible canvases rendered;
 
 `npm run check` verifies JavaScript syntax. `npm run dev` runs the dependency-free static development server; production stays static Vercel hosting.
 
-Viewport QA harness: `docs/qa/viewport.html` renders same-origin iframes at the six exact requested sizes. The visible wrapper is scaled to fit; each iframe has its actual chosen layout viewport. Test results and screenshots are added after visual verification.
+Viewport QA harness: `docs/qa/viewport.html` renders same-origin iframes at the six exact requested sizes. The visible wrapper is scaled to fit; each iframe has its actual chosen layout viewport. Final results and screenshots: [REPORT_COMPLETE_SITE_V01.md](REPORT_COMPLETE_SITE_V01.md).
