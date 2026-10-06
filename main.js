@@ -368,6 +368,9 @@ function frame(time){pending=0;if(document.hidden)return;if(time-lastTime<32){sc
 }
 const observer=new IntersectionObserver(entries=>{for(const entry of entries){const c=controllers.find(c=>c.el===entry.target);if(c)c.visible=entry.isIntersecting;}schedule();},{rootMargin:'0px'});controllers.forEach(c=>observer.observe(c.el));
 let resizeFrame=0;addEventListener('resize',()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{controllers.forEach(c=>{c.resize();c.last=-1;});schedule();});});
+// Lenis intercepts wheel input before native scroll. Wake the renderer even
+// in editorial sections, where the animation loop deliberately rests.
+addEventListener('wheel',schedule,{passive:true});
 addEventListener('scroll',schedule,{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
 applyMotion();
 /* Reproducible scene QA; never needed by the public user journey. */
