@@ -40,6 +40,7 @@
     { id: "clinica",    label: "clinica",    hint: "cosa accade nella cura" },
     { id: "conoscenza", label: "conoscenza", hint: "ciò che si condivide" },
     { id: "ricerca",    label: "ricerca",    hint: "ciò che trasforma" },
+    { id: "tutela",     label: "tutela",    hint: "assistenza legale" },
     { id: "esterna",    label: "esterna",    hint: "società connesse" },
   ];
 
@@ -87,7 +88,7 @@
       logo: null,
       status: "current",
       currentUrl: "https://pbcare.it/articolo-32/", // verificato sul sito PB-CARe
-      urlStatus: "da verificare",
+      urlStatus: "verificato",
       futureUrl: null,
       layer: "tutela",
       layerMeta: "servizio di tutela legale",
