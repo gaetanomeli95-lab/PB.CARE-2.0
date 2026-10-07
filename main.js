@@ -1591,10 +1591,12 @@ const controllers = [...document.querySelectorAll(".scene")].map(el => {
   const canvas = stage.querySelector("canvas");
   const ctx = canvas ? canvas.getContext("2d") : null;
   const tag = stage.querySelector(".tag .pb");
+  const tagEl = stage.querySelector(".tag");
+  const dlabel = stage.querySelector(".datalabel");
   const { resize, update } = (INITS[el.dataset.scene] || NOOP_INIT)(stage, ctx);
   // le scene a canvas hanno animazioni legate al tempo: vanno sempre ridisegnate.
   // le scene DOM reagiscono solo a p: se p non cambia, non si ridisegnano affatto.
-  const c = { el, stage, ctx, tag, cur: 0, last: -1, state: "", err: false,
+  const c = { el, stage, ctx, tag, tagEl, dlabel, cur: 0, last: -1, state: "", err: false,
               resize, update,
               ease: el.dataset.scene === "sep" ? .09 : .115,
               timeDriven: !!canvas };
@@ -1720,6 +1722,11 @@ function loop(time) {
     // senza Lenis, fallback al lerp per-scena.
     c.cur = (lenis || reduce) ? p : c.cur + (p - c.cur) * c.ease;
     c.tag.style.setProperty("--p", c.cur);
+    // chrome di scena: etichetta e marcatore dati esistono solo nel corpo
+    // della scena — mai sovrapposti a quelli della scena vicina
+    const tw = c.cur > .03 && c.cur < .96 ? 1 : 0;
+    if (c.tagEl) c.tagEl.style.opacity = tw;
+    if (c.dlabel) c.dlabel.style.opacity = tw;
 
     /* EXIT ENVELOPE — la scena cede intenzionalmente la viewport:
        ultima parte del progresso → lieve uscita in luminosità/quota.
