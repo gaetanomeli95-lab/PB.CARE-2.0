@@ -204,13 +204,13 @@ html.js:not(.booted) .hero .hero-sub,html.js:not(.booted) .hero-actions{opacity:
 html.js:not(.booted) .hero .imark{transform:translateY(20px) scale(.94)}
 html.js:not(.booted) .hero-cue{opacity:0;transform:translate(-50%,12px)}
 html.js:not(.booted) .topnav{opacity:0}
-html.js.booted .hero .imark{opacity:1;transform:none;transition-delay:.25s}
-html.js.booted .hero .iline{opacity:1;transform:none;transition-delay:.75s}
-html.js.booted .hero .hero-line{opacity:1;transform:none;transition-delay:1.05s}
-html.js.booted .hero .hero-sub{opacity:1;transform:none;transition-delay:1.35s}
-html.js.booted .hero-actions{opacity:1;transform:none;transition-delay:1.6s}
-html.js.booted .hero-cue{opacity:1;transform:translateX(-50%);transition-delay:2.2s}
-html.js.booted .topnav{opacity:1;transition-delay:.5s}
+html.js.booted .hero .imark{opacity:1;transform:none;transition:opacity 1.4s ease,transform 1.4s cubic-bezier(.19,1,.22,1);transition-delay:1.05s}
+html.js.booted .hero .iline{opacity:1;transform:none;transition-delay:2.1s}
+html.js.booted .hero .hero-line{opacity:1;transform:none;transition-delay:2.4s}
+html.js.booted .hero .hero-sub{opacity:1;transform:none;transition-delay:2.7s}
+html.js.booted .hero-actions{opacity:1;transform:none;transition-delay:3s}
+html.js.booted .hero-cue{opacity:1;transform:translateX(-50%);transition-delay:3.6s}
+html.js.booted .topnav{opacity:1;transition-delay:1.6s}
 
 /* ---------- elementi condivisi fuori scena ---------- */
 
