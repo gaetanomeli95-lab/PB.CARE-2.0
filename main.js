@@ -101,22 +101,72 @@ function initHero(canvas) {
   function draw(time) {
     ctx.clearRect(0, 0, W, H);
     const t = reduce ? 0 : time;
-    const cx = W * .5, cy = H * .42;
+    const cx = W * .5, cy = H * .40;
 
-    // fenditura quieta: la firma luminosa dell'identità, sempre accesa
-    const breathe = reduce ? .85 : .78 + .07 * Math.sin(t * .0006);
-    const hh = H * .30;
-    const g = ctx.createLinearGradient(cx, cy - hh, cx, cy + hh);
-    g.addColorStop(0, "rgba(168,216,240,0)");
-    g.addColorStop(.5, `rgba(${COLD},${.42 * breathe})`);
-    g.addColorStop(1, "rgba(168,216,240,0)");
-    ctx.strokeStyle = g; ctx.lineWidth = 1.4;
-    ctx.shadowColor = "rgba(120,200,240,.55)"; ctx.shadowBlur = 18;
-    ctx.beginPath(); ctx.moveTo(cx, cy - hh); ctx.lineTo(cx, cy + hh); ctx.stroke();
-    ctx.shadowBlur = 0;
-    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * .34);
-    rg.addColorStop(0, `rgba(90,160,200,${.08 * breathe})`); rg.addColorStop(1, "rgba(0,0,0,0)");
+    // il marchio è un globo di orbite: la sua stessa geometria vive nel
+    // campo — meridiani che ruotano piano attorno all'asse dell'identità,
+    // paralleli inclinati, nodi che orbitano. Autonomo dallo scroll.
+    const R = Math.min(W, H) * .36;
+    const sq = .30;                       // inclinazione prospettica dei paralleli
+    const breathe = reduce ? .85 : .82 + .08 * Math.sin(t * .0006);
+
+    // alone ambientale dietro il globo
+    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.6);
+    rg.addColorStop(0, `rgba(90,160,200,${.10 * breathe})`);
+    rg.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+
+    // asse: la fenditura dell'identità resta accesa — è l'asse del globo
+    const g = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
+    g.addColorStop(0, "rgba(168,216,240,0)");
+    g.addColorStop(.5, `rgba(${COLD},${.34 * breathe})`);
+    g.addColorStop(1, "rgba(168,216,240,0)");
+    ctx.strokeStyle = g; ctx.lineWidth = 1.2;
+    ctx.shadowColor = "rgba(120,200,240,.5)"; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // meridiani: ellissi verticali il cui raggio orizzontale respira
+    // cos(θ) — la rotazione lenta del wireframe
+    ctx.lineWidth = 1;
+    for (let m = 0; m < 5; m++) {
+      const th = t * .00012 + m * (Math.PI / 5);
+      const mx = Math.abs(Math.cos(th)) * R;
+      const a = (.05 + .10 * Math.abs(Math.cos(th))) * breathe;
+      ctx.strokeStyle = `rgba(${COLD},${a})`;
+      ctx.beginPath(); ctx.ellipse(cx, cy, mx, R, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // paralleli: anelli orizzontali inclinati — il reticolo della sfera
+    for (let la = -2; la <= 2; la++) {
+      const phi = la * .34;
+      const rx = R * Math.cos(phi);
+      const ry = rx * sq;
+      const yy = cy + Math.sin(phi) * R * sq;
+      ctx.strokeStyle = `rgba(${COLD},${(la === 0 ? .16 : .08) * breathe})`;
+      ctx.beginPath(); ctx.ellipse(cx, yy, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // profilo esterno della sfera — trattenuto, quasi invisibile
+    ctx.strokeStyle = `rgba(${COLD},${.10 * breathe})`;
+    ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .98, 0, 0, Math.PI * 2); ctx.stroke();
+
+    // nodi orbitali: punti del sistema che percorrono i paralleli —
+    // l'ecosistema gravita attorno all'identità, mai fermo
+    for (let n = 0; n < 4; n++) {
+      const lane = [-2, -1, 1, 2][n];
+      const phi = lane * .34;
+      const rx = R * Math.cos(phi), ry = rx * sq;
+      const yy = cy + Math.sin(phi) * R * sq;
+      const a = t * (.00016 + n * .00003) * (n % 2 ? -1 : 1) + n * 1.7;
+      const nx = cx + Math.cos(a) * rx, ny = yy + Math.sin(a) * ry;
+      // il nodo si attenua sul lato "dietro" dell'orbita
+      const depth = .5 + .5 * Math.sin(a + Math.PI / 2);
+      ctx.fillStyle = `rgba(220,245,255,${(.12 + .38 * depth) * breathe})`;
+      ctx.shadowColor = "rgba(140,210,245,.7)"; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(nx, ny, 1.7, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
 
     // pulviscolo in deriva lenta — il campo è vivo, non fermo
     for (const d of dust) {
