@@ -133,164 +133,6 @@ function initHero(canvas) {
   return { draw, el: canvas.parentElement };
 }
 
-/* ---------- atto 01 · la persona — dal caos una traccia ---------- */
-
-function initS1(stage, ctx) {
-  let W = 0, H = 0, parts = [], grain = null;
-  const intro = stage.querySelector(".intro"), cap = stage.querySelector("[data-cap]");
-  const eyebrow = intro.querySelector(".eyebrow"), h1 = intro.querySelector("h2"), sub = intro.querySelector(".sub");
-  let geo = null; // geometria della traccia, calcolata al resize
-
-  function resize() {
-    W = stage.clientWidth; H = stage.clientHeight;
-    const DPR = Math.min(1.5, devicePixelRatio || 1);
-    const c = stage.querySelector("canvas");
-    c.width = W * DPR; c.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    grain = makeGrain(ctx);
-
-    // dal campo disperso emerge una traccia:
-    // 74% particelle → il filo del tempo, 14% → il nucleo (la persona),
-    // 12% restano libere nel campo
-    parts = [];
-    const mob = W < 760;
-    const cx = mob ? W * .5 : W * .70, cy = mob ? H * .56 : H * .50;
-    const R = Math.min(W, H) * (mob ? .30 : .26);
-    const ly = cy + R * .66;                  // la traccia nasce sotto il nucleo
-    const lx0 = cx - R * 1.45, lx1 = cx + R * 1.45;
-    geo = { cx, cy, R, ly, lx0, lx1 };
-    const N = mob ? 90 : 130;
-    for (let i = 0; i < N; i++) {
-      const kind = i < N * .74 ? 0 : (i < N * .88 ? 1 : 2);
-      let tx, ty;
-      if (kind === 0) {
-        const u = i / (N * .74);
-        tx = lerp(lx0, lx1, u);
-        // il filo del tempo: un respiro lento, non un tracciato nervoso
-        ty = ly - Math.sin(u * 3.6 + .4) * R * .08 + (rnd(i * 3.1) - .5) * R * .025;
-      } else if (kind === 1) {
-        const a = rnd(i * 4.7) * Math.PI * 2, rr = rnd(i * 6.3) * R * .20;
-        tx = cx + Math.cos(a) * rr;
-        ty = cy + Math.sin(a) * rr;
-      } else {
-        tx = cx + (rnd(i * 7.9) - .5) * R * 2.6;
-        ty = cy + (rnd(i * 2.4) - .5) * R * 2.6;
-      }
-      parts.push({
-        sx: rnd(i * 11.3) * W, sy: rnd(i * 13.7) * H,
-        tx, ty, kind,
-        wx: (rnd(i * 5.5) - .5) * 90, wy: (rnd(i * 8.8) - .5) * 90,
-        ph: rnd(i * 1.9) * 6.28,
-        r: kind === 1 ? 1.6 : .9 + rnd(i * 3.3) * 1.1,
-        dly: rnd(i * 6.1) * .25,
-      });
-    }
-  }
-
-  function update(p, time) {
-    ctx.clearRect(0, 0, W, H);
-    const t = reduce ? 0 : time;
-    const { cx, cy, R, ly, lx0, lx1 } = geo;
-
-    // handoff dall'intro: il seme del marchio continua a scendere qui —
-    // un filo che arriva dall'alto e si dissolve nel campo disperso
-    const incoming = 1 - smooth(seg(p, .02, .18));
-    if (incoming > 0) {
-      const hy = lerp(-H * .05, cy - R * .55, 1 - incoming);
-      ctx.strokeStyle = `rgba(${MINT},${.4 * incoming})`;
-      ctx.lineWidth = 1.1;
-      ctx.setLineDash([1, 6]);
-      ctx.beginPath(); ctx.moveTo(cx, -H * .05); ctx.lineTo(cx, hy); ctx.stroke();
-      ctx.setLineDash([]);
-      const rg = ctx.createRadialGradient(cx, hy, 0, cx, hy, 18);
-      rg.addColorStop(0, `rgba(${MINT},${.6 * incoming})`); rg.addColorStop(1, `rgba(${MINT},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, hy, 18, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // posizioni attuali — emersione lenta: il campo resta disperso a lungo
-    const pos = [];
-    for (const pt of parts) {
-      const m = smoother(seg(p, .12 + pt.dly * .4, .46 + pt.dly * .4));
-      pos.push({
-        x: lerp(pt.sx + pt.wx * Math.sin(t * .0005 + pt.ph), pt.tx, m),
-        y: lerp(pt.sy + pt.wy * Math.cos(t * .0004 + pt.ph), pt.ty, m),
-        m, pt,
-      });
-    }
-
-    // la traccia: i vicini del filo si collegano quando il filo si forma —
-    // è l'asse del tempo che continuerà nella scena successiva
-    const thread = pos.filter(q => q.pt.kind === 0);
-    const linkA = smooth(seg(p, .40, .60));
-    if (linkA > 0) {
-      ctx.lineWidth = 1.2;
-      ctx.lineCap = "round";
-      for (let i = 0; i < thread.length - 1; i++) {
-        const a = thread[i], b = thread[i + 1];
-        ctx.strokeStyle = `rgba(${MINT},${.42 * linkA * a.m})`;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-      }
-      ctx.lineCap = "butt";
-    }
-
-    // particelle — il campo libero resta tenue: silenzio visivo
-    for (const q of pos) {
-      const col = q.pt.kind === 1 ? GOLD : MINT;
-      const a = q.pt.kind === 2 ? .12 : lerp(.22, .80, q.m);
-      ctx.fillStyle = `rgba(${col},${a})`;
-      ctx.beginPath(); ctx.arc(q.x, q.y, q.pt.r, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // il nucleo: la persona — presenza, prima del sistema
-    const core = smooth(seg(p, .42, .60));
-    if (core > 0) {
-      const pulse = 1 + .05 * Math.sin(t * .0012);
-      const rr = R * .42 * pulse;
-      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr);
-      rg.addColorStop(0, `rgba(${GOLD},${.34 * core})`);
-      rg.addColorStop(.4, `rgba(${GOLD},${.10 * core})`);
-      rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = `rgba(255,249,220,${.95 * core})`;
-      ctx.beginPath(); ctx.arc(cx, cy, 3.2 * core, 0, Math.PI * 2); ctx.fill();
-      // ponte nucleo → traccia: la vita incontra il tempo
-      const drop = smooth(seg(p, .52, .70));
-      if (drop > 0) {
-        ctx.strokeStyle = `rgba(${GOLD},${.35 * drop})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(cx, cy + R * .1); ctx.lineTo(cx, lerp(cy + R * .1, ly, drop)); ctx.stroke();
-      }
-    }
-
-    // impulso vitale: percorre la traccia, non orbita — il tempo scorre
-    const life = smooth(seg(p, .62, .78));
-    if (life > 0 && !reduce) {
-      const u = (t * .00012) % 1;
-      const lx = lerp(lx0, lx1, u);
-      const rg = ctx.createRadialGradient(lx, ly, 0, lx, ly, 26);
-      rg.addColorStop(0, `rgba(${GOLD},${.8 * life})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(lx, ly, 26, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = `rgba(255,249,220,${life})`;
-      ctx.beginPath(); ctx.arc(lx, ly, 2.6, 0, Math.PI * 2); ctx.fill();
-    }
-
-    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // DOM — la tipografia è temporizzata sul campo: prima il silenzio,
-    // poi l'eyebrow, poi la frase; tutto cede quando la persona emerge
-    const out = smooth(seg(p, .46, .58));
-    const e = smooth(seg(p, .02, .10)) * (1 - out);
-    const h = smooth(seg(p, .06, .16)) * (1 - out);
-    const s = smooth(seg(p, .16, .26)) * (1 - out);
-    eyebrow.style.opacity = e;
-    h1.style.opacity = h; h1.style.transform = `translateY(${lerp(22, 0, smooth(seg(p, .06, .16))) - out * 18}px)`;
-    sub.style.opacity = s; sub.style.transform = `translateY(${lerp(14, 0, smooth(seg(p, .16, .26)))}px)`;
-    intro.style.transform = `translateY(calc(-50% - ${26 * out}px))`;
-    cap.style.opacity = seg(p, .70, .82);
-  }
-  return { resize, update };
-}
-
 /* ---------- atto 03 · il tempo — la misura al posto della dichiarazione ----------
 
    Concetto: una dichiarazione è un punto fermo; una misura è una sequenza.
@@ -939,13 +781,13 @@ function initKnowledge(stage, ctx) {
     const fc = smooth(seg(p, .82, .90));
     if (fc > 0) {
       const lx = W * .5, ly = H * .44;
-      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .26);
-      g.addColorStop(0, `rgba(234,252,255,${.22 * fc})`);
+      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .36);
+      g.addColorStop(0, `rgba(234,252,255,${.34 * fc})`);
       g.addColorStop(1, "rgba(234,252,255,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       const v = ctx.createRadialGradient(lx, ly, Math.min(W, H) * .18, lx, ly, Math.max(W, H) * .72);
       v.addColorStop(0, "rgba(0,0,0,0)");
-      v.addColorStop(1, `rgba(3,10,18,${.30 * fc})`);
+      v.addColorStop(1, `rgba(3,10,18,${.38 * fc})`);
       ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
     }
 
@@ -1668,7 +1510,7 @@ function initWorld(stage, ctx) {
 /* ---------- engine ---------- */
 
 const INITS = {
-  s1: initS1, sep: initSep, tempo: initTempo,
+  sep: initSep, tempo: initTempo,
   relation: initRelation, knowledge: initKnowledge,
   system: initSystem, reveal: initReveal,
   world: initWorld,
@@ -1790,7 +1632,7 @@ if (DBL) {
 }
 const DBL_SEL = ".manifest .eyebrow,.manifest h2,.manifest .sub," +
   ".tlog .tl.cur,.bsig,.kpeak,.services,.specs,.cap,.tag,.imark,.iline," +
-  ".pbc-logo,.reveal-line,#revealEyebrow,.sigs .lsig,.intro";
+  ".pbc-logo,.reveal-line,#revealEyebrow,.sigs .lsig";
 function debugLayout() {
   dblCtx.clearRect(0, 0, dblCanvas.width, dblCanvas.height);
   const boxes = [];

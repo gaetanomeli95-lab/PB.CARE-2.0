@@ -16,7 +16,7 @@
    (docs/VISUAL_SYSTEM.md): il mondo PB-CARe assorbe progressivamente
    la palette dell'identità nel cui territorio entra lo scroll */
 #intro{--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#04090f}
-#s1 {--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#050e14}
+
 #sep{--scene-accent:#f1c847;--scene-accent2:#e5e2d7;--scene-atmo:#0a1f1b}
 #tempo{--scene-accent:#4fd8e0;--scene-accent2:#9fd8c9;--scene-atmo:#0a1a24}
 #knowledge{--scene-accent:#4fd8e0;--scene-accent2:#a8e4ff;--scene-atmo:#060f1d}
@@ -88,8 +88,6 @@ a{color:inherit}
    prima ancora del marchio. La transizione resta organica perché
    l'handoff (exit envelope + entrata dal basso) porta il colore oltre
    il confine della scena.                                          */
-#s1 .stage{background:radial-gradient(1000px 700px at 74% 43%,rgba(20,56,66,.26),transparent 65%),
-  linear-gradient(125deg,#040b10 0%,#061219 52%,#0a1e28 100%)}
 #tempo .stage{background:radial-gradient(1000px 700px at 70% 50%,rgba(28,64,86,.24),transparent 66%),
   linear-gradient(130deg,#070f16 0%,#0b1c28 55%,#102736 100%)}
 #careprogram .stage{background:radial-gradient(900px 640px at 30% 55%,rgba(24,80,48,.22),transparent 68%),
@@ -101,7 +99,6 @@ a{color:inherit}
 #reveal .stage{background:radial-gradient(1000px 700px at 50% 46%,rgba(22,74,65,.30),transparent 65%),
   linear-gradient(125deg,#051310 0%,#071a16 52%,#0a2420 100%)}
 
-#s1{height:170vh}
 #sep{height:520vh}
 #tempo{height:240vh}
 #per-chi{height:250vh}
@@ -219,7 +216,8 @@ a{color:inherit}
 
 /* ---------- per chi / ingressi — scena che si compone ---------- */
 
-.world-aud .stage{display:flex;align-items:center;background:
+.world-aud .stage{display:flex;align-items:center;
+  padding-top:calc(var(--nav) + 46px);background:
   radial-gradient(900px 620px at 70% 48%,rgba(31,92,84,.20),transparent 66%),
   linear-gradient(140deg,#050e12 0%,#081a20 55%,#0b2730 100%)}
 .world-aud .eyebrow{color:#8fc4c9}
@@ -228,15 +226,15 @@ a{color:inherit}
   display:grid;grid-template-columns:.8fr 1.2fr;gap:7%;align-items:center}
 .world-aud .audience-clinic{position:absolute;z-index:3;left:var(--pad);bottom:6.5vh;margin:0}
 .audience-list{border-top:1px solid rgba(182,209,201,.2)}
-.audience-list>a{display:grid;grid-template-columns:50px 1fr auto;align-items:center;gap:25px;
-  padding:21px 0;border-bottom:1px solid rgba(182,209,201,.16);text-decoration:none;
+.audience-list>a{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:20px;
+  padding:14px 0;border-bottom:1px solid rgba(182,209,201,.16);text-decoration:none;
   transition:padding .25s,background .25s}
 .audience-list>a:hover{padding-left:12px;padding-right:12px;background:rgba(182,209,201,.03)}
 .entry-index{font:400 9px var(--mono);color:#6c989e}
-.audience-list strong{display:block;font:300 clamp(23px,2.5vw,36px)/1.2 var(--serif);letter-spacing:-.025em;color:var(--ink)}
-.audience-list small{font-size:12px;line-height:1.7;color:#94afb3;display:block;margin-top:6px}
+.audience-list strong{display:block;font:300 clamp(19px,1.9vw,28px)/1.15 var(--serif);letter-spacing:-.02em;color:var(--ink)}
+.audience-list small{font-size:11px;line-height:1.5;color:#94afb3;display:block;margin-top:3px}
 .entry-destination{font:400 10px var(--mono);color:#aac8be;white-space:nowrap}
-.entry-destination i{font:300 24px var(--serif);font-style:normal;margin-left:18px}
+.entry-destination i{font:300 20px var(--serif);font-style:normal;margin-left:14px}
 .audience-clinic{margin-top:24px}
 
 /* ---------- mondi: una realtà, un territorio, un'uscita ----------
@@ -247,7 +245,7 @@ a{color:inherit}
 .world{height:190vh}
 #tutela{height:210vh}
 #prosperya{height:200vh}
-.world .stage{display:flex;align-items:center}
+.world .stage{display:flex;align-items:center;padding-top:calc(var(--nav) + 40px)}
 .world-grid{position:relative;z-index:3;width:100%;padding:0 var(--pad);
   display:grid;grid-template-columns:1.05fr .95fr;gap:8%;align-items:center}
 .world-copy{position:relative;max-width:560px}
@@ -394,14 +392,7 @@ footer p{margin:0}
 footer a{color:#aecfc6;text-decoration:none}
 footer a:hover{color:var(--gold)}
 
-/* ---------- scena 01 ---------- */
-
-#s1 .intro{position:absolute;z-index:10;left:var(--pad);top:50%;transform:translateY(-50%);max-width:min(680px,70vw)}
-#s1 .intro .eyebrow,#s1 h2,#s1 .sub{opacity:0;will-change:opacity,transform}
-#s1 h2{margin:0;font-size:clamp(44px,8.5vw,124px)}
-#s1 .sub{margin:30px 0 0;max-width:470px;font-size:clamp(16px,1.45vw,21px);line-height:1.4;color:rgba(236,244,239,.72)}
-
-/* ---------- scena 02 · separazione (port Cut02) ---------- */
+/* ---------- separazione (port Cut02) ---------- */
 
 #sep .stage{background:#05110f;isolation:isolate}
 #sep canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
@@ -471,13 +462,14 @@ footer a:hover{color:var(--gold)}
 /* composizioni diverse per rompere la ripetizione */
 #careprogram .manifest.centered,#knowledge .manifest.centered{
   left:50%;transform:translateX(-50%);width:min(760px,86vw);text-align:center;top:22vh}
+#careprogram .manifest.centered{top:calc(var(--nav) + 172px)}
 #careprogram .manifest.centered .sub,#knowledge .manifest.centered .sub{margin-left:auto;margin-right:auto;max-width:560px}
 #knowledge .manifest.centered h2{font-size:clamp(40px,6.2vw,92px)}
 
 /* il marchio CareProgram apre la scena in alto — firma del mondo,
    parte del campo, non un adesivo */
-#careprogram .wsig{position:absolute;z-index:14;left:50%;top:calc(var(--nav) + 34px);
-  height:76px;width:auto;max-width:70vw;opacity:0;transform:translateX(-50%) scale(.94);
+#careprogram .wsig{position:absolute;z-index:14;left:50%;top:calc(var(--nav) + 26px);
+  height:112px;width:auto;max-width:70vw;opacity:0;transform:translateX(-50%) scale(.94);
   filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.6))}
 /* la prova del principio chiude la scena: il pannello appare quando
    il filo della connessione ha completato il suo ciclo            */
@@ -499,7 +491,7 @@ footer a:hover{color:var(--gold)}
 }
 .tlog.caps .tl{
   grid-area:1/1;border:0;padding:0;
-  font:300 clamp(17px,1.6vw,23px)/1.3 var(--serif);letter-spacing:-.01em;color:rgba(236,244,239,.9);
+  font:300 clamp(20px,1.9vw,27px)/1.3 var(--serif);letter-spacing:-.01em;color:rgba(240,247,243,.95);
   text-shadow:0 2px 14px rgba(0,0,0,.5);
   opacity:0;transform:translateY(8px);transition:opacity .55s ease,transform .55s ease;
 }
@@ -521,18 +513,18 @@ footer a:hover{color:var(--gold)}
 /* focus progressivo: il layer non attivo resta contesto leggibile,
    non svanisce — il dominante si distingue perché gli altri calano */
 .layer.dim{opacity:.55}
-.lname{display:block;padding:14px 6px 6px;font:9px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(138,164,157,.5)}
+.lname{display:block;padding:14px 6px 6px;font:10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(168,196,190,.68)}
 .sat{
   display:grid;grid-template-columns:16px 1fr;grid-template-rows:auto auto;
   column-gap:12px;align-items:center;
-  padding:9px 6px;border-bottom:1px solid rgba(159,216,201,.12);
-  text-decoration:none;color:rgba(236,244,239,.34);
+  padding:10px 6px;border-bottom:1px solid rgba(159,216,201,.12);
+  text-decoration:none;color:rgba(236,244,239,.42);
   transition:color .3s, background .3s;
 }
 .sat:hover{background:rgba(159,216,201,.06)}
 .sat .sdot{grid-row:1/3;width:7px;height:7px;border:1px solid rgba(138,164,157,.7);border-radius:50%;justify-self:center;transition:all .4s}
-.sat .sname{font-size:17px;font-weight:400;letter-spacing:-.01em}
-.sat .smeta{font:10px/1.5 var(--mono);color:rgba(138,164,157,.6);letter-spacing:.02em;
+.sat .sname{font-size:19px;font-weight:400;letter-spacing:-.01em}
+.sat .smeta{font:10px/1.5 var(--mono);color:rgba(168,196,190,.75);letter-spacing:.02em;
   opacity:0;transition:opacity .5s}
 /* riconoscimento: il dettaglio esiste solo nel layer dominante */
 .layer:not(.dim) .sat.lit .smeta{opacity:1}
@@ -549,7 +541,7 @@ footer a:hover{color:var(--gold)}
   filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
 /* knowledge: tre autorità visive diverse — ambiente, superficie, percorso */
-#knowledge .bsig.hero{left:50%;top:44%;height:112px;transform:translate(-50%,-50%) scale(.92);
+#knowledge .bsig.hero{left:50%;top:44%;height:150px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.65))}
 #knowledge .bsig.surface{left:50%;top:16%;height:80px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 3px rgba(255,255,255,.5)) drop-shadow(0 8px 34px rgba(0,20,40,.4))}
@@ -564,16 +556,16 @@ footer a:hover{color:var(--gold)}
 /* ---------- atto 09 · sintesi: loghi per layer ---------- */
 
 #system .sigs{position:absolute;inset:0;z-index:13;pointer-events:none}
-#system .sigs .lsig{position:absolute;right:var(--pad);height:52px;width:auto;max-width:38vw;
+#system .sigs .lsig{position:absolute;right:var(--pad);height:60px;width:auto;max-width:38vw;
   opacity:0;transform:scale(.92);
   transition:opacity .6s,transform .6s;
   filter:drop-shadow(0 0 2px rgba(255,255,255,.32)) drop-shadow(0 6px 28px rgba(0,0,0,.55))}
 #system .sigs .lsig.on{opacity:.95;transform:none}
-#system .sigs .lsig.minor{height:30px;opacity:0}
+#system .sigs .lsig.minor{height:34px;opacity:0}
 #system .sigs .lsig.minor.on{opacity:.85}
 /* Prosperya: la presenza esterna ha diritto a una scala maggiore —
    il suo multicolore è il contrasto deliberato del sistema */
-#system .sigs .lsig.e-prosperya{height:64px}
+#system .sigs .lsig.e-prosperya{height:74px}
 #system .sigs .lsig.e-prosperya.on{opacity:1}
 
 /* ---------- epilogo · ritorno al campo madre ---------- */
@@ -620,7 +612,7 @@ a.contact:hover{background:#0c1f1c}
 
 @media (max-width:760px){
   .topnav nav a:not(:nth-last-child(-n+2)){display:none}
-  #s1{height:190vh}#tempo{height:260vh}#per-chi{height:290vh}
+  #tempo{height:260vh}#per-chi{height:290vh}
   #careprogram{height:360vh}#tutela{height:230vh}
   #knowledge{height:380vh}#system{height:300vh}#reveal{height:200vh}
   .hero{padding-bottom:70px}
@@ -635,16 +627,18 @@ a.contact:hover{background:#0c1f1c}
   .editorial h2{font-size:clamp(38px,11vw,52px)}
   .about-body{grid-template-columns:1fr;gap:24px;padding-top:30px;margin-top:30px}
   .about-body .large-copy{font-size:clamp(22px,6.4vw,30px)}
-  .audience-list>a{grid-template-columns:22px 1fr 24px;gap:14px;padding:13px 0}
-  .audience-list strong{font-size:20px}
-  .audience-list small{font-size:10px;line-height:1.45}
+  .audience-list>a{grid-template-columns:18px 1fr 18px;gap:10px;padding:9px 0}
+  .audience-list strong{font-size:17px}
+  .audience-list small{font-size:9.5px;line-height:1.4;margin-top:2px}
   .entry-destination{font-size:0}
-  .entry-destination i{font-size:22px;margin:0}
+  .entry-destination i{font-size:19px;margin:0}
   .world{height:210vh}
   #prosperya{height:220vh}
-  .aud-grid{grid-template-columns:1fr;gap:26px;align-content:center;
-    padding-top:calc(var(--nav) + 10px)}
-  .world-aud .audience-clinic{position:static;margin-top:18px;display:inline-flex}
+  .world-aud .stage{flex-direction:column;justify-content:center;gap:14px}
+  .aud-grid{grid-template-columns:1fr;gap:16px;align-content:center;padding-top:0}
+  .aud-grid .world-copy h2{font-size:clamp(30px,9vw,40px);margin-bottom:14px}
+  .aud-grid .world-copy>p:not(.eyebrow){font-size:12px;max-width:88vw}
+  .world-aud .audience-clinic{position:static;margin:0;display:inline-flex;font-size:9px}
   .world-grid{grid-template-columns:1fr;gap:30px;align-content:center}
   .camit-grid,.legal-grid{grid-template-columns:1fr;gap:26px}
   .world-copy{max-width:none}
@@ -672,7 +666,6 @@ a.contact:hover{background:#0c1f1c}
   .legal-services li{padding:10px 11px;font-size:9.5px}
   footer{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   footer p{order:3;grid-column:1/-1}
-  #s1 .intro{top:20vh;max-width:86vw}
   #system .manifest,#tempo .manifest,#careprogram .manifest,#knowledge .manifest{
     top:11vh;width:min(430px,88vw)}
   #system h2,#tempo h2,#careprogram h2,#knowledge h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
@@ -681,11 +674,11 @@ a.contact:hover{background:#0c1f1c}
   .lname{padding:10px 6px 4px;font-size:8px}
   .sat{padding:5px 4px}.sat .sname{font-size:14px}
   .sat .smeta{font-size:9px}
-  #careprogram .manifest.centered{left:24px;right:24px;width:auto;transform:none;text-align:left;top:17vh}
+  #careprogram .manifest.centered{left:24px;right:24px;width:auto;transform:none;text-align:left;top:calc(var(--nav) + 140px)}
   #knowledge .manifest.centered{
     left:24px;right:24px;width:auto;transform:none;text-align:left;top:11vh}
   #knowledge .manifest.centered h2{font-size:clamp(34px,10vw,48px)}
-  #careprogram .wsig{height:48px;top:calc(var(--nav) + 22px)}
+  #careprogram .wsig{height:64px;top:calc(var(--nav) + 16px)}
   #careprogram .connection-demo{width:94vw;bottom:2.5vh;padding:18px 16px}
   #careprogram .connection-field{height:120px}
   #careprogram .connection-person{width:62px;height:62px}
