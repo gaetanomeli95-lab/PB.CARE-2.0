@@ -1562,6 +1562,19 @@ const NOOP_INIT = () => ({ resize() {}, update() {} });
 const nav = document.getElementById("topnav");
 const gp = document.getElementById("gp");
 
+// nav mobile: il tetto resta, il menu si apre — tutti i link, nessuno escluso
+const navToggle = document.getElementById("navToggle");
+const navMenu = document.getElementById("navMenu");
+if (navToggle && navMenu) {
+  const setMenu = open => {
+    nav.classList.toggle("menu-open", open);
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.setAttribute("aria-label", open ? "Chiudi il menu" : "Apri il menu");
+  };
+  navToggle.addEventListener("click", () => setMenu(!nav.classList.contains("menu-open")));
+  navMenu.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+}
+
 // smooth scroll alla sorgente: la rotellina diventa flusso continuo,
 // le scene seguono 1:1 — niente più "inseguimento" a scatti
 let lenis = null;
