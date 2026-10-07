@@ -612,7 +612,7 @@ footer .brand img{height:24px;filter:drop-shadow(0 2px 8px rgba(120,190,230,.28)
   filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
 /* knowledge: tre autorità visive diverse — ambiente, superficie, percorso */
-#knowledge .bsig.hero{left:50%;top:44%;height:120px;transform:translate(-50%,-50%) scale(.92);
+#knowledge .bsig.lead{left:50%;top:44%;height:120px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.65))}
 #knowledge .bsig.surface{left:50%;top:16%;height:80px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 3px rgba(255,255,255,.5)) drop-shadow(0 8px 34px rgba(0,20,40,.4))}
@@ -789,7 +789,7 @@ a.contact:hover:after{opacity:1;transform:none}
   .tlog.caps{bottom:13vh;width:86vw}
   .tlog.caps .tl{font-size:19px}
   .bsig{height:38px}
-  #knowledge .bsig.hero{height:66px;top:30%}
+  #knowledge .bsig.lead{height:96px;top:30%;max-width:86vw}
   #knowledge .bsig.surface{height:52px;top:14%}
   #knowledge .bsig.path{height:30px;right:24px;top:86%}
   .kpeak{top:30%;font-size:clamp(36px,10.5vw,52px)}

@@ -776,21 +776,25 @@ function initKnowledge(stage, ctx) {
       ctx.shadowBlur = 0; ctx.lineWidth = 1;
     }
 
-    // il nome dell'ambiente: una luce chiara si raccoglie dove apparirà,
-    // e il resto del campo arretra — il marchio è il messaggio dominante
+    // il nome dell'ambiente: il campo arretra uniformemente e dietro al
+    // marchio si raccoglie un alone ellittico proporzionato — luce, non un
+    // pannello: nessun disco con bordo percepibile, nessuna cornice
     const fc = smooth(seg(p, .80, .92));
     if (fc > 0) {
-      const lx = W * .5, ly = H * .44;
-      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .48);
+      const lx = W * .5, ly = H * (mob() ? .30 : .44);
+      ctx.fillStyle = `rgba(3,10,18,${.18 * fc})`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.scale(mob() ? 1.55 : 2.3, 1);
+      const r = Math.min(W, H) * .30;
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
       g.addColorStop(0, `rgba(234,252,255,${.30 * fc})`);
+      g.addColorStop(.5, `rgba(${FC.rgbAccent},${.13 * fc})`);
       g.addColorStop(1, "rgba(234,252,255,0)");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      // la vignettatura arretra il campo: raggio interno ampio e bordo
-      // morbido — luce che respira, non una cornice attorno al marchio
-      const v = ctx.createRadialGradient(lx, ly, Math.min(W, H) * .34, lx, ly, Math.max(W, H) * .98);
-      v.addColorStop(0, "rgba(0,0,0,0)");
-      v.addColorStop(1, `rgba(3,10,18,${.34 * fc})`);
-      ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = g;
+      ctx.fillRect(-r, -r, r * 2, r * 2);
+      ctx.restore();
     }
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
