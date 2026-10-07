@@ -191,6 +191,26 @@ a{color:inherit}
 .hero-cue::after{content:"";display:block;width:1px;height:26px;margin:10px auto 0;
   background:linear-gradient(rgba(158,208,205,.6),transparent)}
 
+/* ---------- boot: l'ingresso si compone da solo ----------
+   all'apertura il DOM entra in sequenza mentre il canvas accende il
+   globo — poi tutto resta. Niente loader: il primo fotogramma è già
+   il sito che si forma. Senza JS tutto resta visibile (html.js). */
+.hero .imark,.hero .iline,.hero .hero-line,.hero .hero-sub,.hero-actions,.hero-cue{
+  transition:opacity 1s ease,transform 1s cubic-bezier(.19,1,.22,1)}
+.topnav{transition:opacity .8s ease,background .4s ease}
+html.js:not(.booted) .hero .imark,html.js:not(.booted) .hero .iline,
+html.js:not(.booted) .hero .hero-line,html.js:not(.booted) .hero .sub,
+html.js:not(.booted) .hero .hero-sub,html.js:not(.booted) .hero-actions{opacity:0;transform:translateY(16px)}
+html.js:not(.booted) .hero-cue{opacity:0;transform:translate(-50%,12px)}
+html.js:not(.booted) .topnav{opacity:0}
+html.js.booted .hero .imark{opacity:1;transform:none;transition-delay:.25s}
+html.js.booted .hero .iline{opacity:1;transform:none;transition-delay:.75s}
+html.js.booted .hero .hero-line{opacity:1;transform:none;transition-delay:1.05s}
+html.js.booted .hero .hero-sub{opacity:1;transform:none;transition-delay:1.35s}
+html.js.booted .hero-actions{opacity:1;transform:none;transition-delay:1.6s}
+html.js.booted .hero-cue{opacity:1;transform:translateX(-50%);transition-delay:2.2s}
+html.js.booted .topnav{opacity:1;transition-delay:.5s}
+
 /* ---------- elementi condivisi fuori scena ---------- */
 
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -877,6 +897,10 @@ a.contact:hover:after{opacity:1;transform:none}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
+  html.js:not(.booted) .hero .imark,html.js:not(.booted) .hero .iline,
+  html.js:not(.booted) .hero .hero-line,html.js:not(.booted) .hero .hero-sub,
+  html.js:not(.booted) .hero-actions,html.js:not(.booted) .hero-cue,
+  html.js:not(.booted) .topnav{opacity:1;transform:none}
   [data-rise]{opacity:1;transform:none;transition:none}
   .connection-wire>span{animation:none}
   .cap,.endcta{transition:none}

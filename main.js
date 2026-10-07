@@ -109,63 +109,79 @@ function initHero(canvas) {
     const R = Math.min(W, H) * .36;
     const sq = .30;                       // inclinazione prospettica dei paralleli
     const breathe = reduce ? .85 : .82 + .08 * Math.sin(t * .0006);
+    // formazione: il globo si accende per strati nei primi ~2.4s,
+    // poi resta — l'ingresso è una nascita, non un loader
+    const born = reduce ? 1 : smoother(clamp(time / 2400));
 
     // alone ambientale dietro il globo
-    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.6);
-    rg.addColorStop(0, `rgba(90,160,200,${.10 * breathe})`);
-    rg.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    const ambA = .10 * breathe * seg(born, 0, .55);
+    if (ambA > 0) {
+      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.6);
+      rg.addColorStop(0, `rgba(90,160,200,${ambA})`);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    }
 
-    // asse: la fenditura dell'identità resta accesa — è l'asse del globo
-    const g = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
-    g.addColorStop(0, "rgba(168,216,240,0)");
-    g.addColorStop(.5, `rgba(${COLD},${.34 * breathe})`);
-    g.addColorStop(1, "rgba(168,216,240,0)");
-    ctx.strokeStyle = g; ctx.lineWidth = 1.2;
-    ctx.shadowColor = "rgba(120,200,240,.5)"; ctx.shadowBlur = 14;
-    ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
-    ctx.shadowBlur = 0;
+    // asse: la fenditura dell'identità — il primo elemento che si accende
+    const axA = .34 * breathe * seg(born, .02, .4);
+    if (axA > 0) {
+      const g = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
+      g.addColorStop(0, "rgba(168,216,240,0)");
+      g.addColorStop(.5, `rgba(${COLD},${axA})`);
+      g.addColorStop(1, "rgba(168,216,240,0)");
+      ctx.strokeStyle = g; ctx.lineWidth = 1.2;
+      ctx.shadowColor = "rgba(120,200,240,.5)"; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
 
     // meridiani: ellissi verticali il cui raggio orizzontale respira
     // cos(θ) — la rotazione lenta del wireframe
-    ctx.lineWidth = 1;
-    for (let m = 0; m < 5; m++) {
-      const th = t * .00012 + m * (Math.PI / 5);
-      const mx = Math.abs(Math.cos(th)) * R;
-      const a = (.05 + .10 * Math.abs(Math.cos(th))) * breathe;
-      ctx.strokeStyle = `rgba(${COLD},${a})`;
-      ctx.beginPath(); ctx.ellipse(cx, cy, mx, R, 0, 0, Math.PI * 2); ctx.stroke();
+    const merA = seg(born, .15, .7) * breathe;
+    if (merA > 0) {
+      ctx.lineWidth = 1;
+      for (let m = 0; m < 5; m++) {
+        const th = t * .00012 + m * (Math.PI / 5);
+        const mx = Math.abs(Math.cos(th)) * R;
+        ctx.strokeStyle = `rgba(${COLD},${(.05 + .10 * Math.abs(Math.cos(th))) * merA})`;
+        ctx.beginPath(); ctx.ellipse(cx, cy, mx, R, 0, 0, Math.PI * 2); ctx.stroke();
+      }
     }
 
     // paralleli: anelli orizzontali inclinati — il reticolo della sfera
-    for (let la = -2; la <= 2; la++) {
-      const phi = la * .34;
-      const rx = R * Math.cos(phi);
-      const ry = rx * sq;
-      const yy = cy + Math.sin(phi) * R * sq;
-      ctx.strokeStyle = `rgba(${COLD},${(la === 0 ? .16 : .08) * breathe})`;
-      ctx.beginPath(); ctx.ellipse(cx, yy, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+    const parA = seg(born, .3, .8) * breathe;
+    if (parA > 0) {
+      for (let la = -2; la <= 2; la++) {
+        const phi = la * .34;
+        const rx = R * Math.cos(phi);
+        const ry = rx * sq;
+        const yy = cy + Math.sin(phi) * R * sq;
+        ctx.strokeStyle = `rgba(${COLD},${(la === 0 ? .16 : .08) * parA})`;
+        ctx.beginPath(); ctx.ellipse(cx, yy, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+      }
+      // profilo esterno — trattenuto, quasi invisibile
+      ctx.strokeStyle = `rgba(${COLD},${.10 * parA})`;
+      ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .98, 0, 0, Math.PI * 2); ctx.stroke();
     }
 
-    // profilo esterno della sfera — trattenuto, quasi invisibile
-    ctx.strokeStyle = `rgba(${COLD},${.10 * breathe})`;
-    ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .98, 0, 0, Math.PI * 2); ctx.stroke();
-
     // nodi orbitali: punti del sistema che percorrono i paralleli —
-    // l'ecosistema gravita attorno all'identità, mai fermo
-    for (let n = 0; n < 4; n++) {
-      const lane = [-2, -1, 1, 2][n];
-      const phi = lane * .34;
-      const rx = R * Math.cos(phi), ry = rx * sq;
-      const yy = cy + Math.sin(phi) * R * sq;
-      const a = t * (.00016 + n * .00003) * (n % 2 ? -1 : 1) + n * 1.7;
-      const nx = cx + Math.cos(a) * rx, ny = yy + Math.sin(a) * ry;
-      // il nodo si attenua sul lato "dietro" dell'orbita
-      const depth = .5 + .5 * Math.sin(a + Math.PI / 2);
-      ctx.fillStyle = `rgba(220,245,255,${(.12 + .38 * depth) * breathe})`;
-      ctx.shadowColor = "rgba(140,210,245,.7)"; ctx.shadowBlur = 8;
-      ctx.beginPath(); ctx.arc(nx, ny, 1.7, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
+    // l'ultimo strato ad accendersi: prima la forma, poi la vita
+    const nodA = seg(born, .55, 1) * breathe;
+    if (nodA > 0) {
+      for (let n = 0; n < 4; n++) {
+        const lane = [-2, -1, 1, 2][n];
+        const phi = lane * .34;
+        const rx = R * Math.cos(phi), ry = rx * sq;
+        const yy = cy + Math.sin(phi) * R * sq;
+        const a = t * (.00016 + n * .00003) * (n % 2 ? -1 : 1) + n * 1.7;
+        const nx = cx + Math.cos(a) * rx, ny = yy + Math.sin(a) * ry;
+        // il nodo si attenua sul lato "dietro" dell'orbita
+        const depth = .5 + .5 * Math.sin(a + Math.PI / 2);
+        ctx.fillStyle = `rgba(220,245,255,${(.12 + .38 * depth) * nodA})`;
+        ctx.shadowColor = "rgba(140,210,245,.7)"; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(nx, ny, 1.7, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
     }
 
     // pulviscolo in deriva lenta — il campo è vivo, non fermo
@@ -1657,6 +1673,10 @@ if (typeof Lenis !== "undefined") {
    non dipende dallo scroll, il campo vive di tempo, non di p         */
 const heroCv = document.getElementById("heroField");
 const heroFx = heroCv ? initHero(heroCv) : null;
+
+// boot: il DOM entra in sequenza (delay in CSS) mentre il canvas accende
+// il globo per strati — in reduced-motion entrambi arrivano subito
+requestAnimationFrame(() => document.documentElement.classList.add("booted"));
 
 /* reveal editoriale guidato dalla posizione: gli elementi entrano quando
    il lettore li raggiunge. In reduced-motion sono subito completi.     */
