@@ -778,16 +778,18 @@ function initKnowledge(stage, ctx) {
 
     // il nome dell'ambiente: una luce chiara si raccoglie dove apparirà,
     // e il resto del campo arretra — il marchio è il messaggio dominante
-    const fc = smooth(seg(p, .82, .90));
+    const fc = smooth(seg(p, .80, .92));
     if (fc > 0) {
       const lx = W * .5, ly = H * .44;
-      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .36);
-      g.addColorStop(0, `rgba(234,252,255,${.34 * fc})`);
+      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, Math.min(W, H) * .48);
+      g.addColorStop(0, `rgba(234,252,255,${.30 * fc})`);
       g.addColorStop(1, "rgba(234,252,255,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      const v = ctx.createRadialGradient(lx, ly, Math.min(W, H) * .18, lx, ly, Math.max(W, H) * .72);
+      // la vignettatura arretra il campo: raggio interno ampio e bordo
+      // morbido — luce che respira, non una cornice attorno al marchio
+      const v = ctx.createRadialGradient(lx, ly, Math.min(W, H) * .34, lx, ly, Math.max(W, H) * .98);
       v.addColorStop(0, "rgba(0,0,0,0)");
-      v.addColorStop(1, `rgba(3,10,18,${.38 * fc})`);
+      v.addColorStop(1, `rgba(3,10,18,${.34 * fc})`);
       ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
     }
 
@@ -798,9 +800,12 @@ function initKnowledge(stage, ctx) {
     const pk = smooth(seg(p, .62, .70)) * (1 - smooth(seg(p, .72, .78)));
     kpeak.style.opacity = pk;
     kpeak.style.transform = `translate(-50%,-50%) translateY(${lerp(14, 0, smooth(seg(p, .62, .70)))}px)`;
-    // le firme: tre autorità diverse — ambiente, percorso, superficie
+    // le firme: tre autorità diverse — ambiente, percorso, superficie.
+    // FarmaCOmm non viene incollato: condensa fuori fuoco dalla luce,
+    // si risolve mentre il campo intorno si raccoglie
     sigFC.style.opacity = fc * lerp(1, .07, esIn);
-    sigFC.style.transform = `translate(-50%,-50%) scale(${lerp(.92, 1, fc)})`;
+    sigFC.style.transform = `translate(-50%,-50%) scale(${lerp(.86, 1, fc)})`;
+    sigFC.style.filter = `blur(${lerp(18, 0, fc)}px) brightness(${lerp(2.4, 1, fc)}) drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.65))`;
     const cm = seg(p, .88, .93);
     sigCAM.style.opacity = cm * .9;
     sigCAM.style.transform = `translateY(-50%) scale(${lerp(.92, 1, cm)})`;
@@ -855,6 +860,7 @@ function initSystem(stage, ctx) {
       rows.push(a);
       NODES.push({ e, li, idx });
     });
+    box.style.setProperty("--layer-accent", layer.entities[0].palette.accent);
     layersEl.appendChild(box);
     layerBoxes.push(box);
     // loghi del layer: il marchio riemerge come eco alla profondità
@@ -1016,6 +1022,24 @@ function initSystem(stage, ctx) {
       ctx.fillStyle = fg; ctx.fillRect(0, 0, W, H);
     }
 
+    // la corona: quando tutti i livelli sono emersi, la spina si chiude
+    // in un anello d'oro — lo stesso segno visto al confine della
+    // separazione. È il coordinamento: PB-CARe, senza scriverlo.
+    const crown = smooth(seg(p, .86, .94));
+    if (crown > 0) {
+      const cy = layerY(nLayers - 1) + H * .085;
+      const sc = lerp(.7, 1, crown);
+      ctx.strokeStyle = `rgba(${GOLD},${.55 * crown})`; ctx.lineWidth = 1.1;
+      ctx.beginPath(); ctx.arc(sx, cy, 15 * sc, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = `rgba(${GOLD},${.30 * crown})`;
+      ctx.beginPath(); ctx.arc(sx, cy, 8.5 * sc, 0, Math.PI * 2); ctx.stroke();
+      const rg = ctx.createRadialGradient(sx, cy, 0, sx, cy, 16);
+      rg.addColorStop(0, `rgba(242,212,124,${.8 * crown})`); rg.addColorStop(1, "rgba(242,212,124,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(sx, cy, 16, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(255,249,220,${.95 * crown})`;
+      ctx.beginPath(); ctx.arc(sx, cy, 2.4, 0, Math.PI * 2); ctx.fill();
+    }
+
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
     // DOM: un layer dominante alla volta — gli altri contesto;
@@ -1174,6 +1198,7 @@ function initSep(stage, ctx) {
   const CP = ECO ? ECO.byId.careprogram.palette : { rgbAccent: "90,191,120", rgbSecondary: "229,138,58" };
   const FC = ECO ? ECO.byId.farmacomm.palette : { rgbAccent: "79,216,224" };
   const intro = $("#sepIntro"), persona = $("#persona"), prole = stage.querySelector(".prole");
+  const sepBrand = stage.querySelector("#sepBrand");
   const identityFacts = $("#identityFacts");
   const clinical = $("#clinical"), code = $("#pcode"), statement = $("#statement");
   const label = $("#tokenLabel"), cue = $("#sepCue");
@@ -1400,6 +1425,19 @@ function initSep(stage, ctx) {
     persona.style.transform = `translate(-50%,-50%) scale(${lerp(1, .92, split)})`;
     persona.classList.toggle("on", split > .97);
     prole.style.opacity = smooth(seg(p, .50, .58));
+
+    // il marchio CareProgram abita lo spazio vuoto a destra mentre la
+    // persona si adagia: la scena della relazione è già cominciata qui
+    if (sepBrand && !mobile) {
+      const sb = smooth(seg(p, .30, .42)) * (1 - smooth(seg(p, .52, .60)));
+      sepBrand.style.opacity = sb;
+      sepBrand.style.transform = `translateY(${lerp(14, 0, smooth(seg(p, .30, .42)))}px)`;
+      if (sb > .1) {
+        const g3 = ctx.createRadialGradient(W * .84, H * .33, 0, W * .84, H * .33, W * .15);
+        g3.addColorStop(0, `rgba(${CP.rgbAccent},${.10 * sb})`); g3.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g3; ctx.fillRect(0, 0, W, H);
+      }
+    }
 
     const facts = smooth(seg(p, .50, .58));
     identityFacts.style.opacity = facts * (1 - .45 * smooth(seg(p, .90, .97)));

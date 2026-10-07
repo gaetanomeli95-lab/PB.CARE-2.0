@@ -75,11 +75,17 @@ a{color:inherit}
 .scene.is-after .stage{pointer-events:none}
 .stage{
   position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate;
+  /* la scena entrante non è un pannello incollato: un'ombra lunga la
+     stacca dalla precedente mentre sale — transizione, non taglio   */
+  box-shadow:0 -180px 220px -60px rgba(0,0,0,.78);
   background:
     radial-gradient(1000px 700px at 74% 43%, rgba(22,74,65,.31), transparent 65%),
     radial-gradient(720px 580px at 17% 58%, rgba(223,218,198,.05), transparent 70%),
     linear-gradient(125deg,#061210 0%,#071816 52%,#0a2420 100%);
 }
+/* vignetta superiore: profondità all'ingresso e aria sotto la nav */
+.stage::before{content:"";position:absolute;inset:0 0 auto;height:22vh;z-index:2;
+  background:linear-gradient(rgba(2,9,8,.5),transparent);pointer-events:none}
 .field{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 /* ---------- drammaturgia cromatica ----------
@@ -177,12 +183,13 @@ a{color:inherit}
 /* ---------- elementi condivisi fuori scena ---------- */
 
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.cta{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;
-  min-height:48px;font:500 11px/1.5 var(--mono);letter-spacing:.04em;
-  border:1px solid currentColor;padding:15px 20px;text-decoration:none;
-  transition:background .2s,transform .2s;color:#b7dacc}
-.cta:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
-.cta span[aria-hidden]{font-size:19px;line-height:1}
+.cta{display:inline-flex;align-items:center;justify-content:space-between;gap:30px;
+  min-height:62px;font:500 13px/1.5 var(--mono);letter-spacing:.07em;
+  border:1px solid currentColor;padding:19px 28px;text-decoration:none;
+  transition:background .2s,transform .2s,box-shadow .2s;color:#b7dacc}
+.cta:hover{transform:translateY(-2px);background:rgba(255,255,255,.05);
+  box-shadow:0 14px 34px -14px rgba(0,0,0,.6)}
+.cta span[aria-hidden]{font-size:22px;line-height:1}
 .cta.primary{background:var(--paper);color:#13282c;border-color:var(--paper)}
 .cta.primary:hover{background:#fff8e7}
 .text-link{display:inline-flex;gap:16px;align-items:center;font:400 11px/1.7 var(--mono);
@@ -201,28 +208,48 @@ a{color:inherit}
 .editorial h2 em{font-style:italic;color:var(--mint)}
 
 /* "Cos'è PB-CARe": stessa grammatica delle scene — petrolio scuro,
-   sgrano nel fondo, elenco dei coordinati a righe fini            */
+   sgrano nel fondo, elenco dei coordinati a righe fini. Il fondo
+   inizia dal colore di chiusura dell'hero: nessun taglio visibile. */
 .about{position:relative;overflow:hidden;color:#e9efe9;
   background:
     radial-gradient(900px 520px at 82% 18%,rgba(31,86,72,.22),transparent 70%),
     radial-gradient(700px 480px at 12% 88%,rgba(241,200,71,.04),transparent 70%),
-    linear-gradient(150deg,#071512 0%,#0a1f1b 55%,#0d2921 100%)}
+    linear-gradient(155deg,#08141d 0%,#071512 16%,#0a1f1b 55%,#0d2921 100%)}
 .about::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E")}
+/* segno editoriale: una riga-misura che attraversa la larghezza —
+   stessa grammatica del righello temporale delle scene           */
+.about::before{content:"";position:absolute;left:0;right:0;top:9vh;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(159,216,201,.22) 15%,rgba(159,216,201,.22) 85%,transparent)}
 .about .eyebrow{color:#8fbfae}
 .about h2 em{color:#9fd8c9}
+.about h2{font-size:clamp(46px,6.6vw,96px)}
 .about-body{display:grid;grid-template-columns:1.05fr .95fr;gap:8%;
   padding-top:44px;margin-top:44px;border-top:1px solid rgba(159,216,201,.18)}
 .about-body .large-copy{font-size:clamp(22px,2.4vw,34px);line-height:1.3;letter-spacing:-.02em;margin:0;color:#eef3ec}
 .about-body div>p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#a9c2ba;margin:0}
 .about-body div>p+p{margin-top:17px}
 .about-sig{font:400 10px/1.7 var(--mono)!important;letter-spacing:.14em;text-transform:uppercase;color:#7fa898!important}
-.coord-list{list-style:none;margin:0;padding:0;align-self:center;
-  border-top:1px solid rgba(159,216,201,.16)}
-.coord-list li{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline;
-  padding:14px 0;border-bottom:1px solid rgba(159,216,201,.14);
-  font:300 17px/1.4 var(--serif);letter-spacing:-.01em;color:#d8e6dd}
-.coord-list span{font:400 9px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#7fa898}
+/* i coordinati: ogni livello porta il colore del suo mondo —
+   l'indice è una mappa cromatica, non solo un elenco              */
+.coord-list{list-style:none;margin:0;padding:0;border-top:1px solid rgba(159,216,201,.14)}
+.coord-list li{display:flex;align-items:baseline;gap:16px;
+  padding:13px 0;border-bottom:1px solid rgba(159,216,201,.10);
+  font:300 clamp(15px,1.3vw,18px)/1.4 var(--serif);color:#d8e6dd;
+  transition:padding-left .3s,background .3s}
+.coord-list li:hover{padding-left:8px;background:rgba(159,216,201,.03)}
+.coord-list li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;
+  align-self:center;background:var(--dc,#9fd8c9);
+  box-shadow:0 0 10px rgba(var(--dcr,159,216,201),.5)}
+.coord-list li span{flex:none;width:150px;font:400 9.5px var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(138,164,157,.75)}
+.coord-list li:nth-child(1){--dc:#f1c847;--dcr:241,200,71}
+.coord-list li:nth-child(2){--dc:#5abf78;--dcr:90,191,120}
+.coord-list li:nth-child(3){--dc:#4fd8e0;--dcr:79,216,224}
+.coord-list li:nth-child(4){--dc:#a8e4ff;--dcr:168,228,255}
+.coord-list li:nth-child(5){--dc:#2bb8c9;--dcr:43,184,201}
+.coord-list li:nth-child(6){--dc:#c9cd93;--dcr:201,205,147}
+.coord-list{align-self:center}
 
 /* ---------- per chi / ingressi — scena che si compone ---------- */
 
@@ -367,26 +394,39 @@ a{color:inherit}
 .world-legal .cta{color:#d9cd92}
 .world-legal .cta:hover{background:rgba(241,200,71,.07)}
 
-/* ---------- demo connessione (CareProgram) ---------- */
+/* ---------- demo connessione (CareProgram) ----------
+   vetro fumé sul territorio verde: stessa materia del sito —
+   hairline, mono, oro per la persona, menta per l'altro polo    */
 
-.connection-demo{padding:35px 28px;border:1px solid rgba(130,181,132,.21);background:#072316;position:relative}
-.connection-demo>.eyebrow{color:#ddb480}
+.connection-demo{
+  padding:30px 30px 26px;position:relative;
+  border:1px solid rgba(207,170,113,.24);
+  background:linear-gradient(160deg,rgba(9,30,20,.78),rgba(4,15,11,.82));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 34px 80px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05)}
+.connection-demo>.eyebrow{color:#ddb480;margin-bottom:6px}
 .connection-field{position:relative;height:280px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.connection-person,.connection-pro{z-index:2;display:grid;place-items:center;border:1px solid rgba(152,197,150,.48);
-  border-radius:50%;width:106px;height:106px;background:#102e1d;color:#c9dfc0;font:400 10px var(--mono)}
-.connection-pro{width:120px;height:120px;background:#0b201a;color:#9eac8e;border-color:rgba(167,182,162,.27)}
-.connection-wire{height:1px;flex:1;background:#84bd80;position:relative;transition:opacity .4s,transform .5s}
+.connection-person,.connection-pro{z-index:2;display:grid;place-items:center;border:1px solid rgba(241,200,71,.4);
+  border-radius:50%;width:106px;height:106px;
+  background:radial-gradient(circle,rgba(241,200,71,.08),rgba(4,15,11,.6) 70%);
+  color:#e8d9a8;font:400 10px var(--mono)}
+.connection-pro{width:120px;height:120px;border-color:rgba(159,216,201,.28);
+  background:radial-gradient(circle,rgba(159,216,201,.06),rgba(4,15,11,.6) 70%);
+  color:#9eac8e}
+.connection-wire{height:1px;flex:1;background:linear-gradient(90deg,rgba(241,200,71,.7),rgba(159,216,201,.6));position:relative;transition:opacity .4s,transform .5s;
+  box-shadow:0 0 12px rgba(241,200,71,.25)}
 .connection-wire>span{position:absolute;inset:-3px 0 auto;height:7px;
   background:linear-gradient(90deg,transparent,#e59a48,transparent);transform:scaleX(.25);
   animation:grant-pass 4s ease-in-out infinite}
 .connection-gate{position:absolute;left:50%;top:42px;transform:translateX(-50%);
   color:#e4b276;font:400 9px var(--mono);letter-spacing:.06em;white-space:nowrap}
 .connection-gate::after{content:"";position:absolute;top:22px;left:50%;height:51px;width:1px;background:rgba(188,146,83,.33)}
-.connection-status{font-size:13px;color:#c5d8c0;min-height:46px;margin:0}
-.demo-controls{display:flex;gap:6px;border-top:1px solid rgba(151,182,145,.19);padding-top:18px;margin-top:15px}
-.demo-controls button{flex:1;border:1px solid rgba(151,182,145,.25);background:none;padding:12px 10px;
-  font:400 10px var(--mono);letter-spacing:.04em;color:#c9dfc0;min-height:44px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
-.demo-controls button[aria-pressed="true"]{border-color:#d29e62;color:#e3b783;background:rgba(205,146,94,.05)}
+.connection-status{font-size:14px;color:#d3e4d3;min-height:46px;margin:0;font-family:"Manrope",system-ui,sans-serif;line-height:1.55}
+.demo-controls{display:flex;gap:8px;border-top:1px solid rgba(159,216,201,.14);padding-top:20px;margin-top:15px}
+.demo-controls button{flex:1;border:1px solid rgba(159,216,201,.22);background:none;padding:14px 10px;
+  font:500 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#b9d0b8;min-height:48px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.demo-controls button:hover{border-color:rgba(241,200,71,.5)}
+.demo-controls button[aria-pressed="true"]{border-color:#d29e62;color:#e9c795;background:rgba(205,146,94,.08)}
 .connection-demo>.small-note{font-size:9px;margin:16px 0 0;color:#88a789;font-family:var(--mono);letter-spacing:.04em}
 .connection-demo[data-state="revoked"] .connection-wire{transform:scaleX(.18);opacity:.12}
 .connection-demo[data-state="revoked"] .connection-wire>span{animation:none}
@@ -396,7 +436,7 @@ a{color:inherit}
 /* ---------- footer ---------- */
 
 footer{display:flex;align-items:center;justify-content:space-between;gap:25px;
-  padding:30px var(--pad);background:#071a21;color:#99b1b3;
+  padding:30px var(--pad);background:linear-gradient(180deg,#061210,#071a21 60%);color:#99b1b3;
   font:400 9px/1.5 var(--mono);letter-spacing:.04em}
 footer p{margin:0}
 footer a{color:#aecfc6;text-decoration:none}
@@ -405,6 +445,11 @@ footer a:hover{color:var(--gold)}
 /* ---------- separazione (port Cut02) ---------- */
 
 #sep .stage{background:#05110f;isolation:isolate}
+/* il marchio CareProgram abita lo spazio identità fin da subito —
+   la scena della relazione non inizia: continua                   */
+#sep .sep-brand{position:absolute;z-index:9;right:8%;top:31%;height:min(104px,11vw);
+  width:auto;opacity:0;will-change:opacity,transform;pointer-events:none;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.35)) drop-shadow(0 14px 44px rgba(0,0,0,.55))}
 #sep canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 
 #sep .sep-intro{position:absolute;z-index:12;will-change:transform,opacity;left:clamp(22px,8vw,138px);top:50%;transform:translateY(-52%);max-width:min(760px,78vw)}
@@ -462,6 +507,7 @@ footer a:hover{color:var(--gold)}
 #system .manifest,#tempo .manifest,#careprogram .manifest,#knowledge .manifest{
   position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)
 }
+#system .manifest{width:min(510px,46vw)}
 #system h2,#tempo h2,#careprogram h2,#knowledge h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
 #tempo .sub,#careprogram .sub,#knowledge .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
 .cite{font:10px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.7)}
@@ -523,6 +569,10 @@ footer a:hover{color:var(--gold)}
 /* focus progressivo: il layer non attivo resta contesto leggibile,
    non svanisce — il dominante si distingue perché gli altri calano */
 .layer.dim{opacity:.55}
+/* il layer dominante prende l'accento del suo mondo — la lista non è
+   un inventario neutro, respira col territorio che sta emergendo    */
+.layer:not(.dim) .lname{color:var(--layer-accent,rgba(168,196,190,.68))}
+.layer:not(.dim){box-shadow:inset 2px 0 0 var(--layer-accent,rgba(159,216,201,.3))}
 .lname{display:block;padding:14px 6px 6px;font:10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(168,196,190,.68)}
 .sat{
   display:grid;grid-template-columns:16px 1fr;grid-template-rows:auto auto;
@@ -551,7 +601,7 @@ footer a:hover{color:var(--gold)}
   filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
 /* knowledge: tre autorità visive diverse — ambiente, superficie, percorso */
-#knowledge .bsig.hero{left:50%;top:44%;height:150px;transform:translate(-50%,-50%) scale(.92);
+#knowledge .bsig.hero{left:50%;top:44%;height:120px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.65))}
 #knowledge .bsig.surface{left:50%;top:16%;height:80px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 3px rgba(255,255,255,.5)) drop-shadow(0 8px 34px rgba(0,20,40,.4))}
@@ -597,7 +647,10 @@ footer a:hover{color:var(--gold)}
 
 .end{
   min-height:88svh;display:grid;place-items:center;
-  padding:14vh var(--pad);background:#061210;text-align:center;
+  padding:14vh var(--pad);text-align:center;
+  /* il petrolio del reveal scende nel finale — continuità, non taglio */
+  background:linear-gradient(180deg,#0a2420 0%,#071916 18%,#061210 45%,#061210 100%);
+  box-shadow:0 -180px 220px -60px rgba(0,0,0,.78);
 }
 .end-inner{max-width:960px;width:100%}
 .end .mini{font:11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -622,6 +675,7 @@ a.contact:hover{background:#0c1f1c}
 
 @media (max-width:760px){
   .topnav nav a:not(:nth-last-child(-n+2)){display:none}
+  #sep .sep-brand{display:none}
   #tempo{height:260vh}#per-chi{height:290vh}
   #careprogram{height:360vh}#tutela{height:230vh}
   #knowledge{height:380vh}#system{height:300vh}#reveal{height:200vh}
