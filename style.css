@@ -19,17 +19,14 @@
 #s1 {--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#050e14}
 #sep{--scene-accent:#f1c847;--scene-accent2:#e5e2d7;--scene-atmo:#0a1f1b}
 #tempo{--scene-accent:#4fd8e0;--scene-accent2:#9fd8c9;--scene-atmo:#0a1a24}
-#relation{--scene-accent:#5abf78;--scene-accent2:#e58a3a;--scene-atmo:#0a2418}
-#event{--scene-accent:#f1c847;--scene-accent2:#4fd8e0;--scene-atmo:#11150e}
 #knowledge{--scene-accent:#4fd8e0;--scene-accent2:#a8e4ff;--scene-atmo:#060f1d}
-#research{--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#041218}
 #system{--scene-accent:#9fd8c9;--scene-accent2:#4fd8e0;--scene-atmo:#050e13}
 #reveal{--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#061512}
 #end{--scene-accent:#f1c847;--scene-accent2:#9fd8c9;--scene-atmo:#071b24}
 /* mondi — il territorio cromatico dell'entità (palette da ecosystem.js) */
+#per-chi{--scene-accent:#9fd8c9;--scene-accent2:#f1c847;--scene-atmo:#0a1a24}
 #careprogram{--scene-accent:#5abf78;--scene-accent2:#e58a3a;--scene-atmo:#0a2418}
 #tutela{--scene-accent:#f1c847;--scene-accent2:#c9cd93;--scene-atmo:#141b12}
-#farmacomm{--scene-accent:#4fd8e0;--scene-accent2:#2e86c1;--scene-atmo:#081a30}
 #camit{--scene-accent:#5fd4b4;--scene-accent2:#2fae8f;--scene-atmo:#0f2a24}
 #eventi{--scene-accent:#a8e4ff;--scene-accent2:#3f9fe0;--scene-atmo:#0c2a44}
 #enzima{--scene-accent:#7fe8e0;--scene-accent2:#4fd8b0;--scene-atmo:#062028}
@@ -47,33 +44,25 @@ a{color:inherit}
 
 /* ---------- fixed nav ---------- */
 
+/* il "tetto" della pagina: la nav è sempre presente, leggibile,
+   con un velo scuro che stacca i link dal campo sottostante */
 .topnav{
   position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 var(--pad);
   font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(236,244,239,.62);
-  transition:background .4s ease, box-shadow .4s ease;
+  background:rgba(6,16,14,.52);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 rgba(236,244,239,.09);
+  transition:background .4s ease;
 }
-.topnav.scrolled{
-  background:rgba(7,21,19,.72);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  box-shadow:0 1px 0 rgba(236,244,239,.08);
-}
-.brand{font-family:var(--serif);font-size:16px;letter-spacing:.04em;text-transform:none;color:#fff;text-decoration:none}
+.topnav.scrolled{background:rgba(7,21,19,.80)}
+.brand{font-family:var(--serif);font-size:17px;letter-spacing:.04em;text-transform:none;color:#fff;text-decoration:none}
 .brand sup{font-size:.55em;color:var(--gold)}
-/* la nav è quieta all'inizio: la struttura si rivela dopo la prima scena,
-   ma resta sempre raggiungibile con hover/focus (usabilità intatta) */
-.topnav nav{display:flex;gap:clamp(12px,2.4vw,30px);opacity:0;transform:translateY(-4px);
-  transition:opacity .6s ease,transform .6s ease}
-.topnav.nav-open nav,.topnav:hover nav,.topnav:focus-within nav{opacity:1;transform:none}
-.topnav nav a{color:rgba(236,244,239,.62);text-decoration:none;transition:color .25s}
+.topnav nav{display:flex;gap:clamp(12px,2.4vw,30px)}
+.topnav nav a{color:rgba(236,244,239,.68);text-decoration:none;transition:color .25s;padding:6px 0}
 .topnav nav a:hover{color:#fff}
-/* durante l'intro la nav è quasi assente: il testo PB-CARe non compete
-   col marchio reale; resta raggiungibile con hover/focus/touch */
-.topnav{transition:opacity .5s ease}
-.topnav.nav-ghost{opacity:.12}
-.topnav.nav-ghost:hover,.topnav.nav-ghost:focus-within{opacity:1}
 .gp{position:absolute;left:0;right:0;bottom:0;height:2px;display:block}
 .gp:before{content:"";display:block;height:100%;width:100%;
   background:linear-gradient(90deg,var(--mint),var(--gold));
@@ -103,26 +92,21 @@ a{color:inherit}
   linear-gradient(125deg,#040b10 0%,#061219 52%,#0a1e28 100%)}
 #tempo .stage{background:radial-gradient(1000px 700px at 70% 50%,rgba(28,64,86,.24),transparent 66%),
   linear-gradient(130deg,#070f16 0%,#0b1c28 55%,#102736 100%)}
-#relation .stage{background:radial-gradient(900px 640px at 30% 55%,rgba(24,80,48,.22),transparent 68%),
+#careprogram .stage{background:radial-gradient(900px 640px at 30% 55%,rgba(24,80,48,.22),transparent 68%),
   linear-gradient(135deg,#061009 0%,#0a2115 55%,#0e2e1d 100%)}
-#event .stage{background:radial-gradient(900px 640px at 60% 40%,rgba(90,70,20,.16),transparent 66%),
-  linear-gradient(130deg,#0a0c08 0%,#12160d 55%,#1a1d10 100%)}
 #knowledge .stage{background:radial-gradient(1100px 720px at 50% 55%,rgba(18,64,110,.22),transparent 68%),
   linear-gradient(140deg,#040a16 0%,#081a30 55%,#0c2740 100%)}
-#research .stage{background:radial-gradient(900px 640px at 58% 50%,rgba(14,72,80,.24),transparent 68%),
-  linear-gradient(135deg,#030d11 0%,#062028 60%,#083038 100%)}
 #system .stage{background:radial-gradient(1000px 700px at 72% 50%,rgba(20,52,60,.22),transparent 66%),
   linear-gradient(140deg,#040a0f 0%,#081720 55%,#0c2129 100%)}
 #reveal .stage{background:radial-gradient(1000px 700px at 50% 46%,rgba(22,74,65,.30),transparent 65%),
   linear-gradient(125deg,#051310 0%,#071a16 52%,#0a2420 100%)}
 
-#s1{height:220vh}
+#s1{height:170vh}
 #sep{height:520vh}
 #tempo{height:240vh}
-#relation{height:320vh}
-#event{height:240vh}
+#per-chi{height:250vh}
+#careprogram{height:330vh}
 #knowledge{height:340vh}
-#research{height:280vh}
 #system{height:260vh}
 #reveal{height:200vh}
 
@@ -167,7 +151,7 @@ a{color:inherit}
 }
 .hero .field{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .hero-inner{position:relative;z-index:2;display:grid;justify-items:center;text-align:center}
-.hero .imark{width:min(400px,64vw);height:auto;
+.hero .imark{width:min(580px,72vw);height:auto;
   filter:drop-shadow(0 0 2px rgba(255,255,255,.35)) drop-shadow(0 16px 60px rgba(0,0,0,.65))}
 .hero .iline{margin:22px 0 0;
   font:10px/1.6 var(--mono);letter-spacing:.24em;text-transform:uppercase;
@@ -209,21 +193,40 @@ a{color:inherit}
 .editorial h2{font-size:clamp(42px,6vw,88px);margin:0}
 .editorial h2 em{font-style:italic;color:var(--mint)}
 
-.about{background:var(--paper);color:#183337}
-.about .eyebrow{color:#506b68}
-.about h2 em{color:#66887e}
-.about-body{display:grid;grid-template-columns:1fr 1fr;gap:10%;
-  padding-top:44px;margin-top:44px;border-top:1px solid rgba(107,134,117,.3)}
-.about-body .large-copy{font-size:clamp(22px,2.4vw,34px);line-height:1.3;letter-spacing:-.02em;margin:0}
-.about-body div>p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#3f5a54;margin:0}
+/* "Cos'è PB-CARe": stessa grammatica delle scene — petrolio scuro,
+   sgrano nel fondo, elenco dei coordinati a righe fini            */
+.about{position:relative;overflow:hidden;color:#e9efe9;
+  background:
+    radial-gradient(900px 520px at 82% 18%,rgba(31,86,72,.22),transparent 70%),
+    radial-gradient(700px 480px at 12% 88%,rgba(241,200,71,.04),transparent 70%),
+    linear-gradient(150deg,#071512 0%,#0a1f1b 55%,#0d2921 100%)}
+.about::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E")}
+.about .eyebrow{color:#8fbfae}
+.about h2 em{color:#9fd8c9}
+.about-body{display:grid;grid-template-columns:1.05fr .95fr;gap:8%;
+  padding-top:44px;margin-top:44px;border-top:1px solid rgba(159,216,201,.18)}
+.about-body .large-copy{font-size:clamp(22px,2.4vw,34px);line-height:1.3;letter-spacing:-.02em;margin:0;color:#eef3ec}
+.about-body div>p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#a9c2ba;margin:0}
 .about-body div>p+p{margin-top:17px}
+.about-sig{font:400 10px/1.7 var(--mono)!important;letter-spacing:.14em;text-transform:uppercase;color:#7fa898!important}
+.coord-list{list-style:none;margin:0;padding:0;align-self:center;
+  border-top:1px solid rgba(159,216,201,.16)}
+.coord-list li{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline;
+  padding:14px 0;border-bottom:1px solid rgba(159,216,201,.14);
+  font:300 17px/1.4 var(--serif);letter-spacing:-.01em;color:#d8e6dd}
+.coord-list span{font:400 9px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#7fa898}
 
-/* ---------- per chi / ingressi ---------- */
+/* ---------- per chi / ingressi — scena che si compone ---------- */
 
-.audiences{background:#081a22}
-.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:38px}
-.section-head .eyebrow{margin-bottom:18px}
-.section-head>p{max-width:330px;color:var(--muted);font-size:14px;margin:0}
+.world-aud .stage{display:flex;align-items:center;background:
+  radial-gradient(900px 620px at 70% 48%,rgba(31,92,84,.20),transparent 66%),
+  linear-gradient(140deg,#050e12 0%,#081a20 55%,#0b2730 100%)}
+.world-aud .eyebrow{color:#8fc4c9}
+.world-aud h2 em{color:#9fd8c9}
+.aud-grid{position:relative;z-index:3;width:100%;padding:0 var(--pad);
+  display:grid;grid-template-columns:.8fr 1.2fr;gap:7%;align-items:center}
+.world-aud .audience-clinic{position:absolute;z-index:3;left:var(--pad);bottom:6.5vh;margin:0}
 .audience-list{border-top:1px solid rgba(182,209,201,.2)}
 .audience-list>a{display:grid;grid-template-columns:50px 1fr auto;align-items:center;gap:25px;
   padding:21px 0;border-bottom:1px solid rgba(182,209,201,.16);text-decoration:none;
@@ -236,31 +239,12 @@ a{color:inherit}
 .entry-destination i{font:300 24px var(--serif);font-style:normal;margin-left:18px}
 .audience-clinic{margin-top:24px}
 
-/* ---------- welfare ---------- */
-
-.welfare{background:#0b211d;border-top:1px solid rgba(166,204,203,.12)}
-.welfare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10%}
-.welfare h2 em{color:#84ccce}
-.welfare p{font:400 14px/1.75 "Manrope",system-ui,sans-serif;color:#a5bec0;margin:0}
-.welfare .text-link{margin-top:18px}
-
-/* ---------- intro dell'ecosistema ---------- */
-
-.ecosystem-intro{background:#071a21;border-top:1px solid rgba(166,204,203,.1);padding-bottom:56px}
-.ecosystem-intro>p:not(.eyebrow){max-width:550px;color:var(--muted);font-size:14px;margin:22px 0 0}
-.world-nav{display:flex;gap:8px 24px;flex-wrap:wrap;margin-top:30px;
-  border-top:1px solid rgba(166,204,203,.16);padding-top:22px;
-  font:400 10px/2 var(--mono);letter-spacing:.04em}
-.world-nav a{color:#aecfc6;text-decoration:none;padding:6px 0}
-.world-nav a:hover{color:var(--gold)}
-
 /* ---------- mondi: una realtà, un territorio, un'uscita ----------
    Ogni mondo è una scena: il territorio cromatico del brand bagna
    lo stage, gli elementi si compongono scrollando (data-beat),
    il marchio emerge nel suo colore — mai un PNG su carta.        */
 
 .world{height:190vh}
-#careprogram{height:230vh}
 #tutela{height:210vh}
 #prosperya{height:200vh}
 .world .stage{display:flex;align-items:center}
@@ -293,13 +277,6 @@ a{color:inherit}
 .world-care h2 em{color:#80c587}
 .world-care .eyebrow{color:#8fbd99}
 .world-care .cta{color:#cfaa71}
-
-.world-farmacomm .stage{background:
-  radial-gradient(900px 600px at 30% 55%,rgba(46,134,193,.16),transparent 66%),
-  linear-gradient(140deg,#040a16 0%,#081a30 55%,#0c2740 100%)}
-.world-farmacomm h2 em{color:#70ccd9}
-.world-farmacomm .eyebrow{color:#91bac9}
-.world-farmacomm .cta{color:#86d4df}
 
 .world-camit .stage{background:
   radial-gradient(760px 560px at 70% 50%,rgba(47,174,143,.14),transparent 66%),
@@ -381,18 +358,6 @@ a{color:inherit}
   letter-spacing:.08em;text-transform:uppercase;color:#a89c62}
 .world-legal .cta{color:#d9cd92}
 .world-legal .cta:hover{background:rgba(241,200,71,.07)}
-
-/* ---------- principi ---------- */
-
-.principles{background:#071a21}
-.principles>h2{margin:25px 0 55px;max-width:850px}
-.principle-lines{margin-left:30%;border-top:1px solid rgba(157,199,195,.19)}
-.principle-lines>div{display:grid;grid-template-columns:1fr 1fr;gap:30px;
-  padding:24px 0;border-bottom:1px solid rgba(157,199,195,.19)}
-.principle-lines span{font:300 24px/1.15 var(--serif);letter-spacing:-.015em}
-.principle-lines p{font-size:12px;line-height:1.65;color:#a1b9b7;margin:0}
-.closing-line{font:300 clamp(28px,3.8vw,55px)/1.2 var(--serif);letter-spacing:-.035em;
-  margin:70px 0 0;color:#9dc2b7}
 
 /* ---------- demo connessione (CareProgram) ---------- */
 
@@ -493,25 +458,37 @@ footer a:hover{color:var(--gold)}
 
 /* ---------- manifest condiviso (tempo, relation, event, knowledge, system) ---------- */
 
-#system .manifest,#tempo .manifest,#relation .manifest,#event .manifest,#knowledge .manifest{
+#system .manifest,#tempo .manifest,#careprogram .manifest,#knowledge .manifest{
   position:absolute;z-index:10;left:var(--pad);top:16vh;width:min(430px,44vw)
 }
-#system h2,#tempo h2,#relation h2,#event h2,#knowledge h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
-#tempo .sub,#relation .sub,#event .sub,#knowledge .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
+#system h2,#tempo h2,#careprogram h2,#knowledge h2{margin:0 0 26px;font-size:clamp(34px,4.6vw,64px)}
+#tempo .sub,#careprogram .sub,#knowledge .sub{margin:0 0 22px;max-width:400px;font-size:clamp(14px,1.2vw,17px);line-height:1.5;color:rgba(236,244,239,.6)}
 .cite{font:10px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(138,164,157,.7)}
 
 /* il titolo è un momento, non un pannello: entra, cede il campo al
    fenomeno, e il sottotesto torna solo alla fine come riflessione */
 .manifest .eyebrow,.manifest h2,.manifest .sub{opacity:0;will-change:opacity,transform}
 /* composizioni diverse per rompere la ripetizione */
-#relation .manifest.centered,#knowledge .manifest.centered{
-  left:50%;transform:translateX(-50%);width:min(760px,86vw);text-align:center;top:18vh}
-/* safe area: il sub di ritorno non deve toccare il bordo del campo di consenso */
-#relation .manifest.centered{top:12vh}
-#relation .manifest.centered .sub,#knowledge .manifest.centered .sub{margin-left:auto;margin-right:auto;max-width:520px}
+#careprogram .manifest.centered,#knowledge .manifest.centered{
+  left:50%;transform:translateX(-50%);width:min(760px,86vw);text-align:center;top:22vh}
+#careprogram .manifest.centered .sub,#knowledge .manifest.centered .sub{margin-left:auto;margin-right:auto;max-width:560px}
 #knowledge .manifest.centered h2{font-size:clamp(40px,6.2vw,92px)}
-#event .manifest.right{left:auto;right:var(--pad);text-align:right;top:14vh;width:min(520px,48vw)}
-#event .manifest.right .sub{margin-left:auto}
+
+/* il marchio CareProgram apre la scena in alto — firma del mondo,
+   parte del campo, non un adesivo */
+#careprogram .wsig{position:absolute;z-index:14;left:50%;top:calc(var(--nav) + 34px);
+  height:76px;width:auto;max-width:70vw;opacity:0;transform:translateX(-50%) scale(.94);
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.6))}
+/* la prova del principio chiude la scena: il pannello appare quando
+   il filo della connessione ha completato il suo ciclo            */
+#careprogram .connection-demo{position:absolute;z-index:16;left:50%;bottom:4.5vh;
+  transform:translateX(-50%);width:min(600px,94vw);opacity:0;pointer-events:none;visibility:hidden}
+#careprogram .connection-field{height:150px}
+#careprogram .connection-person{width:74px;height:74px}
+#careprogram .connection-pro{width:86px;height:86px}
+#careprogram .connection-gate{top:20px}
+#careprogram .connection-gate::after{height:26px}
+#careprogram .demo-cta{margin-top:14px;width:100%;justify-content:center;color:#cfaa71}
 
 /* didascalie temporali: una alla volta, vicino al fenomeno —
    tutte le righe restano nel DOM (accessibilità), solo la corrente è visibile */
@@ -571,11 +548,6 @@ footer a:hover{color:var(--gold)}
   opacity:0;transform:scale(.92);will-change:opacity,transform;
   filter:drop-shadow(0 6px 30px rgba(0,0,0,.45));
 }
-/* CareProgram: brand beat — il marchio prende il campo sotto la persona */
-#sigCare{left:30%;top:70%;height:96px;transform:translate(-50%,0) scale(.92);
-  filter:drop-shadow(0 0 2px rgba(255,255,255,.32)) drop-shadow(0 10px 40px rgba(0,0,0,.6))}
-#sigENZ{right:var(--pad);top:15vh;height:78px;
-  filter:drop-shadow(0 0 2px rgba(255,255,255,.32)) drop-shadow(0 8px 34px rgba(0,0,0,.55))}
 /* knowledge: tre autorità visive diverse — ambiente, superficie, percorso */
 #knowledge .bsig.hero{left:50%;top:44%;height:112px;transform:translate(-50%,-50%) scale(.92);
   filter:drop-shadow(0 0 2px rgba(255,255,255,.4)) drop-shadow(0 12px 46px rgba(0,0,0,.65))}
@@ -588,30 +560,6 @@ footer a:hover{color:var(--gold)}
   margin:0;width:min(900px,90vw);text-align:center;
   font-size:clamp(40px,6.6vw,96px);opacity:0;will-change:opacity,transform;
   text-shadow:0 10px 50px rgba(0,0,0,.5)}
-
-/* ---------- atto 05 · la prestazione diventa evento ----------
-   gli ambiti di tutela sono migrati nella sezione Articolo 32:
-   la scena racconta la prestazione, il servizio legale è a sé   */
-
-#event .tlog.caps{bottom:9vh}
-
-/* ---------- atto 08 · ricerca (Enzima) ---------- */
-
-#research .enz{position:absolute;z-index:10;left:var(--pad);top:17vh;width:min(560px,58vw)}
-#research .enz .eyebrow,#research .enz h2{opacity:0;will-change:opacity,transform}
-#research h2{margin:0 0 30px;font-size:clamp(38px,5.6vw,84px)}
-.specs{display:grid;gap:0;border-top:1px solid rgba(159,216,201,.14);max-width:520px}
-.spec{
-  display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:12px;
-  padding:12px 2px;border-bottom:1px solid rgba(159,216,201,.12);
-  font:12px/1.4 var(--mono);color:rgba(236,244,239,.32);
-  transition:color .4s;
-}
-.spec .sdot{width:7px;height:7px;border:1px solid rgba(138,164,157,.7);border-radius:50%;transition:all .4s}
-.spec em{font-style:normal;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(138,164,157,.55)}
-.spec.done{color:rgba(236,244,239,.92)}
-.spec.done .sdot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 14px rgba(241,200,71,.6)}
-.spec.done em{color:rgba(241,200,71,.85)}
 
 /* ---------- atto 09 · sintesi: loghi per layer ---------- */
 
@@ -672,10 +620,11 @@ a.contact:hover{background:#0c1f1c}
 
 @media (max-width:760px){
   .topnav nav a:not(:nth-last-child(-n+2)){display:none}
-  #s1{height:240vh}#tempo{height:260vh}#relation{height:340vh}#event{height:260vh}
-  #knowledge{height:380vh}#research{height:300vh}#system{height:300vh}#reveal{height:200vh}
+  #s1{height:190vh}#tempo{height:260vh}#per-chi{height:290vh}
+  #careprogram{height:360vh}#tutela{height:230vh}
+  #knowledge{height:380vh}#system{height:300vh}#reveal{height:200vh}
   .hero{padding-bottom:70px}
-  .hero .imark{width:74vw}
+  .hero .imark{width:82vw}
   .hero .iline{font-size:8.5px;letter-spacing:.18em}
   .hero .hero-line{font-size:clamp(34px,10vw,52px);margin-top:5vh}
   .hero .hero-sub{font-size:14px;max-width:340px}
@@ -686,19 +635,16 @@ a.contact:hover{background:#0c1f1c}
   .editorial h2{font-size:clamp(38px,11vw,52px)}
   .about-body{grid-template-columns:1fr;gap:24px;padding-top:30px;margin-top:30px}
   .about-body .large-copy{font-size:clamp(22px,6.4vw,30px)}
-  .section-head{display:block;margin-bottom:28px}
-  .section-head>p{margin-top:20px}
-  .audience-list>a{grid-template-columns:22px 1fr 24px;gap:14px;padding:19px 0}
-  .audience-list strong{font-size:24px}
-  .audience-list small{font-size:11px;line-height:1.5}
+  .audience-list>a{grid-template-columns:22px 1fr 24px;gap:14px;padding:13px 0}
+  .audience-list strong{font-size:20px}
+  .audience-list small{font-size:10px;line-height:1.45}
   .entry-destination{font-size:0}
   .entry-destination i{font-size:22px;margin:0}
-  .welfare-grid{grid-template-columns:1fr;gap:20px}
-  .ecosystem-intro h2{font-size:clamp(38px,11vw,50px)}
   .world{height:210vh}
-  #careprogram{height:250vh}
-  #tutela{height:230vh}
   #prosperya{height:220vh}
+  .aud-grid{grid-template-columns:1fr;gap:26px;align-content:center;
+    padding-top:calc(var(--nav) + 10px)}
+  .world-aud .audience-clinic{position:static;margin-top:18px;display:inline-flex}
   .world-grid{grid-template-columns:1fr;gap:30px;align-content:center}
   .camit-grid,.legal-grid{grid-template-columns:1fr;gap:26px}
   .world-copy{max-width:none}
@@ -724,34 +670,33 @@ a.contact:hover{background:#0c1f1c}
   .legal-quote{font-size:19px;margin-top:26px}
   .legal-services{grid-template-columns:1fr 1fr}
   .legal-services li{padding:10px 11px;font-size:9.5px}
-  .principle-lines{margin-left:0}
-  .principle-lines>div{grid-template-columns:1fr;gap:10px;padding:20px 0}
-  .principle-lines span{font-size:23px}
-  .closing-line{font-size:28px;margin-top:44px}
   footer{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   footer p{order:3;grid-column:1/-1}
   #s1 .intro{top:20vh;max-width:86vw}
-  #system .manifest,#tempo .manifest,#relation .manifest,#event .manifest,#knowledge .manifest{
+  #system .manifest,#tempo .manifest,#careprogram .manifest,#knowledge .manifest{
     top:11vh;width:min(430px,88vw)}
-  #system h2,#tempo h2,#relation h2,#event h2,#knowledge h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
-  #tempo .sub,#relation .sub,#event .sub,#knowledge .sub{font-size:13px;max-width:88vw}
+  #system h2,#tempo h2,#careprogram h2,#knowledge h2{font-size:clamp(28px,8.4vw,40px);margin-bottom:18px}
+  #tempo .sub,#careprogram .sub,#knowledge .sub{font-size:13px;max-width:88vw}
   .tlog .tl{font-size:10px;padding:7px 2px}
   .lname{padding:10px 6px 4px;font-size:8px}
   .sat{padding:5px 4px}.sat .sname{font-size:14px}
   .sat .smeta{font-size:9px}
-  #relation .manifest.centered,#knowledge .manifest.centered,#event .manifest.right{
+  #careprogram .manifest.centered{left:24px;right:24px;width:auto;transform:none;text-align:left;top:17vh}
+  #knowledge .manifest.centered{
     left:24px;right:24px;width:auto;transform:none;text-align:left;top:11vh}
   #knowledge .manifest.centered h2{font-size:clamp(34px,10vw,48px)}
+  #careprogram .wsig{height:48px;top:calc(var(--nav) + 22px)}
+  #careprogram .connection-demo{width:94vw;bottom:2.5vh;padding:18px 16px}
+  #careprogram .connection-field{height:120px}
+  #careprogram .connection-person{width:62px;height:62px}
+  #careprogram .connection-pro{width:72px;height:72px}
   .tlog.caps{bottom:13vh;width:86vw}
   .tlog.caps .tl{font-size:16px}
   .bsig{height:38px}
-  #sigCare{left:50%;top:56%;height:60px}
-  #sigENZ{height:42px;top:auto;bottom:16vh;right:24px}
   #knowledge .bsig.hero{height:66px;top:30%}
   #knowledge .bsig.surface{height:52px;top:14%}
   #knowledge .bsig.path{height:30px;right:24px;top:86%}
   .kpeak{top:30%;font-size:clamp(36px,10.5vw,52px)}
-  #research .enz{top:13vh;width:86vw}
   #system .sigs .lsig{height:34px;max-width:56vw}
   #system .sigs .lsig.minor{height:22px}
   #system .sigs .lsig.e-prosperya{height:42px}

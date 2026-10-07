@@ -210,7 +210,7 @@ function initS1(stage, ctx) {
     // posizioni attuali — emersione lenta: il campo resta disperso a lungo
     const pos = [];
     for (const pt of parts) {
-      const m = smoother(seg(p, .22 + pt.dly * .5, .62 + pt.dly * .5));
+      const m = smoother(seg(p, .12 + pt.dly * .4, .46 + pt.dly * .4));
       pos.push({
         x: lerp(pt.sx + pt.wx * Math.sin(t * .0005 + pt.ph), pt.tx, m),
         y: lerp(pt.sy + pt.wy * Math.cos(t * .0004 + pt.ph), pt.ty, m),
@@ -221,7 +221,7 @@ function initS1(stage, ctx) {
     // la traccia: i vicini del filo si collegano quando il filo si forma —
     // è l'asse del tempo che continuerà nella scena successiva
     const thread = pos.filter(q => q.pt.kind === 0);
-    const linkA = smooth(seg(p, .52, .74));
+    const linkA = smooth(seg(p, .40, .60));
     if (linkA > 0) {
       ctx.lineWidth = 1.2;
       ctx.lineCap = "round";
@@ -242,7 +242,7 @@ function initS1(stage, ctx) {
     }
 
     // il nucleo: la persona — presenza, prima del sistema
-    const core = smooth(seg(p, .50, .70));
+    const core = smooth(seg(p, .42, .60));
     if (core > 0) {
       const pulse = 1 + .05 * Math.sin(t * .0012);
       const rr = R * .42 * pulse;
@@ -254,7 +254,7 @@ function initS1(stage, ctx) {
       ctx.fillStyle = `rgba(255,249,220,${.95 * core})`;
       ctx.beginPath(); ctx.arc(cx, cy, 3.2 * core, 0, Math.PI * 2); ctx.fill();
       // ponte nucleo → traccia: la vita incontra il tempo
-      const drop = smooth(seg(p, .62, .78));
+      const drop = smooth(seg(p, .52, .70));
       if (drop > 0) {
         ctx.strokeStyle = `rgba(${GOLD},${.35 * drop})`;
         ctx.lineWidth = 1;
@@ -263,7 +263,7 @@ function initS1(stage, ctx) {
     }
 
     // impulso vitale: percorre la traccia, non orbita — il tempo scorre
-    const life = smooth(seg(p, .72, .84));
+    const life = smooth(seg(p, .62, .78));
     if (life > 0 && !reduce) {
       const u = (t * .00012) % 1;
       const lx = lerp(lx0, lx1, u);
@@ -278,15 +278,15 @@ function initS1(stage, ctx) {
 
     // DOM — la tipografia è temporizzata sul campo: prima il silenzio,
     // poi l'eyebrow, poi la frase; tutto cede quando la persona emerge
-    const out = smooth(seg(p, .50, .66));
+    const out = smooth(seg(p, .46, .58));
     const e = smooth(seg(p, .02, .10)) * (1 - out);
-    const h = smooth(seg(p, .08, .20)) * (1 - out);
-    const s = smooth(seg(p, .20, .30)) * (1 - out);
+    const h = smooth(seg(p, .06, .16)) * (1 - out);
+    const s = smooth(seg(p, .16, .26)) * (1 - out);
     eyebrow.style.opacity = e;
-    h1.style.opacity = h; h1.style.transform = `translateY(${lerp(22, 0, smooth(seg(p, .08, .20))) - out * 18}px)`;
-    sub.style.opacity = s; sub.style.transform = `translateY(${lerp(14, 0, smooth(seg(p, .20, .30)))}px)`;
+    h1.style.opacity = h; h1.style.transform = `translateY(${lerp(22, 0, smooth(seg(p, .06, .16))) - out * 18}px)`;
+    sub.style.opacity = s; sub.style.transform = `translateY(${lerp(14, 0, smooth(seg(p, .16, .26)))}px)`;
     intro.style.transform = `translateY(calc(-50% - ${26 * out}px))`;
-    cap.style.opacity = seg(p, .80, .90);
+    cap.style.opacity = seg(p, .70, .82);
   }
   return { resize, update };
 }
@@ -511,6 +511,7 @@ function initRelation(stage, ctx) {
   let W = 0, H = 0, grain = null;
   const cap = stage.querySelector("[data-cap]");
   const sig = stage.querySelector("#sigCare");
+  const demo = stage.querySelector("#connDemo");
   const ECO = window.PBCARE_ECOSYSTEM;
   const CP = ECO ? ECO.byId.careprogram.palette
                  : { rgbAccent: "90,191,120", rgbSecondary: "229,138,58", rgbAtmosphere: "10,36,24" };
@@ -519,10 +520,12 @@ function initRelation(stage, ctx) {
     { t: "proposta — la richiesta attende al confine",    at: .22 },
     { t: "consenso — la persona apre la connessione",     at: .46 },
     { t: "accesso — ciò che serve, per ciò che serve",    at: .62 },
-    { t: "revoca — la connessione si ritira",             at: .82 },
+    { t: "revoca — la connessione si ritira",             at: .78 },
   ];
-  const caps = captionLog(stage.querySelector("#rlog"), LOG, .90);
-  const title = titleStager(stage, { in: [.02, .12], out: [.16, .26], sub: [.88, .95] });
+  const caps = captionLog(stage.querySelector("#rlog"), LOG, .82);
+  // marchio + titolo aprono insieme, poi cedono il campo al filo;
+  // la prova interattiva chiude la scena al posto della didascalia
+  const title = titleStager(stage, { in: [.02, .12], out: [.17, .27], sub: [.05, .14], subOut: [.18, .28] });
 
   const mob = () => W <= 800;
   const px = () => mob() ? W * .50 : W * .30, py = () => mob() ? H * .40 : H * .52;
@@ -692,207 +695,25 @@ function initRelation(stage, ctx) {
 
     ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
 
-    // DOM — durante il brand beat il marchio è il messaggio dominante:
-    // le didascalie cedono leggermente e un alone caldo lo accoglie
+    // DOM — il marchio apre in alto col titolo e RESTA: è la firma del
+    // mondo, parte del campo. La prova interattiva arriva alla fine.
     title(p); caps(p);
-    const so = seg(p, .56, .64) * (1 - seg(p, .80, .88));
+    const so = smooth(seg(p, .03, .11));
     sig.style.opacity = so;
-    sig.style.transform = `translate(-50%,0) scale(${lerp(.92, 1, so)})`;
+    sig.style.transform = `translateX(-50%) scale(${lerp(.94, 1, so)})`;
     if (so > .3) {
-      const lx = mob() ? W * .5 : W * .30, ly = mob() ? H * .56 : H * .70;
-      const g = ctx.createRadialGradient(lx, ly + 20, 0, lx, ly + 20, W * .16);
-      g.addColorStop(0, `rgba(${CP.rgbAccent},${.10 * so})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      const g = ctx.createRadialGradient(W * .5, H * .10, 0, W * .5, H * .10, W * .22);
+      g.addColorStop(0, `rgba(${CP.rgbAccent},${.09 * so})`); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
-    cap.style.opacity = seg(p, .92, .97);
-  }
-  return { resize, update };
-}
-
-/* ---------- atto 06 · il diritto diventa evento ----------
-
-   Continuità col token della scena separazione: il DIRITTO (anello oro)
-   si assegna, viene preso in carico, viene erogato — e quando accade
-   diventa un EVENTO DATATO sull'asse del tempo. Articolo 32 resta come
-   fonte della tutela, non più come macro-scena.                         */
-
-function initEvent(stage, ctx) {
-  let W = 0, H = 0, grain = null, ticks = [];
-  const cap = stage.querySelector("[data-cap]");
-  const services = [...stage.querySelectorAll("#eservices li")];
-  const ECO = window.PBCARE_ECOSYSTEM;
-  const FC = ECO ? ECO.byId.farmacomm.palette : { rgbAccent: "79,216,224" };
-
-  const LOG = [
-    { t: "la prestazione è riconosciuta — ancora promessa", at: .12 },
-    { t: "assegnazione — la prestazione è affidata",        at: .34 },
-    { t: "presa in carico — entra nel percorso",            at: .52 },
-    { t: "erogazione — accade davvero",                     at: .72 },
-    { t: "evento datato — osservabile nel tempo",           at: .86 },
-  ];
-  const caps = captionLog(stage.querySelector("#elog"), LOG, .91);
-  const title = titleStager(stage, { in: [.02, .12], out: [.22, .32], sub: [.40, .50], subOut: [.70, .78] });
-
-  const mob = () => W <= 800;
-  const ox = () => mob() ? W * .50 : W * .30, oy = () => mob() ? H * .34 : H * .30;
-  const cx2 = () => mob() ? W * .50 : W * .60, cy2 = () => mob() ? H * .52 : H * .40;
-  const axisY = () => mob() ? H * .86 : H * .80;
-  const ax0 = () => W * .14, ax1 = () => W * .86;
-  const landX = () => ax0() + (ax1() - ax0()) * .62;
-
-  function resize() {
-    W = stage.clientWidth; H = stage.clientHeight;
-    const DPR = Math.min(1.5, devicePixelRatio || 1);
-    const c = stage.querySelector("canvas");
-    c.width = W * DPR; c.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    grain = makeGrain(ctx);
-    ticks = [];
-    for (let i = 0; i < 42; i++) {
-      ticks.push({ u: .45 + rnd(i * 7.1) * .34, h: (.006 + rnd(i * 4.7) * .018) * H });
+    if (demo) {
+      const d = smooth(seg(p, .86, .94));
+      demo.style.opacity = d;
+      demo.style.visibility = d > 0 ? "visible" : "hidden";
+      demo.style.pointerEvents = d > .5 ? "auto" : "none";
+      demo.style.transform = `translateX(-50%) translateY(${lerp(26, 0, d)}px)`;
     }
-  }
-
-  // traiettoria del token: origine → presa in carico → asse del tempo
-  function tokenAt(u) {
-    // u 0..1 = viaggio completo (due gambe)
-    const a = { x: ox(), y: oy() }, b = { x: cx2(), y: cy2() }, c = { x: landX(), y: axisY() };
-    if (u < .5) {
-      const q = u * 2, m = 1 - q;
-      const mx = (a.x + b.x) / 2 - (b.y - a.y) * .18, my = (a.y + b.y) / 2 + (b.x - a.x) * .18;
-      return { x: m * m * a.x + 2 * m * q * mx + q * q * b.x,
-               y: m * m * a.y + 2 * m * q * my + q * q * b.y };
-    }
-    const q = (u - .5) * 2, m = 1 - q;
-    const mx = (b.x + c.x) / 2 + (c.y - b.y) * .14, my = (b.y + c.y) / 2 - (c.x - b.x) * .14;
-    return { x: m * m * b.x + 2 * m * q * mx + q * q * c.x,
-             y: m * m * b.y + 2 * m * q * my + q * q * c.y };
-  }
-
-  function update(p, time) {
-    ctx.clearRect(0, 0, W, H);
-    const t = reduce ? 0 : time;
-
-    const seed = smooth(seg(p, .04, .14));     // l'anello del diritto
-    const ride = smooth(seg(p, .14, .38));     // assegnazione
-    const care = smooth(seg(p, .38, .56));     // presa in carico
-    const drop = smooth(seg(p, .56, .74));     // erogazione
-    const dated = smooth(seg(p, .76, .90));    // evento datato
-
-    // energia semantica: ambra mentre il diritto viaggia, poi il campo
-    // si RAFFREDDA verso il ciano clinico — il colore passa il testimone
-    const amber = smooth(seg(p, .10, .55)) * (1 - smooth(seg(p, .82, .97)));
-    const cool = smooth(seg(p, .82, .97));
-    if (amber > 0) {
-      const g = ctx.createRadialGradient(W * .55, H * .5, 0, W * .55, H * .5, W * .5);
-      g.addColorStop(0, `rgba(212,169,79,${.055 * amber})`); g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    }
-    if (cool > 0) {
-      const g = ctx.createRadialGradient(W * .5, H * .85, 0, W * .5, H * .85, W * .6);
-      g.addColorStop(0, `rgba(${FC.rgbAccent},${.05 * cool})`); g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    }
-
-    // il diritto: lo stesso anello del confine della scena separazione
-    if (seed > 0) {
-      const sx0 = ox(), sy0 = oy();
-      ctx.globalAlpha = seed;
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = `rgba(${GOLD},.6)`;
-      ctx.shadowColor = `rgba(${GOLD},.25)`; ctx.shadowBlur = 14;
-      ctx.beginPath(); ctx.arc(sx0, sy0, 30, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = `rgba(${GOLD},.28)`;
-      ctx.beginPath(); ctx.arc(sx0, sy0, 19, 0, Math.PI * 2); ctx.stroke();
-      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-    }
-
-    // l'asse del tempo appare quando serve — stessa grammatica di #tempo
-    const axIn = smooth(seg(p, .50, .64));
-    if (axIn > 0) {
-      ctx.strokeStyle = `rgba(${FC.rgbAccent},${.26 * axIn})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(ax0(), axisY()); ctx.lineTo(ax1(), axisY()); ctx.stroke();
-      for (const tk of ticks) {
-        const x = ax0() + (ax1() - ax0()) * tk.u;
-        ctx.strokeStyle = `rgba(${FC.rgbAccent},${.28 * axIn})`;
-        ctx.beginPath(); ctx.moveTo(x, axisY() - tk.h); ctx.lineTo(x, axisY() + tk.h); ctx.stroke();
-      }
-    }
-
-    // la presa in carico: un punto clinico che accoglie il token
-    if (care > 0) {
-      const rg = ctx.createRadialGradient(cx2(), cy2(), 0, cx2(), cy2(), 30);
-      rg.addColorStop(0, `rgba(${FC.rgbAccent},${.5 * care})`); rg.addColorStop(1, `rgba(${FC.rgbAccent},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx2(), cy2(), 30, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = `rgba(234,252,255,${.9 * care})`;
-      ctx.beginPath(); ctx.arc(cx2(), cy2(), 2.6, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // il token in viaggio — promessa finché non atterra
-    const journey = clamp((ride * .5 + drop * .5) / .999);
-    const u = ride < 1 ? ride * .5 : .5 + drop * .5;
-    if ((ride > 0 && ride < 1) || (drop > 0 && drop < 1)) {
-      const pt = tokenAt(u);
-      ctx.lineCap = "round";
-      for (let i = 22; i >= 0; i--) {
-        const pu = Math.max(0, u - i * .008), pu2 = Math.max(0, pu - .008);
-        const a0 = tokenAt(pu), a1 = tokenAt(pu2);
-        const f = 1 - i / 23;
-        ctx.strokeStyle = `rgba(244,203,106,${.75 * f})`;
-        ctx.lineWidth = .5 + 3 * f;
-        ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
-      }
-      ctx.lineCap = "butt";
-      const rg = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 34);
-      rg.addColorStop(0, "rgba(255,238,187,.85)"); rg.addColorStop(1, "rgba(242,205,121,0)");
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(pt.x, pt.y, 34, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#fff3cf";
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3.8, 0, Math.PI * 2); ctx.fill();
-      // durante la presa in carico il token respira attorno al punto clinico
-      if (care > .6 && drop < .05) {
-        const a2 = t * .003;
-        ctx.strokeStyle = `rgba(${FC.rgbAccent},.4)`;
-        ctx.beginPath(); ctx.arc(cx2(), cy2(), 12 + 3 * Math.sin(a2), 0, Math.PI * 2); ctx.stroke();
-      }
-    }
-
-    // l'evento datato: il token si fissa sull'asse — da promessa a fatto
-    if (dated > 0) {
-      const ex = landX(), ey = axisY();
-      ctx.strokeStyle = `rgba(${GOLD},${.8 * dated})`;
-      ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.moveTo(ex, ey - H * .10); ctx.lineTo(ex, ey + H * .03); ctx.stroke();
-      const rg = ctx.createRadialGradient(ex, ey - H * .10, 0, ex, ey - H * .10, 26 * dated);
-      rg.addColorStop(0, `rgba(${GOLD},${.7 * dated})`); rg.addColorStop(1, `rgba(${GOLD},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ex, ey - H * .10, 26 * dated, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#fff9dc";
-      ctx.beginPath(); ctx.arc(ex, ey - H * .10, 3, 0, Math.PI * 2); ctx.fill();
-      if (W >= 760) {
-        ctx.font = "10px 'DM Mono', monospace";
-        ctx.textAlign = "center";
-        ctx.fillStyle = `rgba(241,200,71,${.85 * dated})`;
-        ctx.fillText("giorno 147 — erogata · esempio", ex, ey + H * .07);
-      }
-    }
-
-    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // DOM — gli ambiti di tutela vivono ora nella sezione Articolo 32;
-    // qui resta solo la prestazione che diventa evento
-    title(p); caps(p);
-    if (services.length) {
-      const sOut = 1 - smooth(seg(p, .70, .78));
-      let sMax = 0;
-      services.forEach((el, i) => {
-        const v = smooth(seg(p, .42 + i * .02, .50 + i * .02)) * sOut;
-        sMax = Math.max(sMax, v);
-        el.style.opacity = v;
-        el.style.transform = `translateY(${10 * (1 - v)}px)`;
-      });
-      services[0].parentElement.style.opacity = Math.min(1, sMax * 3);
-    }
-    cap.style.opacity = seg(p, .92, .97);
+    if (cap) cap.style.opacity = seg(p, .92, .97);
   }
   return { resize, update };
 }
@@ -1145,199 +966,6 @@ function initKnowledge(stage, ctx) {
     sigES.style.opacity = es;
     sigES.style.transform = `translate(-50%,-50%) scale(${lerp(.92, 1, es)})`;
     cap.style.opacity = seg(p, .96, .99);
-  }
-  return { resize, update };
-}
-
-/* ---------- atto 08 · Enzima — un ciclo, non una pipeline ----------
-
-   Il pattern osservato viene isolato, diventa domanda, attraversa un
-   ciclo chiuso (ricerca → progetto → applicazione), rientra nel campo e
-   perturba il sistema: nasce una nuova osservazione. Catalizza, non
-   conclude. Comportamento: circolare + ritorno perturbante.             */
-
-function initResearch(stage, ctx) {
-  let W = 0, H = 0, grain = null, dust = [], cluster = [];
-  const cap = stage.querySelector("[data-cap]");
-  const specs = [...stage.querySelectorAll(".spec")];
-  const sig = stage.querySelector("#sigENZ");
-  const ECO = window.PBCARE_ECOSYSTEM;
-  const ENZ = ECO ? ECO.byId.enzima.palette
-                  : { rgbAccent: "127,232,224", rgbSecondary: "79,216,176", rgbAtmosphere: "6,34,42" };
-  const TEAL = ENZ.rgbAccent, TEAL2 = ENZ.rgbSecondary;
-
-  const mob = () => W <= 800;
-  const cx = () => mob() ? W * .5 : W * .60, cy = () => mob() ? H * .60 : H * .52;
-  const rx = () => Math.min(W, H) * (mob() ? .20 : .23);
-  const ry = () => rx() * .74;
-  // punto sul ciclo — wobble organico, non ellisse perfetta
-  function loopPt(a, t) {
-    const w = 1 + .07 * Math.sin(3 * a + t * .0008);
-    return { x: cx() + Math.cos(a) * rx() * w, y: cy() + Math.sin(a) * ry() * w };
-  }
-  const STATIONS = [-.5, .7, 1.9, 3.1, 4.3]; // osservazione→…→impatto sul ciclo
-
-  function resize() {
-    W = stage.clientWidth; H = stage.clientHeight;
-    const DPR = Math.min(1.5, devicePixelRatio || 1);
-    const c = stage.querySelector("canvas");
-    c.width = W * DPR; c.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    grain = makeGrain(ctx);
-    dust = [];
-    for (let i = 0; i < 50; i++) dust.push({ x: rnd(i * 3.1) * W, y: rnd(i * 7.9) * H, r: .6 + rnd(i * 2.2) * 1.1, ph: rnd(i) * 6.28 });
-    cluster = [];
-    for (let i = 0; i < 14; i++) {
-      const a = rnd(i * 5.3) * 6.28, r = rnd(i * 8.7) * 26;
-      cluster.push({ x: Math.cos(a) * r, y: Math.sin(a) * r * .7, ph: rnd(i) * 6.28 });
-    }
-  }
-
-  function update(p, time) {
-    ctx.clearRect(0, 0, W, H);
-    const t = reduce ? 0 : time;
-
-    const obs = smooth(seg(p, .05, .18));      // osservazione isolata
-    const ask = smooth(seg(p, .20, .34));      // diventa domanda → entra nel ciclo
-    const spin = smooth(seg(p, .34, .78));     // circola: ricerca/progetto
-    const back = smooth(seg(p, .70, .84));     // ritorno al campo
-    const wake = smooth(seg(p, .80, .94));     // perturbazione → nuova osservazione
-
-    // campo di fondo — il pulviscolo che la perturbazione attraversa.
-    // Dopo il ritorno il campo RESTA cambiato: le particelle vicine al
-    // punto di rientro si tingono di teal e si orientano — memoria del ciclo
-    const to0 = { x: mob() ? W * .5 : W * .30, y: mob() ? H * .82 : H * .78 };
-    for (const d of dust) {
-      const dist = Math.hypot(d.x - to0.x, d.y - to0.y);
-      const touched = wake * smooth(1 - clamp(dist / (W * .32)));
-      const rip = wake > 0 ? .5 + .5 * Math.sin(t * .002 + d.ph + wake * 9) : 0;
-      const col = mixRGB(MINT, TEAL2, touched);
-      ctx.fillStyle = `rgba(${col},${.07 + .08 * rip + .35 * touched})`;
-      ctx.beginPath(); ctx.arc(d.x, d.y, d.r * (1 + touched * .6), 0, Math.PI * 2); ctx.fill();
-    }
-
-    // il cluster dell'osservazione: il pattern della scena precedente
-    const hx = mob() ? W * .5 : W * .30, hy = mob() ? H * .76 : H * .70;
-    if (obs > 0) {
-      for (const d of cluster) {
-        const wob = Math.sin(t * .001 + d.ph) * 3;
-        ctx.fillStyle = `rgba(${TEAL},${.55 * obs})`;
-        ctx.beginPath(); ctx.arc(hx + d.x + wob, hy + d.y + wob * .6, 1.7, 0, Math.PI * 2); ctx.fill();
-      }
-      // "domanda": anello che oscilla — interrogativo senza simbolo
-      const q = ask * (1 - smooth(seg(p, .30, .36)));
-      if (q > 0) {
-        const rr = 34 + 4 * Math.sin(t * .002);
-        ctx.setLineDash([3, 5]);
-        ctx.strokeStyle = `rgba(${TEAL},${.5 * q})`;
-        ctx.beginPath(); ctx.arc(hx, hy, rr, 0, Math.PI * 2); ctx.stroke();
-        ctx.setLineDash([]);
-      }
-    }
-
-    // il ciclo: si disegna quando la domanda entra — e non si chiude mai del tutto
-    if (ask > 0) {
-      const draw = smooth(seg(ask, .2, 1)) * Math.PI * 2 * .96;
-      ctx.strokeStyle = `rgba(${TEAL},${.22 * ask})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let k = 0; k <= 90; k++) {
-        const a = -Math.PI / 2 + (k / 90) * draw;
-        const q = loopPt(a, t);
-        k === 0 ? ctx.moveTo(q.x, q.y) : ctx.lineTo(q.x, q.y);
-      }
-      ctx.stroke();
-      // stazioni del ciclo — le fasi, sospese
-      STATIONS.forEach((a, i) => {
-        const q = loopPt(a, t);
-        const on = smooth(seg(p, .30 + i * .11, .38 + i * .11));
-        if (on <= 0) return;
-        ctx.strokeStyle = `rgba(${TEAL2},${.5 * on})`;
-        ctx.beginPath(); ctx.arc(q.x, q.y, 7, 0, Math.PI * 2); ctx.stroke();
-        ctx.fillStyle = `rgba(${TEAL2},${.25 * on})`;
-        ctx.beginPath(); ctx.arc(q.x, q.y, 3, 0, Math.PI * 2); ctx.fill();
-      });
-    }
-
-    // la domanda circola nel ciclo — catalisi
-    if (spin > 0) {
-      const rev = spin * Math.PI * 2 * 1.4; // ~1.4 giri, poi esce
-      const a = -Math.PI / 2 + rev;
-      const q = loopPt(a, t);
-      // scia lungo il ciclo
-      ctx.lineCap = "round";
-      for (let i = 26; i >= 0; i--) {
-        const a0 = a - i * .03, a1 = a - (i + 1) * .03;
-        const q0 = loopPt(a0, t), q1 = loopPt(a1, t);
-        const f = 1 - i / 27;
-        ctx.strokeStyle = `rgba(${TEAL},${.75 * f * spin})`;
-        ctx.lineWidth = .5 + 2.4 * f;
-        ctx.beginPath(); ctx.moveTo(q0.x, q0.y); ctx.lineTo(q1.x, q1.y); ctx.stroke();
-      }
-      ctx.lineCap = "butt";
-      const rg = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, 26);
-      rg.addColorStop(0, `rgba(${TEAL},.8)`); rg.addColorStop(1, `rgba(${TEAL},0)`);
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(q.x, q.y, 26, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#eafdff";
-      ctx.beginPath(); ctx.arc(q.x, q.y, 2.8, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // il ritorno: una parte rientra nel campo — la trasformazione applicata
-    if (back > 0) {
-      const a = -Math.PI / 2 + 1.4 * Math.PI * 2; // punto di uscita del ciclo
-      const from = loopPt(a, t);
-      const to = { x: mob() ? W * .5 : W * .30, y: mob() ? H * .82 : H * .78 };
-      const bx2 = lerp(from.x, to.x, smooth(back)), by2 = lerp(from.y, to.y, smooth(back));
-      ctx.strokeStyle = `rgba(${TEAL2},${.6 * back})`;
-      ctx.setLineDash([2, 4]);
-      ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(bx2, by2); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = `rgba(${TEAL2},.95)`;
-      ctx.beginPath(); ctx.arc(bx2, by2, 2.6, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // la perturbazione: onda che attraversa il campo + nuova osservazione
-    if (wake > 0) {
-      const to = { x: mob() ? W * .5 : W * .30, y: mob() ? H * .82 : H * .78 };
-      const k = smooth(wake);
-      ctx.strokeStyle = `rgba(${TEAL2},${.35 * (1 - k)})`;
-      ctx.beginPath(); ctx.arc(to.x, to.y, 10 + k * W * .25, 0, Math.PI * 2); ctx.stroke();
-      // nuova piccola traccia — il ciclo riapre l'osservazione
-      const draw = k * 30;
-      ctx.strokeStyle = `rgba(${GOLD},${.75 * k})`;
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      for (let i = 0; i <= draw; i++) {
-        const u = i / 30;
-        const x = to.x + u * 90;
-        const y = to.y - Math.sin(u * 6) * 8 - u * 10;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke(); ctx.lineWidth = 1;
-    }
-
-    ctx.globalAlpha = .045; ctx.fillStyle = grain; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-
-    // DOM — il titolo cede al ciclo e TORNA quando il ciclo riapre
-    // l'osservazione: la frase è la tesi della scena, non un'etichetta.
-    // La firma arriva con la trasformazione compiuta e resta.
-    const tin = smooth(seg(p, .02, .14)), tout = smooth(seg(p, .26, .38));
-    const back2 = smooth(seg(p, .86, .94));
-    const ta = clamp(tin * (1 - tout) + back2);
-    const ty = lerp(18, 0, tin) - tout * 12 - back2 * 6;
-    stage.querySelectorAll(".enz .eyebrow, .enz h2").forEach(el => {
-      el.style.opacity = ta; el.style.transform = `translateY(${ty}px)`;
-    });
-    const so = seg(p, .74, .82);
-    // durante il beat la lista delle fasi arretra: Enzima è il messaggio
-    const beat = smooth(so) * (1 - smooth(seg(p, .86, .92)));
-    specs.forEach((el, i) => {
-      el.classList.toggle("done", p > .16 + i * .15);
-      el.style.opacity = lerp(1, .30, beat);
-    });
-    sig.style.opacity = so;
-    sig.style.transform = `scale(${lerp(.92, 1, so)})`;
-    cap.style.opacity = seg(p, .90, .97);
   }
   return { resize, update };
 }
@@ -1809,8 +1437,9 @@ function initSep(stage, ctx) {
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
-    // righello del tempo: tacche che il confine poi taglia
-    const emerge = smooth(seg(p, .005, .13));
+    // righello del tempo: le tacche-onda si caricano lentamente,
+    // distribuite su un arco di scroll più ampio
+    const emerge = smooth(seg(p, .02, .32));
     const fadeEvents = 1 - smooth(seg(p, .72, .80));
     const n = tickH.length;
     for (let i = 0; i < n; i++) {
@@ -2040,8 +1669,8 @@ function initWorld(stage, ctx) {
 
 const INITS = {
   s1: initS1, sep: initSep, tempo: initTempo,
-  relation: initRelation, event: initEvent, knowledge: initKnowledge,
-  research: initResearch, system: initSystem, reveal: initReveal,
+  relation: initRelation, knowledge: initKnowledge,
+  system: initSystem, reveal: initReveal,
   world: initWorld,
 };
 // scena senza init = stage statica, non rompe l'esperienza
@@ -2222,14 +1851,7 @@ function loop(time) {
   const gp_ = max > 0 ? clamp(scrollY / max) : 0;
   gp.style.setProperty("--gp", gp_);
   nav.classList.toggle("scrolled", scrollY > 30);
-  // durante l'intro la nav è quasi assente: il testo PB-CARe non compete
-  // col marchio reale (resta raggiungibile con hover/focus)
-  const introEl = document.getElementById("intro");
-  nav.classList.toggle("nav-ghost",
-    !!introEl && introEl.getBoundingClientRect().bottom > innerHeight * .45);
-  // la struttura si rivela dopo l'intro + la persona — non prima
-  const navAt = (introEl ? introEl.offsetHeight : 0) + innerHeight * .5;
-  nav.classList.toggle("nav-open", scrollY > navAt);
+  // la nav è il tetto della pagina: sempre presente, si scurisce allo scroll
 
   const dbg = [];
   for (const c of controllers) {
