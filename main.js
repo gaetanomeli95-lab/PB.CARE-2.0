@@ -109,9 +109,10 @@ function initHero(canvas) {
     const R = Math.min(W, H) * .36;
     const sq = .30;                       // inclinazione prospettica dei paralleli
     const breathe = reduce ? .85 : .82 + .08 * Math.sin(t * .0006);
-    // formazione: il globo si accende per strati nei primi ~2.4s,
-    // poi resta — l'ingresso è una nascita, non un loader
-    const born = reduce ? 1 : smoother(clamp(time / 2400));
+    // formazione: nei primi ~2.6s il sistema ARRIVA — le tracce convergono
+    // dalla periferia alla persona, accendono il globo, i nodi prendono
+    // posto sulle orbite. Poi resta: nascita, non loader.
+    const born = reduce ? 1 : smoother(clamp(time / 2600));
 
     // alone ambientale dietro il globo
     const ambA = .10 * breathe * seg(born, 0, .55);
@@ -120,6 +121,48 @@ function initHero(canvas) {
       rg.addColorStop(0, `rgba(90,160,200,${ambA})`);
       rg.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    }
+
+    // convergenza: sette tracce corrono dal bordo verso il centro —
+    // tutto arriva alla persona: è la storia di PB-CARe nel primo secondo
+    const convFade = 1 - smooth(seg(born, .38, .52));
+    if (convFade > 0) {
+      ctx.lineWidth = 1.2;
+      for (let i = 0; i < 7; i++) {
+        const u = smooth(seg(born, i * .045, i * .045 + .30));
+        if (u <= 0) continue;
+        const a0 = -Math.PI / 2 + (i - 3) * .44 + (rnd(i * 7.7) - .5) * .35;
+        const r0 = Math.max(W, H) * (.60 + rnd(i * 3.1) * .22);
+        const sx = cx + Math.cos(a0) * r0, sy = cy + Math.sin(a0) * r0;
+        const mx = (sx + cx) / 2 + (sy - cy) * .16;
+        const my = (sy + cy) / 2 - (sx - cx) * .16;
+        const ex = cx + Math.cos(a0) * R * .10, ey = cy + Math.sin(a0) * R * .10;
+        const t0 = Math.max(0, u - .38);
+        ctx.strokeStyle = `rgba(${COLD},${.45 * convFade})`;
+        ctx.beginPath();
+        for (let k = 0; k <= 24; k++) {
+          const q = t0 + (u - t0) * k / 24;
+          const bx = (1 - q) * (1 - q) * sx + 2 * (1 - q) * q * mx + q * q * ex;
+          const by = (1 - q) * (1 - q) * sy + 2 * (1 - q) * q * my + q * q * ey;
+          k === 0 ? ctx.moveTo(bx, by) : ctx.lineTo(bx, by);
+        }
+        ctx.stroke();
+        const hx = (1 - u) * (1 - u) * sx + 2 * (1 - u) * u * mx + u * u * ex;
+        const hy = (1 - u) * (1 - u) * sy + 2 * (1 - u) * u * my + u * u * ey;
+        ctx.fillStyle = `rgba(225,248,255,${.9 * convFade})`;
+        ctx.shadowColor = "rgba(140,210,245,.8)"; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(hx, hy, 2.2, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // l'arrivo: le tracce raggiungono il centro — un respiro di luce
+    const flash = smooth(seg(born, .30, .48)) * (1 - smooth(seg(born, .48, .82)));
+    if (flash > 0) {
+      const fg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * .65);
+      fg.addColorStop(0, `rgba(210,244,255,${.30 * flash})`);
+      fg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = fg; ctx.fillRect(0, 0, W, H);
     }
 
     // asse: la fenditura dell'identità — il primo elemento che si accende
@@ -135,37 +178,40 @@ function initHero(canvas) {
       ctx.shadowBlur = 0;
     }
 
-    // meridiani: ellissi verticali il cui raggio orizzontale respira
-    // cos(θ) — la rotazione lenta del wireframe
+    // meridiani: si srotolano uno dopo l'altro dal centro verso i poli,
+    // poi continuano la rotazione lenta del wireframe
     const merA = seg(born, .15, .7) * breathe;
     if (merA > 0) {
       ctx.lineWidth = 1;
       for (let m = 0; m < 5; m++) {
         const th = t * .00012 + m * (Math.PI / 5);
-        const mx = Math.abs(Math.cos(th)) * R;
+        const mg = smoother(seg(born, .18 + m * .05, .52 + m * .05));
+        const mx = Math.abs(Math.cos(th)) * R * mg;
         ctx.strokeStyle = `rgba(${COLD},${(.05 + .10 * Math.abs(Math.cos(th))) * merA})`;
-        ctx.beginPath(); ctx.ellipse(cx, cy, mx, R, 0, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(cx, cy, mx, R * mg, 0, 0, Math.PI * 2); ctx.stroke();
       }
     }
 
-    // paralleli: anelli orizzontali inclinati — il reticolo della sfera
+    // paralleli: gli anelli crescono dal centro verso l'esterno —
+    // il reticolo prende volume
     const parA = seg(born, .3, .8) * breathe;
+    const pg = smoother(seg(born, .30, .82));
     if (parA > 0) {
       for (let la = -2; la <= 2; la++) {
         const phi = la * .34;
-        const rx = R * Math.cos(phi);
+        const rx = R * Math.cos(phi) * pg;
         const ry = rx * sq;
-        const yy = cy + Math.sin(phi) * R * sq;
+        const yy = cy + Math.sin(phi) * R * sq * pg;
         ctx.strokeStyle = `rgba(${COLD},${(la === 0 ? .16 : .08) * parA})`;
         ctx.beginPath(); ctx.ellipse(cx, yy, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
       }
       // profilo esterno — trattenuto, quasi invisibile
       ctx.strokeStyle = `rgba(${COLD},${.10 * parA})`;
-      ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .98, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(cx, cy, R * pg, R * .98 * pg, 0, 0, Math.PI * 2); ctx.stroke();
     }
 
-    // nodi orbitali: punti del sistema che percorrono i paralleli —
-    // l'ultimo strato ad accendersi: prima la forma, poi la vita
+    // nodi orbitali: volano dal bordo e prendono posto sulle orbite —
+    // l'ecosistema arriva al suo posto attorno all'identità
     const nodA = seg(born, .55, 1) * breathe;
     if (nodA > 0) {
       for (let n = 0; n < 4; n++) {
@@ -174,8 +220,12 @@ function initHero(canvas) {
         const rx = R * Math.cos(phi), ry = rx * sq;
         const yy = cy + Math.sin(phi) * R * sq;
         const a = t * (.00016 + n * .00003) * (n % 2 ? -1 : 1) + n * 1.7;
-        const nx = cx + Math.cos(a) * rx, ny = yy + Math.sin(a) * ry;
-        // il nodo si attenua sul lato "dietro" dell'orbita
+        const ox = cx + Math.cos(a) * rx, oy = yy + Math.sin(a) * ry;
+        // ingresso: arriva dalla direzione della sua orbita, dal bordo
+        const nodIn = smoother(seg(born, .52 + n * .07, .82 + n * .07));
+        const farx = cx + Math.cos(a) * Math.max(W, H) * .75;
+        const fary = oy + Math.sin(a) * Math.max(W, H) * .42;
+        const nx = lerp(farx, ox, nodIn), ny = lerp(fary, oy, nodIn);
         const depth = .5 + .5 * Math.sin(a + Math.PI / 2);
         ctx.fillStyle = `rgba(220,245,255,${(.12 + .38 * depth) * nodA})`;
         ctx.shadowColor = "rgba(140,210,245,.7)"; ctx.shadowBlur = 8;

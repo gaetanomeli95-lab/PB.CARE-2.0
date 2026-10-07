@@ -201,6 +201,7 @@ a{color:inherit}
 html.js:not(.booted) .hero .imark,html.js:not(.booted) .hero .iline,
 html.js:not(.booted) .hero .hero-line,html.js:not(.booted) .hero .sub,
 html.js:not(.booted) .hero .hero-sub,html.js:not(.booted) .hero-actions{opacity:0;transform:translateY(16px)}
+html.js:not(.booted) .hero .imark{transform:translateY(20px) scale(.94)}
 html.js:not(.booted) .hero-cue{opacity:0;transform:translate(-50%,12px)}
 html.js:not(.booted) .topnav{opacity:0}
 html.js.booted .hero .imark{opacity:1;transform:none;transition-delay:.25s}
